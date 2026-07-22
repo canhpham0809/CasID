@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giao diện Thông báo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body, input, select, textarea, button, span, p, div, h1, h2, h3, h4, h5, h6, strong, label, input::placeholder, textarea::placeholder {
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        /* Giả lập khung viền điện thoại */
+        .phone-container {
+            width: 375px;
+            height: 812px;
+        }
+
+        .ca-card-dark {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ca-card-dark::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+
+    <div
+        class="phone-container bg-white shadow-2xl rounded-[40px] overflow-hidden flex flex-col relative border-[8px] border-black">
+
+        <div class="flex justify-between items-center px-6 pt-3 pb-2 text-xs font-bold text-black bg-white z-10">
+            <span>9:41</span>
+            <div class="flex items-center gap-1.5">
+                <i class="fa-solid fa-signal text-[10px]"></i>
+                <i class="fa-solid fa-battery-full text-sm"></i>
+            </div>
+        </div>
+
+        <!-- VIEW 1: NOTI LIST -->
+        <div id="view-noti-list" class="flex-1 flex flex-col overflow-hidden">
+            <div class="px-4 py-3 flex items-center gap-4 bg-white">
+                <button onclick="window.location.href='index.html'"
+                    class="text-gray-700 text-lg hover:opacity-70">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h1 class="text-xl font-bold text-gray-800">Thông báo</h1>
+            </div>
+
+            <div class="px-4 pt-3 bg-white shrink-0">
+                <div class="flex border-b border-gray-100 text-[14px] font-semibold text-gray-500">
+                    <!-- Tab: Cần xử lý -->
+                    <button id="tab-pending" onclick="switchNotiTab('pending')"
+                        class="flex-1 pb-2.5 text-center border-b-2 border-emerald-600 text-emerald-600 font-bold flex items-center justify-center gap-1.5 transition-all">
+                        <span>Cần xử lý</span>
+                        <span id="pending-badge"
+                            class="inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full bg-red-500 text-white text-[9px] font-bold leading-none">
+                            2
+                        </span>
+                    </button>
+
+                    <!-- Tab: Hoạt động -->
+                    <button id="tab-activity" onclick="switchNotiTab('activity')"
+                        class="flex-1 pb-2.5 text-center border-b-2 border-transparent flex items-center justify-center gap-1.5 transition-all">
+                        <span>Hoạt động</span>
+                        <span id="activity-badge"
+                            class="inline-flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full bg-gray-300 text-white text-[9px] font-bold leading-none">
+                            2
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="noti-list" class="flex-1 overflow-y-auto px-4 divide-y divide-gray-100"></div>
+
+            <button
+                class="absolute bottom-20 right-6 w-14 h-14 bg-black rounded-full text-white flex items-center justify-center shadow-lg hover:bg-gray-800 transition-colors hidden">
+                <i class="fa-solid fa-plus text-xl"></i>
+            </button>
+
+            <div
+                class="bg-white border-t border-gray-100 px-2 py-2 flex justify-around items-center text-[10px] text-gray-400 font-medium pb-5 shrink-0">
+                <button onclick="showComingSoon()"
+                    class="flex flex-col items-center gap-1 w-16 text-gray-400">
+                    <i class="fa-solid fa-house text-lg"></i>
+                    <span>Trang chủ</span>
+                </button>
+                <button onclick="window.location.href='index.html'"
+                    class="flex flex-col items-center gap-1 w-16 text-gray-400">
+                    <i class="fa-solid fa-server text-lg"></i>
+                    <span>Dữ liệu</span>
+                </button>
+                <button onclick="window.location.href='casID-sign-delegation.html'"
+                    class="flex flex-col items-center gap-1 w-16 text-gray-400">
+                    <i class="fa-solid fa-qrcode text-lg"></i>
+                    <span>Cấp quyền</span>
+                </button>
+                <button onclick="window.location.href='casID-sign-noti.html'"
+                    class="flex flex-col items-center gap-1 w-16 text-black relative">
+                    <div class="relative">
+                        <i class="fa-solid fa-bell text-lg"></i>
+                        <span id="footer-noti-badge"
+                            class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center border border-white hidden">
+                            2
+                        </span>
+                    </div>
+                    <span>Thông báo</span>
+                </button>
+                <button onclick="showComingSoon()" class="flex flex-col items-center gap-1 w-16 text-gray-400">
+                    <i class="fa-solid fa-circle-user text-lg"></i>
+                    <span class="font-bold">Hồ sơ</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW 2: INVITE DETAIL -->
+        <div id="view-invite-detail" class="flex-1 flex flex-col overflow-hidden hidden bg-gray-50">
+            <div class="px-4 py-3 flex items-center gap-3 bg-white border-b border-gray-50 shrink-0">
+                <button onclick="showListNotiView()" class="text-gray-700 text-lg hover:opacity-70">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h1 class="text-[15px] font-bold text-gray-800">Lời mời nhận ủy quyền</h1>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+                <!-- Card uỷ quyền giống normal CA card style -->
+                <div id="invite-card-container" class="ca-card-dark rounded-2xl p-4 text-white shadow-lg shrink-0">
+                    <div class="flex justify-between items-start mb-4">
+                        <div id="invite-card-logo" class="text-white font-black text-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-shield-halved text-emerald-400 text-xs"></i>
+                            <span id="invite-card-title-text" class="font-bold text-sm">Lời mời uỷ quyền</span>
+                            <i class="fa-solid fa-circle-check text-emerald-400 text-xs ml-1"></i>
+                        </div>
+                        <span
+                            class="bg-amber-500 text-white text-[9px] font-bold px-2.5 py-1 rounded-full border border-amber-500">Chờ
+                            xác nhận</span>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-gray-400 mb-0.5">Người ủy quyền</p>
+                        <p id="invite-card-sender-big" class="text-xl font-bold tracking-wide">--</p>
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div class="flex flex-col gap-3">
+                    <h2 class="text-[13px] font-bold text-gray-800">Chi tiết lời mời</h2>
+                    <div
+                        class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden divide-y divide-gray-50">
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Người
+                                gửi</span><span id="detail-invite-sender"
+                                class="text-[11px] font-bold text-gray-800">--</span></div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Loại ủy
+                                quyền</span><span id="detail-invite-type"
+                                class="text-[11px] font-bold text-gray-800">--</span></div>
+                        <div id="detail-invite-cert-row" class="flex justify-between px-4 py-3"><span
+                                class="text-[11px] text-gray-500">Chứng thư số</span><span id="detail-invite-cert"
+                                class="text-[11px] font-bold text-gray-800">--</span></div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">CCCD của
+                                bạn</span><span id="detail-invite-cccd"
+                                class="text-[11px] font-mono font-bold text-gray-700">--</span></div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Trạng
+                                thái</span><span class="text-[11px] font-bold text-amber-500">Chờ xác nhận</span></div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex gap-2 w-full mt-auto pt-4 pb-6 shrink-0">
+                    <button onclick="respondInvite(false)"
+                        class="flex-1 py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold text-[13px] rounded-md transition-all active:scale-[0.98]">
+                        Từ chối ủy quyền
+                    </button>
+                    <button onclick="respondInvite(true)"
+                        class="flex-1 py-3.5 bg-black hover:bg-gray-900 text-white font-bold text-[13px] rounded-md transition-all active:scale-[0.98]">
+                        Đồng ý xác nhận
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let notificationsData = [];
+        let selectedNoti = null;
+        let activeTab = 'pending'; // 'pending' or 'activity'
+
+        window.onload = function () {
+            loadNotifications();
+
+            // Check signed URL param and sync to notifications status
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('signed') === 'true') {
+                localStorage.setItem('doc_signed_status', 'signed');
+                notificationsData = notificationsData.map(n => {
+                    if (n.id === 'noti_item_casso_1') {
+                        return { ...n, status: 'completed' };
+                    }
+                    return n;
+                });
+                localStorage.setItem('app_notifications', JSON.stringify(notificationsData));
+
+                setTimeout(() => {
+                    showSuccessToast('Ký tài liệu thành công!');
+                }, 400);
+            }
+
+            updateFooterNotiBadge();
+            renderNotifications();
+            switchNotiTab('pending'); // Render pending tab by default
+        };
+
+        function updateFooterNotiBadge() {
+            const badge = document.getElementById('footer-noti-badge');
+            if (badge) {
+                // Count sign requests with status pending + invite requests with status pending
+                const pendingCount = notificationsData.filter(n => n.status === 'pending').length;
+                badge.textContent = pendingCount;
+                badge.classList.toggle('hidden', pendingCount === 0);
+            }
+        }
+
+        function loadNotifications() {
+            // Check sign status from local storage
+            const isDocSigned = localStorage.getItem('doc_signed_status') === 'signed';
+
+            const stored = localStorage.getItem('app_notifications');
+            if (stored) {
+                try {
+                    let parsed = JSON.parse(stored);
+                    let needsUpgrade = false;
+
+                    parsed = parsed.map(n => {
+                        const isInvite = n.type === 'delegation_invite_ca' || n.type === 'delegation_invite_signing';
+
+                        // Upgrade email to name ONLY for invitation requests
+                        if (isInvite) {
+                            if (n.sender === 'canhphq@cas.so') {
+                                n.sender = 'Nguyễn Văn An';
+                                needsUpgrade = true;
+                            }
+                            if (n.sender === 'tuyetlp@cas.so' || n.sender === 'casso_pos') {
+                                n.sender = 'Casso POS';
+                                needsUpgrade = true;
+                            }
+                            if (n.message && n.message.includes('canhphq@cas.so')) {
+                                n.message = n.message.replace('canhphq@cas.so', 'Nguyễn Văn An');
+                                needsUpgrade = true;
+                            }
+                            if (n.message && (n.message.includes('tuyetlp@cas.so') || n.message.includes('tuyetlq@cas.so'))) {
+                                n.message = n.message.replace('tuyetlp@cas.so', 'Casso POS').replace('tuyetlq@cas.so', 'Casso POS');
+                                needsUpgrade = true;
+                            }
+                        } else {
+                            // Ensure standard sign requests keep their emails (revert if previously modified)
+                            if (n.id === 'noti_item_casso_1' && n.sender === 'Nguyễn Văn An') {
+                                n.sender = 'canhphq@cas.so';
+                                n.message = 'Bạn đang có 1 yêu cầu ký số được gửi từ canhphq@cas.so';
+                                needsUpgrade = true;
+                            }
+                            if (n.id === 'noti_item_casso_2' && n.sender === 'Casso POS') {
+                                n.sender = 'tuyetlp@cas.so';
+                                n.message = 'Bạn đang có 1 yêu cầu ký số được gửi từ tuyetlp@cas.so';
+                                needsUpgrade = true;
+                            }
+                        }
+
+                        if (n.status === undefined) {
+                            needsUpgrade = true;
+                            // Set status logic for legacy items
+                            if (n.id === 'noti_item_casso_1') {
+                                return { ...n, status: isDocSigned ? 'completed' : 'pending' };
+                            } else {
+                                return { ...n, status: 'pending' };
+                            }
+                        }
+
+                        // Sync with doc_signed_status
+                        if (n.id === 'noti_item_casso_1' && isDocSigned && n.status === 'pending') {
+                            needsUpgrade = true;
+                            return { ...n, status: 'completed' };
+                        }
+                        return n;
+                    });
+
+                    if (needsUpgrade) {
+                        localStorage.setItem('app_notifications', JSON.stringify(parsed));
+                    }
+                    notificationsData = parsed;
+                    return;
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            // Default mock data with pending status
+            const defaultMock = [
+                {
+                    id: 'noti_item_casso_1',
+                    type: 'sign_request',
+                    title: 'Yêu cầu ký số tài liệu',
+                    message: 'Bạn đang có 1 yêu cầu ký số được gửi từ canhphq@cas.so',
+                    sender: 'canhphq@cas.so',
+                    status: isDocSigned ? 'completed' : 'pending',
+                    time: 'Vừa xong',
+                    createdAt: new Date().toLocaleString('vi-VN')
+                },
+                {
+                    id: 'noti_item_casso_2',
+                    type: 'sign_request',
+                    title: 'Yêu cầu ký số tài liệu',
+                    message: 'Bạn đang có 1 yêu cầu ký số được gửi từ tuyetlp@cas.so',
+                    sender: 'tuyetlp@cas.so',
+                    status: 'pending',
+                    time: '2 giờ trước',
+                    createdAt: new Date().toLocaleString('vi-VN')
+                },
+                {
+                    id: 'noti_invite_demo_1',
+                    type: 'delegation_invite_ca',
+                    title: 'Lời mời nhận uỷ quyền chứng thư số',
+                    message: 'Nguyễn Văn An muốn uỷ quyền chứng thư số Cas Cert cho bạn.',
+                    sender: 'Nguyễn Văn An',
+                    cccd: '012345678910',
+                    certId: 100, // Matches static ca cert id
+                    certName: 'Cas Cert',
+                    delegationId: 100,
+                    status: 'pending',
+                    time: '3 giờ trước',
+                    createdAt: new Date().toLocaleString('vi-VN')
+                },
+                {
+                    id: 'noti_invite_demo_2',
+                    type: 'delegation_invite_signing',
+                    title: 'Lời mời nhận uỷ quyền ký số',
+                    message: 'Casso POS muốn uỷ quyền ký số tài liệu thay mặt họ cho bạn.',
+                    sender: 'Casso POS',
+                    cccd: '031204900123',
+                    delegationId: 1, // Matches a signing delegation
+                    status: 'pending',
+                    time: '5 giờ trước',
+                    createdAt: new Date().toLocaleString('vi-VN')
+                }
+            ];
+            localStorage.setItem('app_notifications', JSON.stringify(defaultMock));
+            notificationsData = defaultMock;
+        }
+
+        function switchNotiTab(tab) {
+            activeTab = tab;
+            const tabPending = document.getElementById('tab-pending');
+            const tabActivity = document.getElementById('tab-activity');
+
+            if (tab === 'pending') {
+                tabPending.className = "flex-1 pb-2.5 text-center border-b-2 border-emerald-600 text-emerald-600 font-bold flex items-center justify-center gap-1.5 transition-all";
+                tabActivity.className = "flex-1 pb-2.5 text-center border-b-2 border-transparent text-gray-500 flex items-center justify-center gap-1.5 transition-all";
+            } else {
+                tabPending.className = "flex-1 pb-2.5 text-center border-b-2 border-transparent text-gray-500 flex items-center justify-center gap-1.5 transition-all";
+                tabActivity.className = "flex-1 pb-2.5 text-center border-b-2 border-emerald-600 text-emerald-600 font-bold flex items-center justify-center gap-1.5 transition-all";
+            }
+
+            renderNotifications();
+        }
+
+        function renderNotifications() {
+            const container = document.getElementById('noti-list');
+            if (!container) return;
+            container.innerHTML = '';
+
+            // Count tab badges dynamically
+            const pendingList = notificationsData.filter(n => n.status === 'pending');
+            const activityList = notificationsData.filter(n => n.status !== 'pending');
+
+            const pBadge = document.getElementById('pending-badge');
+            if (pBadge) {
+                pBadge.textContent = pendingList.length;
+                pBadge.classList.toggle('hidden', pendingList.length === 0);
+            }
+
+            const aBadge = document.getElementById('activity-badge');
+            if (aBadge) {
+                aBadge.textContent = activityList.length;
+                aBadge.classList.toggle('hidden', activityList.length === 0);
+            }
+
+            const currentList = activeTab === 'pending' ? pendingList : activityList;
+
+            if (currentList.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center p-8 text-gray-400 flex flex-col gap-2 items-center justify-center mt-10">
+                        <i class="fa-solid fa-bell-slash text-3xl text-gray-200"></i>
+                        <p class="text-xs">Không có thông báo nào trong mục này</p>
+                    </div>`;
+                return;
+            }
+
+            currentList.forEach(noti => {
+                const isInvite = noti.type === 'delegation_invite_ca' || noti.type === 'delegation_invite_signing';
+
+                let iconHtml = '<i class="fa-solid fa-pen-nib text-lg"></i>';
+                let bgIconClass = 'bg-black text-white';
+                let badgeStatus = '';
+
+                if (isInvite) {
+                    iconHtml = '<i class="fa-solid fa-user-shield text-lg"></i>';
+                    bgIconClass = 'bg-emerald-600 text-white';
+
+                    if (noti.status === 'accepted') {
+                        badgeStatus = `<span class="bg-emerald-50 text-emerald-700 text-[8px] font-bold px-1.5 py-0.5 rounded border border-emerald-100 mt-1 block w-fit">Đã xác nhận</span>`;
+                    } else if (noti.status === 'rejected') {
+                        badgeStatus = `<span class="bg-red-50 text-red-700 text-[8px] font-bold px-1.5 py-0.5 rounded border border-red-100 mt-1 block w-fit">Đã từ chối</span>`;
+                    } else {
+                        badgeStatus = `<span class="bg-amber-50 text-amber-700 text-[8px] font-bold px-1.5 py-0.5 rounded border border-amber-100 mt-1 block w-fit">Chờ xác nhận</span>`;
+                    }
+                } else {
+                    if (noti.status === 'completed') {
+                        badgeStatus = `<span class="bg-emerald-50 text-emerald-700 text-[8px] font-bold px-1.5 py-0.5 rounded border border-emerald-100 mt-1 block w-fit">Đã hoàn thành</span>`;
+                    } else {
+                        badgeStatus = `<span class="bg-amber-50 text-amber-700 text-[8px] font-bold px-1.5 py-0.5 rounded border border-amber-100 mt-1 block w-fit">Chờ ký</span>`;
+                    }
+                }
+
+                const item = document.createElement('div');
+                item.className = 'flex gap-4 py-4 items-start cursor-pointer hover:bg-gray-50 transition-colors -mx-4 px-4 border-b border-gray-100';
+
+                if (isInvite && noti.status === 'pending') {
+                    item.onclick = () => openInviteDetailView(noti);
+                } else if (noti.type === 'sign_request' && noti.status === 'pending') {
+                    item.onclick = () => window.location.href = 'casID-sign-view.html';
+                }
+
+                const brandLabel = isInvite ? 'Cas ID' : 'KySoQR.io';
+                item.innerHTML = `
+                    <div class="w-12 h-12 rounded-full ${bgIconClass} flex items-center justify-center flex-shrink-0">
+                        ${iconHtml}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-[12.5px] font-medium text-gray-800 leading-snug">
+                            ${noti.message}
+                        </h4>
+                        ${badgeStatus}
+                        <p class="text-[10px] text-gray-400 mt-1">
+                            ${brandLabel} - <span class="text-emerald-500 font-medium">${noti.time}</span>
+                        </p>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function openInviteDetailView(noti) {
+            selectedNoti = noti;
+            document.getElementById('view-noti-list').classList.add('hidden');
+            document.getElementById('view-invite-detail').classList.remove('hidden');
+
+            document.getElementById('invite-card-sender-big').textContent = noti.sender;
+            document.getElementById('detail-invite-sender').textContent = noti.sender;
+            document.getElementById('detail-invite-type').textContent = noti.type === 'delegation_invite_ca' ? 'Chứng thư số' : 'Ký số tài liệu';
+            document.getElementById('detail-invite-cccd').textContent = noti.cccd || '--';
+
+            const detailRow = document.getElementById('detail-invite-cert-row');
+            const detailCert = document.getElementById('detail-invite-cert');
+
+            if (noti.type === 'delegation_invite_ca') {
+                detailRow.classList.remove('hidden');
+                detailCert.textContent = noti.certName || '--';
+                document.getElementById('invite-card-title-text').textContent = "Lời mời uỷ quyền CTS";
+            } else {
+                detailRow.classList.add('hidden');
+                document.getElementById('invite-card-title-text').textContent = "Lời mời uỷ quyền Ký số";
+            }
+        }
+
+        function showListNotiView() {
+            document.getElementById('view-invite-detail').classList.add('hidden');
+            document.getElementById('view-noti-list').classList.remove('hidden');
+            selectedNoti = null;
+        }
+
+        function respondInvite(isAccepted) {
+            if (!selectedNoti) return;
+            const notiId = selectedNoti.id;
+            const type = selectedNoti.type;
+            const delegationId = selectedNoti.delegationId;
+            const nowTimeStr = new Date().toLocaleString('vi-VN');
+
+            // 1. Update notification status
+            notificationsData = notificationsData.map(n => {
+                if (n.id === notiId) {
+                    return { ...n, status: isAccepted ? 'accepted' : 'rejected' };
+                }
+                return n;
+            });
+            localStorage.setItem('app_notifications', JSON.stringify(notificationsData));
+
+            // 2. Update delegation status in storage
+            if (type === 'delegation_invite_ca') {
+                const caDelegations = JSON.parse(localStorage.getItem('ca_delegations') || '[]');
+                const index = caDelegations.findIndex(d => String(d.id) === String(delegationId));
+                if (index !== -1) {
+                    const d = caDelegations[index];
+                    d.status = isAccepted ? 'active' : 'rejected';
+                    if (!d.history) d.history = [];
+                    d.history.push({
+                        time: nowTimeStr,
+                        note: isAccepted ? 'Người nhận đã xác nhận uỷ quyền' : 'Người nhận từ chối uỷ quyền'
+                    });
+                    caDelegations[index] = d;
+                    localStorage.setItem('ca_delegations', JSON.stringify(caDelegations));
+                }
+            } else if (type === 'delegation_invite_signing') {
+                const signDelegations = JSON.parse(localStorage.getItem('signing_delegations') || '[]');
+                const index = signDelegations.findIndex(d => String(d.id) === String(delegationId));
+                if (index !== -1) {
+                    const d = signDelegations[index];
+                    d.status = isAccepted ? 'active' : 'rejected';
+                    if (!d.history) d.history = [];
+                    d.history.push({
+                        time: nowTimeStr,
+                        note: isAccepted ? 'Người nhận đã xác nhận uỷ quyền' : 'Người nhận từ chối uỷ quyền'
+                    });
+                    signDelegations[index] = d;
+                    localStorage.setItem('signing_delegations', JSON.stringify(signDelegations));
+                }
+            }
+
+            showListNotiView();
+
+            setTimeout(() => {
+                renderNotifications();
+                updateFooterNotiBadge();
+                showSuccessToast(isAccepted ? 'Đã xác nhận ủy quyền thành công!' : 'Đã từ chối nhận ủy quyền!');
+            }, 320);
+        }
+
+        function showSuccessToast(msg) {
+            // Create toast container dynamically
+            const toast = document.createElement('div');
+            toast.className = 'absolute top-[75px] right-4 left-4 z-50 bg-emerald-600 text-white rounded-2xl p-3.5 shadow-xl flex items-center gap-3 transition-all duration-300 transform translate-y-[-20px] opacity-0 pointer-events-none';
+            toast.innerHTML = `
+                <div class="w-7 h-7 bg-white/20 rounded-full flex items-center justify-center text-white shrink-0">
+                    <i class="fa-solid fa-circle-check text-base"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="text-xs font-bold">Thành công</h4>
+                    <p class="text-[9.5px] text-emerald-100 leading-tight mt-0.5">${msg}</p>
+                </div>
+            `;
+
+            const container = document.querySelector('.phone-container');
+            if (container) {
+                container.appendChild(toast);
+
+                // Force reflow
+                toast.offsetHeight;
+
+                // Slide down & Fade in
+                toast.classList.remove('translate-y-[-20px]', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+
+                // Auto dismiss after 3 seconds
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('translate-y-[-20px]', 'opacity-0');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        }
+
+        function showComingSoon() {
+            const container = document.querySelector('.phone-container');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'absolute top-[75px] right-4 left-4 z-50 bg-gray-900/90 text-white rounded-2xl p-3.5 shadow-xl flex items-center gap-3 transition-all duration-300 transform translate-y-[-20px] opacity-0 pointer-events-none';
+            toast.innerHTML = `
+                <i class="fa-solid fa-circle-info text-amber-400"></i>
+                <span class="text-[11px] font-semibold text-white">Tính năng đang được phát triển</span>
+            `;
+            container.appendChild(toast);
+            
+            requestAnimationFrame(() => {
+                toast.offsetHeight;
+                toast.classList.remove('translate-y-[-20px]', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+            });
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-[-20px]', 'opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+    </script>
+</body>
+
+</html>

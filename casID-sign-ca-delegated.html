@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chứng thư số (Ủy quyền) - Casso ID</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Outfit:wght@700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body, input, select, textarea, button, span, p, div, h1, h2, h3, h4, h5, h6, strong, label, input::placeholder, textarea::placeholder {
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+        }
+
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .ca-card-dark {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ca-card-dark::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .ca-card-delegated {
+            background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #064e3b 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ca-card-delegated::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+    <div
+        class="phone-container bg-white shadow-2xl rounded-[40px] overflow-hidden flex flex-col relative border-[8px] border-black">
+
+        <!-- Status Bar -->
+        <div
+            class="flex justify-between items-center px-6 pt-3 pb-1 text-xs font-bold text-black bg-white z-10 shrink-0">
+            <span>16:58</span>
+            <div class="flex items-center gap-1.5">
+                <i class="fa-solid fa-signal text-[10px]"></i>
+                <span class="text-[9px] font-bold mr-0.5">5G</span>
+                <i class="fa-solid fa-battery-three-quarters text-sm"></i>
+            </div>
+        </div>
+
+        <!-- VIEW 1: LIST -->
+        <div id="view-list" class="flex-1 flex flex-col overflow-hidden">
+            <div class="px-4 py-3 flex items-center gap-3 bg-white shrink-0">
+                <button onclick="window.location.href='index.html'"
+                    class="text-gray-700 text-lg hover:opacity-70">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h1 class="text-[17px] font-bold text-gray-900">Chứng thư số</h1>
+            </div>
+
+            <!-- Entity badges -->
+            <div class="px-4 pb-3 bg-white border-b border-gray-100 flex gap-2 overflow-x-auto scrollbar-none shrink-0">
+                <div id="ent-personal" onclick="switchEntity('personal')"
+                    class="flex items-center gap-2 bg-gray-100 text-gray-500 px-3 py-1.5 rounded-full shrink-0 cursor-pointer hover:bg-gray-200/60 transition-all">
+                    <div
+                        class="w-5 h-5 rounded-full bg-gray-100 text-gray-700 text-[9px] font-black flex items-center justify-center shrink-0">
+                        NA</div>
+                    <span class="text-[9px] font-bold tracking-wider leading-none">NGUYEN VAN A</span>
+                </div>
+                <div id="ent-bank" onclick="switchEntity('bank')"
+                    class="flex items-center gap-2 bg-gray-100 text-gray-500 px-3 py-1.5 rounded-full shrink-0 cursor-pointer hover:bg-gray-200/60 transition-all">
+                    <div
+                        class="w-5 h-5 rounded-full bg-blue-500 text-white text-[9px] font-black flex items-center justify-center shrink-0">
+                        B</div>
+                    <span class="text-[9px] font-bold tracking-wider leading-none">BANKUSRDEMO01</span>
+                </div>
+                <div id="ent-delegated" onclick="switchEntity('delegated')"
+                    class="flex items-center gap-2 bg-black text-white px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer transition-all">
+                    <div
+                        class="w-5 h-5 rounded-full bg-white text-black text-[9px] font-black flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-users text-[8px]"></i>
+                    </div>
+                    <span class="text-[9px] font-bold tracking-wider leading-none">Ủy quyền số</span>
+                </div>
+            </div>
+
+            <div id="cert-list" class="flex-1 overflow-y-auto p-4 flex flex-col gap-4"></div>
+        </div>
+
+        <!-- VIEW 2: DETAIL (own cert) -->
+        <div id="view-detail-own" class="flex-1 flex flex-col overflow-hidden hidden">
+            <div class="px-4 py-3 flex items-center gap-3 bg-white border-b border-gray-50 shrink-0">
+                <button onclick="showListView()" class="text-gray-700 text-lg hover:opacity-70">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h1 class="text-[15px] font-bold text-gray-800">Thông tin chứng thư số</h1>
+            </div>
+            <div class="flex-1 overflow-y-auto bg-gray-50">
+                <div class="p-4">
+                    <div class="ca-card-dark rounded-2xl p-4 text-white shadow-lg">
+                        <div class="flex justify-between items-start mb-4">
+                            <div id="own-logo" class="text-white font-black text-sm flex items-center gap-1.5"></div>
+                            <span class="bg-emerald-500 text-white text-[9px] font-bold px-2.5 py-1 rounded-full">Hoạt
+                                động</span>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-400 mb-0.5">Hạn sử dụng</p>
+                            <p id="own-expiry-big" class="text-2xl font-bold tracking-wide">--</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-4 pb-6">
+                    <h2 class="text-[13px] font-bold text-gray-800 mb-3">Thông tin chứng thư số</h2>
+                    <div
+                        class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden divide-y divide-gray-50">
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Nhà cung
+                                cấp</span><span id="own-provider" class="text-[11px] font-bold text-gray-800">--</span>
+                        </div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Chủ sở
+                                hữu</span><span id="own-owner" class="text-[11px] font-bold text-gray-800">--</span>
+                        </div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Loại chứng
+                                thư số</span><span id="own-type" class="text-[11px] font-bold text-gray-800">--</span>
+                        </div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Số
+                                seri</span><span id="own-serial"
+                                class="text-[10px] font-mono font-bold text-gray-700 break-all max-w-[55%] text-right">--</span>
+                        </div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Ngày
+                                cấp</span><span id="own-issued" class="text-[11px] font-bold text-gray-800">--</span>
+                        </div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Ngày hết
+                                hạn</span><span id="own-expiry" class="text-[11px] font-bold text-gray-800">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 3: DETAIL (delegated cert) -->
+        <div id="view-detail-delegated" class="flex-1 flex flex-col overflow-hidden hidden">
+            <div class="px-4 py-3 flex items-center gap-3 bg-white border-b border-gray-50 shrink-0">
+                <button onclick="showListView()" class="text-gray-700 text-lg hover:opacity-70">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h1 class="text-[15px] font-bold text-gray-800">Chứng thư số được ủy quyền</h1>
+            </div>
+            <div class="flex-1 overflow-y-auto bg-gray-50">
+                <div class="p-4">
+                    <!-- Matches normal CA style with ca-card-dark -->
+                    <div class="ca-card-dark rounded-2xl p-4 text-white shadow-lg">
+                        <div class="flex justify-between items-start mb-4">
+                            <div id="del-logo" class="text-white font-black text-sm flex items-center gap-1.5"></div>
+                            <span class="bg-emerald-500 text-white text-[9px] font-bold px-2.5 py-1 rounded-full">Hoạt
+                                động</span>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-400 mb-0.5">Hạn sử dụng</p>
+                            <p id="del-expiry-big" class="text-2xl font-bold tracking-wide">--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info -->
+                <div class="px-4 pb-4">
+                    <h2 class="text-[13px] font-bold text-gray-800 mb-3">Thông tin chứng thư số</h2>
+                    <div
+                        class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden divide-y divide-gray-50">
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Nhà cung
+                                cấp</span><span id="del-provider" class="text-[11px] font-bold text-gray-800">--</span>
+                        </div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Chủ sở hữu
+                                gốc</span><span id="del-owner" class="text-[11px] font-bold text-gray-800">--</span>
+                        </div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Loại chứng
+                                thư số</span><span id="del-type" class="text-[11px] font-bold text-gray-800">--</span>
+                        </div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Số
+                                seri</span><span id="del-serial"
+                                class="text-[10px] font-mono font-bold text-gray-700 break-all max-w-[55%] text-right">--</span>
+                        </div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Ngày
+                                cấp</span><span id="del-issued" class="text-[11px] font-bold text-gray-800">--</span>
+                        </div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Ngày hết hạn
+                                chứng thư</span><span id="del-cert-expiry"
+                                class="text-[11px] font-bold text-gray-800">--</span></div>
+                    </div>
+                </div>
+
+                <!-- Delegation info -->
+                <div class="px-4 pb-4">
+                    <h2 class="text-[13px] font-bold text-gray-800 mb-3">Thông tin ủy quyền</h2>
+                    <div
+                        class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden divide-y divide-gray-50">
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Ủy quyền
+                                từ</span><span id="del-delegator" class="text-[11px] font-bold text-gray-800">--</span>
+                        </div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Ngày nhận ủy
+                                quyền</span><span id="del-created" class="text-[11px] font-bold text-gray-800">--</span>
+                        </div>
+                        <div class="flex justify-between px-4 py-3"><span class="text-[11px] text-gray-500">Hiệu lực
+                                đến</span><span id="del-end" class="text-[11px] font-bold text-emerald-600">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revoke button -->
+                <div class="px-4 pb-6">
+                    <button id="btn-revoke" onclick="openRevokePopup()"
+                        class="w-full py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-600 text-[15px] font-bold rounded-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+                        Xóa ủy quyền
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirm Revoke Popup -->
+        <div id="popup-revoke" class="absolute inset-0 z-50 flex items-end justify-center hidden"
+            style="background:rgba(0,0,0,0.4); backdrop-filter:blur(3px);">
+            <div id="popup-revoke-sheet"
+                class="bg-white w-full max-w-[375px] rounded-t-3xl p-6 flex flex-col gap-4 transform translate-y-full transition-all duration-300">
+                <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-1"></div>
+                <div class="flex flex-col items-center gap-2 text-center">
+                    <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-1">
+                        <i class="fa-solid fa-link-slash text-gray-500 text-xl"></i>
+                    </div>
+                    <h3 class="text-[15px] font-bold text-gray-800">Huỷ ủy quyền chứng thư số?</h3>
+                    <p class="text-[11px] text-gray-500 leading-relaxed">Sau khi huỷ, bạn sẽ không còn quyền sử dụng
+                        chứng
+                        thư số <strong id="revoke-cert-name" class="text-gray-800"></strong> được ủy quyền bởi <strong
+                            id="revoke-delegator" class="text-gray-800"></strong>.</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <button onclick="confirmRevoke()"
+                        class="w-full py-3 bg-black hover:bg-gray-900 text-white text-[15px] font-bold rounded-md transition-all active:scale-[0.98]">
+                        Xóa ủy quyền
+                    </button>
+                    <button onclick="closeRevokePopup()"
+                        class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 text-[15px] font-bold rounded-md transition-all active:scale-[0.98]">
+                        Để sau
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div id="custom-toast"
+            class="absolute top-12 left-4 right-4 z-50 bg-gray-900/95 backdrop-blur-md text-white rounded-2xl p-3.5 shadow-xl flex items-center gap-2.5 transform -translate-y-6 opacity-0 transition-all duration-300 pointer-events-none hidden border border-gray-800">
+            <i id="custom-toast-icon" class="text-xs shrink-0 text-emerald-400 fa-solid fa-circle-info"></i>
+            <span id="custom-toast-msg" class="text-[11px] font-semibold leading-snug"></span>
+        </div>
+
+    </div>
+
+    <script>
+        // Own certs data (same as CA page)
+        const ownCerts = {
+            personal: [
+                { id: 1, name: 'Cas Cert', provider: 'CMC CA', owner: 'NGUYEN VAN A', type: 'Cá nhân', serial: '54010d693076dda87806394dcb25', serialShort: '5401...5a994', issued: '12/06/2026', expiry: '10/09/2026' },
+                { id: 2, name: 'Intrust CA', provider: 'Intrust CA', owner: 'NGUYEN VAN A', type: 'Cá nhân', serial: '03550cd91d456a18734f12e3b', serialShort: '0355...9175B', issued: '08/07/2025', expiry: '08/07/2027' }
+            ],
+            bank: [
+                { id: 3, name: 'VNPT CA', provider: 'VNPT CA', owner: 'BANKUSRDEMO01', type: 'Doanh nghiệp', serial: 'AB12CD34EF56GH789012345678ABCDE', serialShort: 'AB12...BCDE', issued: '01/01/2026 13:43', expiry: '01/01/2028 13:43' }
+            ]
+        };
+
+        // Example static delegated certs (supplemented with localStorage)
+        const staticDelegated = [
+            { id: 100, certName: 'Cas Cert', certSerial: '5401...5a994', certSerialFull: '54010d693076dda87806394d', certProvider: 'CMC CA', certOwner: 'Nguyễn Văn B', certType: 'Cá nhân', certExpiry: '10/09/2026', certIssued: '12/06/2026', delegatorName: 'Nguyễn Văn B', endDate: '31/12/2026 12:32', createdAt: '01/07/2026 12:32' },
+            { id: 101, certName: 'Intrust CA', certSerial: '0355...9175B', certSerialFull: '03550cd91d456a18734f12e3', certProvider: 'Intrust CA', certOwner: 'Hoàng Thị Mai', certType: 'Cá nhân', certExpiry: '08/07/2027', certIssued: '08/07/2025', delegatorName: 'Hoàng Thị Mai', endDate: 'Vô thời hạn', createdAt: '10/07/2026 15:43' }
+        ];
+
+        let activeEntity = 'delegated';
+        let activeDTab = 'own';
+        let selectedDelegation = null;
+        let delegatedCerts = [];
+
+        window.onload = function () {
+            loadDelegatedCerts();
+            updateEntityUI();
+            renderList();
+        };
+
+        function loadDelegatedCerts() {
+            const stored = JSON.parse(localStorage.getItem('ca_delegations') || '[]');
+            // Filter stored delegations to only display active ones
+            const fromStorage = stored
+                .filter(d => d.status === 'active')
+                .map(d => ({
+                    id: d.id || Date.now(),
+                    certName: d.certName,
+                    certSerial: d.certSerial,
+                    certSerialFull: d.certSerialFull || d.certSerial,
+                    certProvider: d.certProvider || 'Không rõ',
+                    certOwner: d.certOwner || 'Không rõ',
+                    certType: d.certType || 'Cá nhân',
+                    certExpiry: d.certExpiry || '--',
+                    certIssued: d.certIssued || '--',
+                    delegatorName: d.delegatorName || ('CCCD: ' + d.cccd),
+                    endDate: d.endDate,
+                    createdAt: d.createdAt
+                }));
+            delegatedCerts = [...staticDelegated, ...fromStorage];
+            const el = document.getElementById('delegated-count');
+            if (el) el.textContent = delegatedCerts.length;
+        }
+
+        function switchEntity(ent) {
+            if (ent === 'personal' || ent === 'bank') {
+                localStorage.setItem('active_entity', ent);
+                window.location.href = 'casID-sign-ca.html';
+                return;
+            }
+            activeEntity = ent;
+            updateEntityUI();
+            renderList();
+        }
+
+        function updateEntityUI() {
+            const configs = {
+                personal: { cls: 'bg-black text-white', avCls: 'bg-white text-black' },
+                bank: { cls: 'bg-blue-600 text-white', avCls: 'bg-white text-blue-600' },
+                delegated: { cls: 'bg-black text-white', avCls: 'bg-white text-black' }
+            };
+            ['personal', 'bank', 'delegated'].forEach(e => {
+                const el = document.getElementById('ent-' + e);
+                if (!el) return;
+                const av = el.querySelector('div');
+                if (e === activeEntity) {
+                    const c = configs[e];
+                    el.className = 'flex items-center gap-2 ' + c.cls + ' px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer transition-all';
+                    if (av) av.className = 'w-5 h-5 rounded-full ' + c.avCls + ' text-[9px] font-black flex items-center justify-center shrink-0';
+                } else {
+                    const isBankInact = (e === 'bank');
+                    el.className = 'flex items-center gap-2 bg-gray-100 text-gray-500 px-3 py-1.5 rounded-full shrink-0 cursor-pointer hover:bg-gray-200/60 transition-all';
+                    if (av) av.className = 'w-5 h-5 rounded-full ' + (isBankInact ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700') + (e === 'delegated' ? ' bg-emerald-500 text-white' : '') + ' text-[9px] font-black flex items-center justify-center shrink-0';
+                }
+            });
+        }
+
+        function renderList() {
+            const c = document.getElementById('cert-list');
+            c.innerHTML = '';
+
+            // Only display received/delegated certificates on this page
+            if (!delegatedCerts.length) {
+                c.innerHTML = '<div class="flex flex-col items-center justify-center gap-2 mt-20 text-gray-400"><i class="fa-solid fa-user-slash text-4xl text-gray-200"></i><p class="text-xs">Chưa có ủy quyền nào</p></div>';
+                return;
+            }
+
+            delegatedCerts.forEach(d => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl shadow-[0_4px_16px_rgba(0,0,0,0.06)] border border-gray-100 overflow-hidden cursor-pointer hover:shadow-md transition-all active:scale-[0.99]';
+                card.onclick = () => openDelegatedDetail(d);
+
+                // Format dates
+                const startVal = d.createdAt || '01/07/2026';
+                const endVal = d.endDate || '31/12/2026';
+
+                card.innerHTML = `
+                <div class="px-4 py-3 flex items-center justify-between border-b border-gray-50 bg-white">
+                    <span class="font-bold text-sm text-gray-800 flex items-center gap-1.5">
+                        <i class="fa-solid fa-shield-halved text-emerald-500 text-xs"></i>${d.certName}
+                        <i class="fa-solid fa-circle-check text-emerald-500 text-xs"></i>
+                    </span>
+                    <span class="bg-emerald-500 text-white text-[9px] font-bold px-2.5 py-1 rounded-full">Hoạt động</span>
+                </div>
+                <div class="ca-card-dark px-4 py-3 text-white">
+
+                    <p class="text-[9px] text-gray-400 mb-0.5">Hạn sử dụng</p>
+                    <p class="text-xl font-bold tracking-wide">${d.certExpiry}</p>
+                    <p class="text-[9px] text-gray-400 mt-2 mb-0.5">Số seri</p>
+                    <p class="text-sm font-mono font-bold">${d.certSerial}</p>
+                </div>
+
+            `;
+                c.appendChild(card);
+            });
+        }
+
+        function showListView() {
+            ['view-detail-own', 'view-detail-delegated'].forEach(v => document.getElementById(v).classList.add('hidden'));
+            document.getElementById('view-list').classList.remove('hidden');
+            loadDelegatedCerts();
+            renderList();
+        }
+
+        function openOwnDetail(cert) {
+            document.getElementById('view-list').classList.add('hidden');
+            document.getElementById('own-logo').innerHTML = `<i class="fa-solid fa-shield-halved text-emerald-400 text-xs"></i><span class="font-bold text-sm">${cert.name}</span><i class="fa-solid fa-circle-check text-emerald-400 text-xs ml-1"></i>`;
+            document.getElementById('own-expiry-big').textContent = cert.expiry;
+            document.getElementById('own-provider').textContent = cert.provider;
+            document.getElementById('own-owner').textContent = cert.owner;
+            document.getElementById('own-type').textContent = cert.type;
+            document.getElementById('own-serial').textContent = cert.serial;
+            document.getElementById('own-issued').textContent = cert.issued;
+            document.getElementById('own-expiry').textContent = cert.expiry;
+            document.getElementById('view-detail-own').classList.remove('hidden');
+        }
+
+        function openDelegatedDetail(d) {
+            selectedDelegation = d;
+            document.getElementById('view-list').classList.add('hidden');
+            document.getElementById('del-logo').innerHTML = `<i class="fa-solid fa-shield-halved text-emerald-400 text-xs"></i><span class="font-bold text-sm">${d.certName}</span><i class="fa-solid fa-circle-check text-emerald-400 text-xs ml-1"></i>`;
+            document.getElementById('del-delegator').textContent = d.delegatorName;
+            document.getElementById('del-expiry-big').textContent = d.certExpiry;
+            document.getElementById('del-provider').textContent = d.certProvider;
+            document.getElementById('del-owner').textContent = d.certOwner;
+            document.getElementById('del-type').textContent = d.certType;
+            document.getElementById('del-serial').textContent = d.certSerialFull || d.certSerial;
+            document.getElementById('del-issued').textContent = d.certIssued;
+            document.getElementById('del-cert-expiry').textContent = d.certExpiry;
+            document.getElementById('del-created').textContent = d.createdAt;
+            document.getElementById('del-end').textContent = d.endDate;
+
+            // Calculate status text
+            let statusText = 'Còn hạn';
+            let isExpired = false;
+            if (d.endDate && d.endDate !== 'Vô thời hạn') {
+                const parts = d.endDate.split('/');
+                let endD = null;
+                if (parts.length === 3) {
+                    endD = new Date(parts[2], parts[1] - 1, parts[0]);
+                } else {
+                    endD = new Date(d.endDate);
+                }
+                if (endD && endD < new Date()) {
+                    statusText = 'Hết hạn';
+                    isExpired = true;
+                }
+            }
+            const statusEl = document.getElementById('del-status-text');
+            if (statusEl) {
+                statusEl.textContent = statusText;
+                statusEl.className = 'text-[11px] font-bold ' + (isExpired ? 'text-red-500' : 'text-emerald-600');
+            }
+
+            document.getElementById('view-detail-delegated').classList.remove('hidden');
+        }
+
+        function openRevokePopup() {
+            if (!selectedDelegation) return;
+            document.getElementById('revoke-cert-name').textContent = selectedDelegation.certName;
+            document.getElementById('revoke-delegator').textContent = selectedDelegation.delegatorName;
+            const popup = document.getElementById('popup-revoke'), sheet = document.getElementById('popup-revoke-sheet');
+            popup.classList.remove('hidden');
+            requestAnimationFrame(() => requestAnimationFrame(() => sheet.classList.remove('translate-y-full')));
+        }
+
+        function closeRevokePopup() {
+            const sheet = document.getElementById('popup-revoke-sheet');
+            sheet.classList.add('translate-y-full');
+            setTimeout(() => document.getElementById('popup-revoke').classList.add('hidden'), 300);
+        }
+
+        function confirmRevoke() {
+            if (!selectedDelegation) return;
+            // Remove from localStorage
+            const stored = JSON.parse(localStorage.getItem('ca_delegations') || '[]');
+            const updated = stored.filter(d => d.id !== selectedDelegation.id);
+            localStorage.setItem('ca_delegations', JSON.stringify(updated));
+            // Remove from staticDelegated if applicable
+            const idx = delegatedCerts.findIndex(d => d.id === selectedDelegation.id);
+            if (idx !== -1) delegatedCerts.splice(idx, 1);
+            closeRevokePopup();
+            setTimeout(() => { showToast('Đã huỷ ủy quyền chứng thư số thành công', 'fa-solid fa-circle-check text-emerald-400'); showListView(); }, 320);
+        }
+
+        let toastTimeout = null;
+        function showToast(msg, iconClass = 'fa-solid fa-circle-info text-emerald-400') {
+            const toast = document.getElementById('custom-toast'), m = document.getElementById('custom-toast-msg'), ic = document.getElementById('custom-toast-icon');
+            if (toast && m) { m.textContent = msg; if (ic) ic.className = iconClass; toast.classList.remove('hidden'); toast.offsetHeight; toast.classList.remove('-translate-y-6', 'opacity-0'); toast.classList.add('translate-y-0', 'opacity-100'); if (toastTimeout) clearTimeout(toastTimeout); toastTimeout = setTimeout(() => { toast.classList.remove('translate-y-0', 'opacity-100'); toast.classList.add('-translate-y-6', 'opacity-0'); setTimeout(() => toast.classList.add('hidden'), 300); }, 3000); }
+        }
+
+        function showComingSoon() {
+            showToast('Tính năng đang được phát triển');
+        }
+    </script>
+</body>
+
+</html>

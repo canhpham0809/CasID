@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dữ liệu được ủy quyền - Casso ID</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body, input, select, textarea, button, span, p, div, h1, h2, h3, h4, h5, h6, strong, label, input::placeholder, textarea::placeholder {
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        /* Giả lập khung viền điện thoại */
+        .phone-container {
+            width: 375px;
+            height: 812px;
+        }
+
+        /* Ẩn thanh cuộn cho thẻ đối tượng */
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+
+    <div
+        class="phone-container bg-white shadow-2xl rounded-[40px] overflow-hidden flex flex-col relative border-[8px] border-black">
+
+        <!-- Status Bar -->
+        <div class="flex justify-between items-center px-6 pt-3 pb-2 text-xs font-bold text-black bg-white z-10">
+            <span>15:35</span>
+            <div class="flex items-center gap-1.5">
+                <i class="fa-solid fa-signal text-[10px]"></i>
+                <span class="text-[9px] font-bold mr-0.5">5G</span>
+                <i class="fa-solid fa-battery-three-quarters text-sm"></i>
+            </div>
+        </div>
+
+        <!-- 1. VIEW 1: CATEGORIES LIST -->
+        <div id="view-categories" class="flex-1 flex flex-col overflow-hidden">
+            <!-- CAS Logo header -->
+            <div class="px-6 pt-4 pb-2 flex items-center justify-between">
+                <span class="text-3xl font-black text-black tracking-tighter"
+                    style="font-family: 'Outfit', 'Inter', sans-serif;">CAS</span>
+            </div>
+
+            <!-- Entity Badges scrollable container -->
+            <div class="px-6 pb-3 pt-1 bg-white border-b border-gray-50 flex gap-2 overflow-x-auto scrollbar-none shrink-0"
+                style="scrollbar-width: none; -ms-overflow-style: none;">
+                <!-- Personal Profile -->
+                <div id="entity-personal" onclick="switchEntity('personal')"
+                    class="flex items-center gap-2 bg-black text-white px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer transition-all">
+                    <div
+                        class="w-5 h-5 rounded-full bg-white text-black text-[9px] font-black flex items-center justify-center shrink-0">
+                        VA
+                    </div>
+                    <span class="text-[9px] font-bold tracking-wider leading-none">VAN A</span>
+                </div>
+
+                <!-- Enterprise 1 (BANKUSRDEMO01) -->
+                <div id="entity-bank" onclick="switchEntity('bank')"
+                    class="flex items-center gap-2 bg-gray-100 text-gray-500 px-3 py-1.5 rounded-full shrink-0 cursor-pointer hover:bg-gray-200/60 transition-all">
+                    <div
+                        class="w-5 h-5 rounded-full bg-blue-500 text-white text-[9px] font-black flex items-center justify-center shrink-0">
+                        B
+                    </div>
+                    <span class="text-[9px] font-bold tracking-wider leading-none">BANKUSRDEMO01</span>
+                </div>
+
+                <!-- Enterprise 2 (Ủy quyền số) -->
+                <div id="entity-delegated" onclick="switchEntity('delegated')"
+                    class="flex items-center gap-2 bg-gray-100 text-gray-500 px-3 py-1.5 rounded-full shrink-0 cursor-pointer hover:bg-gray-200/60 transition-all">
+                    <div
+                        class="w-5 h-5 rounded-full bg-emerald-500 text-white text-[9px] font-black flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-users text-[8px]"></i>
+                    </div>
+                    <span class="text-[9px] font-bold tracking-wider leading-none">Ủy quyền số</span>
+                </div>
+            </div>
+
+            <!-- Options Cards -->
+            <div class="flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-4">
+
+                <!-- Option 1: Ngân hàng -->
+                <div
+                    class="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)] border border-gray-100 flex items-center gap-4 hover:bg-gray-50 active:scale-[0.99] transition-all cursor-pointer">
+                    <div
+                        class="w-12 h-12 rounded-full bg-[#181818] flex items-center justify-center text-white text-lg shrink-0">
+                        <i class="fa-solid fa-building-columns"></i>
+                    </div>
+                    <span class="text-sm font-bold text-gray-800">Ngân hàng</span>
+                </div>
+
+                <!-- Option 2: Hóa đơn điện tử -->
+                <div
+                    class="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)] border border-gray-100 flex items-center gap-4 hover:bg-gray-50 active:scale-[0.99] transition-all cursor-pointer">
+                    <div
+                        class="w-12 h-12 rounded-full bg-[#181818] flex items-center justify-center text-white text-lg shrink-0">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                    </div>
+                    <span class="text-sm font-bold text-gray-800">Hóa đơn điện tử</span>
+                </div>
+
+                <!-- Option 3: Chứng thư số -->
+                <div
+                    class="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)] border border-gray-100 flex items-center gap-4 hover:bg-gray-50 active:scale-[0.99] transition-all cursor-pointer">
+                    <div
+                        class="w-12 h-12 rounded-full bg-[#181818] flex items-center justify-center text-white text-lg shrink-0">
+                        <i class="fa-solid fa-signature"></i>
+                    </div>
+                    <span class="text-sm font-bold text-gray-800">Chứng thư số</span>
+                </div>
+
+                <!-- Option 4: Yêu cầu ký số -->
+                <div id="option-sign-request" onclick="showRequestsView()"
+                    class="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)] border border-gray-100 flex items-center gap-4 hover:bg-gray-50 active:scale-[0.99] transition-all cursor-pointer">
+                    <div
+                        class="w-12 h-12 rounded-full bg-[#181818] flex items-center justify-center text-white text-lg shrink-0">
+                        <i class="fa-solid fa-file-contract"></i>
+                    </div>
+                    <span class="text-sm font-bold text-gray-800">Yêu cầu ký số</span>
+                </div>
+
+            </div>
+
+            <!-- Floating Action Button -->
+            <button
+                class="absolute bottom-20 right-6 w-12 h-12 bg-black hover:bg-gray-900 text-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-all z-10">
+                <i class="fa-solid fa-plus text-lg"></i>
+            </button>
+        </div>
+
+        <!-- 2. VIEW 2: DELEGATED REQUESTS LIST -->
+        <div id="view-requests" class="flex-1 flex flex-col overflow-hidden hidden">
+            <!-- Header -->
+            <div class="px-4 py-3 flex items-center justify-between bg-white shrink-0">
+                <div class="flex items-center gap-4">
+                    <button class="text-gray-700 text-lg hover:opacity-70"
+                        onclick="window.location.href='index.html'">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <h1 class="text-[15px] font-bold text-gray-800">Yêu cầu ký số</h1>
+                </div>
+                <!-- Ủy quyền button top-right -->
+                <button onclick="showMyDelegationsView()"
+                    class="flex items-center text-[10px] font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full px-3.5 py-1.5 transition-all active:scale-95">
+                    <span>Ủy quyền</span>
+                </button>
+            </div>
+
+            <!-- Entity Badges container inside list view -->
+            <div class="px-4 pb-3 pt-1 bg-white border-b border-gray-50 flex gap-2 overflow-x-auto scrollbar-none shrink-0"
+                style="scrollbar-width: none; -ms-overflow-style: none;">
+                <!-- Personal Profile -->
+                <div id="req-entity-personal" onclick="switchEntity('personal')"
+                    class="flex items-center gap-2 px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer border border-gray-200 hover:bg-gray-50 transition-all text-gray-500">
+                    <div
+                        class="w-5 h-5 rounded-full bg-gray-100 text-gray-700 text-[9px] font-black flex items-center justify-center shrink-0">
+                        VA
+                    </div>
+                    <span class="text-[9px] font-bold tracking-wider leading-none">VAN A</span>
+                </div>
+
+                <!-- Enterprise 1 (BANKUSRDEMO01) -->
+                <div id="req-entity-bank" onclick="switchEntity('bank')"
+                    class="flex items-center gap-2 px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer border border-gray-200 hover:bg-gray-50 transition-all text-gray-500">
+                    <div
+                        class="w-5 h-5 rounded-full bg-blue-500 text-white text-[9px] font-black flex items-center justify-center shrink-0">
+                        B
+                    </div>
+                    <span class="text-[9px] font-bold tracking-wider leading-none">BANKUSRDEMO01</span>
+                </div>
+
+                <!-- Enterprise 2 (Ủy quyền số) -->
+                <div id="req-entity-delegated" onclick="switchEntity('delegated')"
+                    class="flex items-center gap-2 px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer border border-emerald-600 bg-emerald-600 text-white transition-all">
+                    <div
+                        class="w-5 h-5 rounded-full bg-white text-emerald-600 text-[9px] font-black flex items-center justify-center shrink-0">
+                        <i class="fa-solid fa-users text-[8px]"></i>
+                    </div>
+                    <span class="text-[9px] font-bold tracking-wider leading-none">Ủy quyền số</span>
+                </div>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="px-4 pt-3 bg-white shrink-0">
+                <div class="flex border-b border-gray-100 text-[12px] font-semibold text-gray-400">
+                    <button id="tab-all" onclick="switchTab('all')"
+                        class="flex-1 pb-2.5 text-center border-b-2 border-emerald-600 text-emerald-600">
+                        Tất cả (<span id="count-all">0</span>)
+                    </button>
+                    <button id="tab-pending" onclick="switchTab('pending')"
+                        class="flex-1 pb-2.5 text-center border-b-2 border-transparent">
+                        Chờ ký (<span id="count-pending">0</span>)
+                    </button>
+                    <button id="tab-completed" onclick="switchTab('completed')"
+                        class="flex-1 pb-2.5 text-center border-b-2 border-transparent">
+                        Đã ký (<span id="count-completed">0</span>)
+                    </button>
+                    <button id="tab-rejected" onclick="switchTab('rejected')"
+                        class="flex-1 pb-2.5 text-center border-b-2 border-transparent">
+                        Từ chối (<span id="count-rejected">0</span>)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Requests List scroll container -->
+            <div id="request-list" class="flex-1 overflow-y-auto bg-gray-50 p-4 flex flex-col gap-3">
+                <!-- Cards will be injected dynamically -->
+            </div>
+        </div>
+
+        <!-- 3. VIEW 3: MY RECEIVED DELEGATIONS -->
+        <div id="view-my-delegations" class="flex-1 flex flex-col overflow-hidden hidden">
+            <!-- Header -->
+            <div class="px-4 py-3 flex items-center gap-4 bg-white border-b border-gray-50 shrink-0">
+                <button class="text-gray-700 text-lg hover:opacity-70" onclick="showRequestsView()">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <div>
+                    <h1 class="text-[15px] font-bold text-gray-800">Ủy quyền đã nhận</h1>
+                    <p class="text-[9.5px] text-gray-400">Danh sách ủy quyền đang hiệu lực với bạn</p>
+                </div>
+            </div>
+
+            <!-- Delegations list -->
+            <div id="my-delegations-list" class="flex-1 overflow-y-auto bg-gray-50 p-4 flex flex-col gap-3">
+                <!-- Injected dynamically -->
+            </div>
+        </div>
+
+        <!-- Bottom Navigation Bar (active tab: Dữ liệu) -->
+        <div
+            class="bg-white border-t border-gray-100 px-2 py-2 flex justify-around items-center text-[10px] text-gray-400 font-medium pb-5 z-10 shrink-0">
+            <button onclick="showComingSoon()" class="flex flex-col items-center gap-1 w-16 text-gray-400">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span>Trang chủ</span>
+            </button>
+            <button class="flex flex-col items-center gap-1 w-16 text-black">
+                <i class="fa-solid fa-server text-lg"></i>
+                <span class="font-bold">Dữ liệu</span>
+            </button>
+            <button onclick="window.location.href='casID-sign-delegation.html'"
+                class="flex flex-col items-center gap-1 w-16 text-gray-400">
+                <i class="fa-solid fa-qrcode text-lg"></i>
+                <span>Cấp quyền</span>
+            </button>
+            <button onclick="window.location.href='casID-sign-noti.html'"
+                class="flex flex-col items-center gap-1 w-16 text-gray-400 relative">
+                <div class="relative">
+                    <i class="fa-solid fa-bell text-lg"></i>
+                    <span id="footer-noti-badge"
+                        class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center border border-white hidden">
+                        2
+                    </span>
+                </div>
+                <span>Thông báo</span>
+            </button>
+            <button onclick="showComingSoon()" class="flex flex-col items-center gap-1 w-16 text-gray-400">
+                <i class="fa-solid fa-circle-user text-lg"></i>
+                <span>Hồ sơ</span>
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Confirm Disconnect Popup -->
+    <div id="popup-disconnect" class="absolute inset-0 z-50 flex items-end justify-center hidden"
+        style="background:rgba(0,0,0,0.35); backdrop-filter:blur(2px);">
+        <div id="popup-disconnect-sheet"
+            class="bg-white w-full max-w-[375px] rounded-t-3xl p-6 flex flex-col gap-4 transform translate-y-full transition-all duration-300">
+            <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-1"></div>
+            <div class="flex flex-col items-center gap-2 text-center">
+                <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-1">
+                    <i class="fa-solid fa-link-slash text-gray-500 text-xl"></i>
+                </div>
+                <h3 class="text-[15px] font-bold text-gray-800">Ngắt liên kết ủy quyền?</h3>
+                <p class="text-[11px] text-gray-500 leading-relaxed">Bạn sẽ không còn thấy hoặc thực hiện các yêu cầu ký
+                    được ủy quyền bởi <strong id="popup-delegator-name" class="text-gray-800"></strong> nữa.</p>
+            </div>
+            <div class="flex flex-col gap-2">
+                <button onclick="confirmDisconnect()"
+                    class="w-full py-3 bg-black hover:bg-gray-900 text-white text-sm font-bold rounded-md transition-all active:scale-[0.98]">
+                    Ngắt liên kết
+                </button>
+                <button onclick="closeDisconnectPopup()"
+                    class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-bold rounded-md transition-all active:scale-[0.98]">
+                    Huỷ
+                </button>
+            </div>
+            <!-- Custom Toast alert banner -->
+            <div id="custom-toast"
+                class="absolute top-12 left-4 right-4 z-50 bg-gray-900/95 backdrop-blur-md text-white rounded-2xl p-3.5 shadow-xl flex items-center gap-2.5 transform -translate-y-6 opacity-0 transition-all duration-300 pointer-events-none hidden border border-gray-800">
+                <i id="custom-toast-icon" class="text-xs shrink-0 text-emerald-400 fa-solid fa-circle-info"></i>
+                <span id="custom-toast-msg" class="text-[11px] font-semibold leading-snug"></span>
+            </div>
+        </div>
+
+        <script>
+            // Mock database for delegated requests
+            let delegatedRequests = [
+                {
+                    id: 101,
+                    title: "Báo cáo doanh thu quý 2 - Casso EKYC",
+                    sender: "casso_admin@cas.so",
+                    time: "17/07/2026 14:10",
+                    timestamp: new Date().getTime(),
+                    status: "pending",
+                    fileSize: "450 KB",
+                    delegator: "Nguyễn Văn Hùng"
+                },
+                {
+                    id: 102,
+                    title: "Hợp đồng thuê văn phòng CMC Tower",
+                    sender: "admin_cmc@cmc.com.vn",
+                    time: "16/07/2026 10:30",
+                    timestamp: new Date().getTime() - 24 * 60 * 60 * 1000,
+                    status: "completed",
+                    fileSize: "1.5 MB",
+                    delegator: "Hoàng Thị Mai"
+                },
+                {
+                    id: 103,
+                    title: "Đơn đề xuất giải ngân dự án EKYC",
+                    sender: "accounting@cas.so",
+                    time: "15/07/2026 09:15",
+                    timestamp: new Date().getTime() - 2 * 24 * 60 * 60 * 1000,
+                    status: "rejected",
+                    fileSize: "820 KB",
+                    delegator: "Nguyễn Văn Hùng"
+                },
+                {
+                    id: 104,
+                    title: "Hợp đồng dịch vụ vận chuyển năm 2026",
+                    sender: "legal@logistics-abc.vn",
+                    time: "14/07/2026 16:45",
+                    timestamp: new Date().getTime() - 3 * 24 * 60 * 60 * 1000,
+                    status: "pending",
+                    fileSize: "2.1 MB",
+                    delegator: "Công ty TNHH ABC Logistics"
+                }
+            ];
+
+            // Mock list of received delegations
+            let receivedDelegations = [
+                {
+                    id: 1,
+                    delegator: "Nguyễn Văn Hùng",
+                    type: "person",
+                    since: "01/07/2026",
+                    expiry: "31/12/2026",
+                    perms: ["Xem tài liệu", "Nhận thông báo", "Ký / Từ chối"]
+                },
+                {
+                    id: 2,
+                    delegator: "Hoàng Thị Mai",
+                    type: "person",
+                    since: "10/07/2026",
+                    expiry: "Vô thời hạn",
+                    perms: ["Xem tài liệu", "Nhận thông báo"]
+                },
+                {
+                    id: 3,
+                    delegator: "Công ty TNHH ABC Logistics",
+                    type: "company",
+                    since: "14/07/2026",
+                    expiry: "14/01/2027",
+                    perms: ["Xem tài liệu", "Nhận thông báo", "Ký / Từ chối"]
+                }
+            ];
+
+            let pendingDisconnectId = null;
+
+            let activeEntity = 'delegated'; // Default to "Ủy quyền số" as requested
+            let currentActiveTab = 'all';
+
+            window.onload = function () {
+                updateFooterNotiBadge();
+                // Pre-fill check signed status if any
+                const signedStatus = localStorage.getItem('delegated_signed_status');
+                if (signedStatus === 'signed') {
+                    delegatedRequests[0].status = 'completed';
+                    delegatedRequests[0].time = "17/07/2026 14:38";
+                    delegatedRequests[0].timestamp = new Date().getTime();
+                } else if (signedStatus === 'rejected') {
+                    delegatedRequests[0].status = 'rejected';
+                    delegatedRequests[0].time = "17/07/2026 14:38";
+                    delegatedRequests[0].timestamp = new Date().getTime();
+                }
+
+                switchEntity(activeEntity);
+            };
+
+            function switchEntity(entityId) {
+                activeEntity = entityId;
+                localStorage.setItem('active_entity', entityId);
+
+                if (entityId !== 'delegated') {
+                    window.location.href = 'index.html';
+                    return;
+                }
+
+                // Sync badges in categories view
+                const catEntities = ['personal', 'bank', 'delegated'];
+                catEntities.forEach(ent => {
+                    const el = document.getElementById(`entity-${ent}`);
+                    if (!el) return;
+                    const avatar = el.querySelector('div');
+                    if (ent === activeEntity) {
+                        el.className = "flex items-center gap-2 bg-black text-white px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer transition-all";
+                        if (avatar) avatar.className = "w-5 h-5 rounded-full bg-white text-black text-[9px] font-black flex items-center justify-center shrink-0";
+                    } else {
+                        if (ent === 'personal') {
+                            el.className = "flex items-center gap-2 bg-gray-100 text-gray-500 px-3 py-1.5 rounded-full shrink-0 cursor-pointer hover:bg-gray-200/60 transition-all";
+                            if (avatar) avatar.className = "w-5 h-5 rounded-full bg-gray-100 text-gray-700 text-[9px] font-black flex items-center justify-center shrink-0";
+                        } else if (ent === 'bank') {
+                            el.className = "flex items-center gap-2 bg-gray-100 text-gray-500 px-3 py-1.5 rounded-full shrink-0 cursor-pointer hover:bg-gray-200/60 transition-all";
+                            if (avatar) avatar.className = "w-5 h-5 rounded-full bg-blue-500 text-white text-[9px] font-black flex items-center justify-center shrink-0";
+                        }
+                    }
+                });
+
+                // Sync badges in requests view
+                const reqEntities = ['personal', 'bank', 'delegated'];
+                reqEntities.forEach(ent => {
+                    const el = document.getElementById(`req-entity-${ent}`);
+                    if (!el) return;
+                    const avatar = el.querySelector('div');
+                    if (ent === activeEntity) {
+                        el.className = "flex items-center gap-2 bg-black text-white px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer transition-all";
+                        if (avatar) avatar.className = "w-5 h-5 rounded-full bg-white text-black text-[9px] font-black flex items-center justify-center shrink-0";
+                    } else {
+                        if (ent === 'personal') {
+                            el.className = "flex items-center gap-2 bg-gray-100 text-gray-500 px-3 py-1.5 rounded-full shrink-0 cursor-pointer hover:bg-gray-200/60 transition-all";
+                            if (avatar) avatar.className = "w-5 h-5 rounded-full bg-gray-100 text-gray-700 text-[9px] font-black flex items-center justify-center shrink-0";
+                        } else if (ent === 'bank') {
+                            el.className = "flex items-center gap-2 bg-gray-100 text-gray-500 px-3 py-1.5 rounded-full shrink-0 cursor-pointer hover:bg-gray-200/60 transition-all";
+                            if (avatar) avatar.className = "w-5 h-5 rounded-full bg-blue-500 text-white text-[9px] font-black flex items-center justify-center shrink-0";
+                        }
+                    }
+                });
+
+                // Show requests list directly for delegated entity
+                showRequestsView();
+            }
+
+            function showRequestsView() {
+                document.getElementById('view-categories').classList.add('hidden');
+                document.getElementById('view-my-delegations').classList.add('hidden');
+                document.getElementById('view-requests').classList.remove('hidden');
+                renderRequests();
+            }
+
+            function showCategoriesView() {
+                document.getElementById('view-requests').classList.add('hidden');
+                document.getElementById('view-my-delegations').classList.add('hidden');
+                document.getElementById('view-categories').classList.remove('hidden');
+            }
+
+            function showMyDelegationsView() {
+                document.getElementById('view-requests').classList.add('hidden');
+                document.getElementById('view-my-delegations').classList.remove('hidden');
+                renderMyDelegations();
+            }
+
+            function renderMyDelegations() {
+                const container = document.getElementById('my-delegations-list');
+                container.innerHTML = '';
+
+                if (receivedDelegations.length === 0) {
+                    container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center text-center text-gray-400 gap-2 mt-20">
+                        <i class="fa-solid fa-user-slash text-3xl text-gray-300"></i>
+                        <p class="text-xs">Bạn chưa nhận ủy quyền nào</p>
+                    </div>`;
+                    return;
+                }
+
+                receivedDelegations.forEach(item => {
+                    const isCompany = item.type === 'company';
+                    const avatarIcon = isCompany
+                        ? `<i class="fa-solid fa-building text-[10px]"></i>`
+                        : `<span class="text-[9px] font-black">${item.delegator.split(' ').pop().charAt(0)}</span>`;
+                    const permTags = item.perms.map(p =>
+                        `<span class="bg-gray-100 text-gray-600 text-[9px] font-medium px-1.5 py-0.5 rounded-full">${p}</span>`
+                    ).join('');
+
+                    const card = document.createElement('div');
+                    card.className = 'bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col gap-3';
+                    card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full ${isCompany ? 'bg-blue-600' : 'bg-emerald-600'} text-white flex items-center justify-center shrink-0">
+                            ${avatarIcon}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-[12px] font-bold text-gray-800 truncate">${item.delegator}</p>
+                            <p class="text-[9.5px] text-gray-400">Từ ${item.since} · Hết hạn: <span class="${item.expiry === 'Vô thời hạn' ? 'text-emerald-600' : 'text-gray-500'}">${item.expiry}</span></p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-1">${permTags}</div>
+                    <button onclick="openDisconnectPopup(${item.id})"
+                        class="w-full py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 text-[11px] font-bold rounded-lg transition-all active:scale-[0.98] flex items-center justify-center">
+                        Ngắt liên kết
+                    </button>
+                `;
+                    container.appendChild(card);
+                });
+            }
+
+            function openDisconnectPopup(delegationId) {
+                pendingDisconnectId = delegationId;
+                const item = receivedDelegations.find(d => d.id === delegationId);
+                if (!item) return;
+                document.getElementById('popup-delegator-name').textContent = item.delegator;
+                const popup = document.getElementById('popup-disconnect');
+                const sheet = document.getElementById('popup-disconnect-sheet');
+                popup.classList.remove('hidden');
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => sheet.classList.remove('translate-y-full'));
+                });
+            }
+
+            function closeDisconnectPopup() {
+                const sheet = document.getElementById('popup-disconnect-sheet');
+                sheet.classList.add('translate-y-full');
+                setTimeout(() => document.getElementById('popup-disconnect').classList.add('hidden'), 300);
+            }
+
+            function confirmDisconnect() {
+                if (!pendingDisconnectId) return;
+                const idx = receivedDelegations.findIndex(d => d.id === pendingDisconnectId);
+                if (idx !== -1) {
+                    const name = receivedDelegations[idx].delegator;
+                    receivedDelegations.splice(idx, 1);
+                    // Also remove related requests from the list
+                    delegatedRequests = delegatedRequests.filter(r => r.delegator !== name);
+                }
+                pendingDisconnectId = null;
+                closeDisconnectPopup();
+                setTimeout(() => {
+                    renderMyDelegations();
+                    showToast('Đã ngắt liên kết ủy quyền thành công', 'fa-solid fa-circle-check text-emerald-400');
+                }, 320);
+            }
+
+            function renderRequests() {
+                // Filter according to current active tab
+                const filteredData = delegatedRequests.filter(item => {
+                    if (currentActiveTab === "all") return true;
+                    return item.status === currentActiveTab;
+                });
+
+                // Update badge counters
+                const countAll = delegatedRequests.length;
+                const countPending = delegatedRequests.filter(i => i.status === 'pending').length;
+                const countCompleted = delegatedRequests.filter(i => i.status === 'completed').length;
+                const countRejected = delegatedRequests.filter(i => i.status === 'rejected').length;
+
+                document.getElementById('count-all').textContent = countAll;
+                document.getElementById('count-pending').textContent = countPending;
+                document.getElementById('count-completed').textContent = countCompleted;
+                document.getElementById('count-rejected').textContent = countRejected;
+
+                // Render list
+                const container = document.getElementById('request-list');
+                container.innerHTML = '';
+
+                if (filteredData.length === 0) {
+                    container.innerHTML = `
+                    <div class="flex-1 flex flex-col items-center justify-center text-center text-gray-400 gap-2 mt-20">
+                        <i class="fa-solid fa-folder-open text-3xl text-gray-300"></i>
+                        <p class="text-xs">Không tìm thấy yêu cầu nào</p>
+                    </div>
+                `;
+                    return;
+                }
+
+                filteredData.forEach(item => {
+                    let statusBadge = "";
+                    let targetUrl = `casID-sign-view.html?delegated=true&id=${item.id}`;
+
+                    if (item.status === 'pending') {
+                        statusBadge = `<span class="bg-amber-50 text-amber-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-amber-200/50">Chờ ký</span>`;
+                    } else if (item.status === 'completed') {
+                        statusBadge = `<span class="bg-emerald-50 text-emerald-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-emerald-200/50">Đã ký xong</span>`;
+                        targetUrl += "&completed=true";
+                    } else {
+                        statusBadge = `<span class="bg-red-50 text-red-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-red-200/50">Đã từ chối</span>`;
+                        targetUrl += "&rejected=true";
+                    }
+
+                    const card = document.createElement('a');
+                    card.href = targetUrl;
+                    card.className = "bg-white rounded-xl p-3.5 shadow-sm border border-gray-100 flex flex-col gap-1.5 hover:shadow-md hover:border-gray-200 transition-all cursor-pointer active:scale-[0.99] block";
+                    card.innerHTML = `
+                    <div class="flex justify-between items-start gap-3">
+                        <h3 class="text-[11.5px] font-bold text-gray-800 leading-snug truncate flex-1">${item.title}</h3>
+                        <div class="shrink-0 mt-0.5">${statusBadge}</div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center text-[9px] text-gray-400">
+                        <div class="flex items-center gap-1 font-medium">
+                            <span>${item.time}</span>
+                            <span class="mx-1">•</span>
+                            <span>${item.fileSize}</span>
+                        </div>
+                    </div>
+
+                    <!-- Note showing who delegated it -->
+                    <div class="text-[9.5px] text-gray-600 bg-gray-100/70 rounded px-2 py-1 mt-1 flex items-center gap-1.5 self-start">
+                        <span>Ủy quyền từ: <strong class="font-bold">${item.delegator}</strong></span>
+                    </div>
+                `;
+                    container.appendChild(card);
+                });
+
+                // Append loader end line
+                const endText = document.createElement('div');
+                endText.className = "text-center text-[10px] text-gray-400 py-3.5 font-medium shrink-0";
+                endText.innerHTML = `<i mr-1 text-emerald-500"></i> Đã tải hết trang`;
+                container.appendChild(endText);
+            }
+
+            function switchTab(tabId) {
+                const prevTab = document.getElementById(`tab-${currentActiveTab}`);
+                if (prevTab) prevTab.className = "flex-1 pb-2.5 text-center border-b-2 border-transparent";
+
+                currentActiveTab = tabId;
+                const newTab = document.getElementById(`tab-${tabId}`);
+                if (newTab) newTab.className = "flex-1 pb-2.5 text-center border-b-2 border-emerald-600 text-emerald-600";
+
+                renderRequests();
+            }
+
+            function updateFooterNotiBadge() {
+                const badge = document.getElementById('footer-noti-badge');
+                if (badge) {
+                    const signedStatus = localStorage.getItem('delegated_signed_status');
+                    let count = 2;
+                    if (signedStatus === 'signed') count = 1;
+                    badge.textContent = count;
+                    badge.classList.remove('hidden');
+                }
+            }
+
+            // Custom toast helper
+            let toastTimeout = null;
+            function showToast(msg, iconClass = "fa-solid fa-circle-info text-emerald-400") {
+                const toast = document.getElementById('custom-toast');
+                const toastMsg = document.getElementById('custom-toast-msg');
+                const toastIcon = document.getElementById('custom-toast-icon');
+
+                if (toast && toastMsg) {
+                    toastMsg.textContent = msg;
+                    if (toastIcon) toastIcon.className = iconClass;
+
+                    toast.classList.remove('hidden');
+                    toast.offsetHeight; // force reflow
+                    toast.classList.remove('-translate-y-6', 'opacity-0');
+                    toast.classList.add('translate-y-0', 'opacity-100');
+
+                    if (toastTimeout) clearTimeout(toastTimeout);
+                    toastTimeout = setTimeout(() => {
+                        toast.classList.remove('translate-y-0', 'opacity-100');
+                        toast.classList.add('-translate-y-6', 'opacity-0');
+                        setTimeout(() => toast.classList.add('hidden'), 300);
+                    }, 3000);
+                }
+            }
+
+            function showComingSoon() {
+                showToast('Tính năng đang được phát triển');
+            }
+        </script>
+</body>
+
+</html>
