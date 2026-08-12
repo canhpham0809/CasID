@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xử lý Mã Giảm Giá - Casso ID</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Outfit:wght@700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body,
+        input,
+        select,
+        textarea,
+        button,
+        span,
+        p,
+        div,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        strong,
+        label,
+        input::placeholder,
+        textarea::placeholder {
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+        }
+
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Custom toggle switch styling */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #000000;
+        }
+
+        .toggle-checkbox:checked+.toggle-label {
+            background-color: #000000;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center py-6 px-4">
+
+    <!-- TOP CONTROL BAR FOR DEMO SWITCHING & SIMULATION -->
+    <div class="mb-4 bg-white rounded-2xl p-3 shadow-md border border-gray-200 w-full max-w-[375px] text-xs">
+        <div class="flex items-center justify-between font-bold text-gray-800 mb-2">
+            <span><i class="fa-solid fa-sliders text-blue-600 mr-1"></i> Bảng điều khiển Flow Demo</span>
+            <span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded-full font-mono">3 Màn hình</span>
+        </div>
+        <div class="grid grid-cols-3 gap-1.5 mb-2">
+            <button onclick="switchScreen(1)" id="tab-scr-1"
+                class="py-1.5 px-2 rounded-lg font-semibold bg-black text-white text-center transition-all">
+                1. Chi tiết
+            </button>
+            <button onclick="switchScreen(2)" id="tab-scr-2"
+                class="py-1.5 px-2 rounded-lg font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 text-center transition-all">
+                2. Xác nhận
+            </button>
+            <button onclick="switchScreen(3)" id="tab-scr-3"
+                class="py-1.5 px-2 rounded-lg font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 text-center transition-all">
+                3. QR Code
+            </button>
+        </div>
+        <div class="pt-2 border-t border-gray-100 flex flex-wrap gap-1.5">
+            <button onclick="simulatePaymentSuccess()"
+                class="flex-1 py-1 px-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-md font-medium text-[11px] hover:bg-emerald-100">
+                <i class="fa-solid fa-circle-check mr-1"></i> Thanh toán thành công
+            </button>
+            <button onclick="triggerQRExpire()"
+                class="flex-1 py-1 px-2 bg-rose-50 text-rose-700 border border-rose-200 rounded-md font-medium text-[11px] hover:bg-rose-100">
+                <i class="fa-solid fa-clock-rotate-left mr-1"></i> QR hết hạn (15m)
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN PHONE MOCKUP CONTAINER -->
+    <div
+        class="phone-container bg-white shadow-2xl rounded-[40px] overflow-hidden flex flex-col relative border-[8px] border-black">
+
+        <!-- Status Bar -->
+        <div
+            class="flex justify-between items-center px-6 pt-3 pb-1 text-xs font-bold text-black bg-white z-10 shrink-0">
+            <span>11:23</span>
+            <div class="flex items-center gap-1.5">
+                <i class="fa-solid fa-signal text-[10px]"></i>
+                <span class="text-[9px] font-bold mr-0.5">5G</span>
+                <div class="flex items-center gap-0.5 border border-black rounded px-1 text-[9px]">
+                    <span>65</span>
+                    <i class="fa-solid fa-battery-three-quarters text-xs"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== SCREEN 1: THÔNG TIN CHI TIẾT ==================== -->
+        <div id="screen-1" class="flex-1 flex flex-col overflow-hidden">
+            <!-- Topbar Header -->
+            <div class="px-4 py-3 flex items-center gap-3 bg-white shrink-0">
+                <button onclick="window.location.href='casID-sign-ca.html'"
+                    class="text-gray-800 text-xl font-bold hover:opacity-70">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <h1 class="text-lg font-bold text-gray-900">Thông tin chi tiết</h1>
+            </div>
+
+            <!-- Content Area -->
+            <div class="flex-1 overflow-y-auto px-4 py-2 space-y-4">
+
+                <!-- Card 1: Thông tin Doanh nghiệp -->
+                <div>
+                    <h2 class="text-[14px] font-bold text-gray-900 mb-2">Thông tin Doanh nghiệp</h2>
+                    <div class="bg-[#f8f9fa] rounded-2xl p-4 space-y-3 border border-gray-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Mã số thuế</span>
+                            <span class="text-xs font-bold text-gray-900 font-mono">0220330440</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Trạng thái</span>
+                            <span class="bg-[#00a859] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full">Chờ
+                                thanh toán</span>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs text-gray-500 shrink-0 mr-2">Tên DN</span>
+                            <span class="text-xs font-bold text-gray-900 text-right">CÔNG TY TEST 0220330440</span>
+                        </div>
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs text-gray-500 shrink-0 mr-2">Địa chỉ DN</span>
+                            <span class="text-xs font-bold text-gray-900 text-right max-w-[65%]">325 Nguyễn Huệ, TP Hồ
+                                Chí Minh</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Trạng thái MST</span>
+                            <span class="text-xs font-bold text-gray-900">NNT đang hoạt động</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Thông tin gói -->
+                <div>
+                    <h2 class="text-[14px] font-bold text-gray-900 mb-2">Thông tin gói</h2>
+                    <div class="bg-[#f8f9fa] rounded-2xl p-4 space-y-3 border border-gray-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Tên gói</span>
+                            <select id="package-selector" onchange="onPackageChange()"
+                                class="text-xs font-bold text-gray-900 bg-white border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:border-black cursor-pointer">
+                                <option value="intrust_12m" selected>Intrust 12 tháng (800.000 VNĐ)</option>
+                                <option value="cmc_3m">CMC 3 tháng (100.000 VNĐ)</option>
+                                <option value="cmc_6m">CMC 6 tháng (450.000 VNĐ)</option>
+                            </select>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Ngày đăng ký</span>
+                            <span class="text-xs font-bold text-gray-900">04/08/2026</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Đơn giá</span>
+                            <span id="screen1-base-price" class="text-xs font-bold text-gray-900">800.000 VNĐ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Thông tin liên hệ -->
+                <div>
+                    <h2 class="text-[14px] font-bold text-gray-900 mb-2">Thông tin liên hệ</h2>
+                    <div class="bg-[#f8f9fa] rounded-2xl p-4 space-y-3 border border-gray-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Họ và tên</span>
+                            <span class="text-xs font-bold text-gray-900">Lê Phương Tuyết</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Số điện thoại</span>
+                            <span class="text-xs font-bold text-gray-900 font-mono">0365654202</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">Thư điện tử</span>
+                            <span class="text-xs font-bold text-gray-900">lephuongtuyet111@gmail.com</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer Action Buttons -->
+            <div class="p-4 bg-white border-t border-gray-100 shrink-0 flex gap-3">
+                <button onclick="window.location.href='casID-sign-ca.html'"
+                    class="flex-1 py-3 px-4 border border-black text-black font-bold text-sm rounded-xl hover:bg-gray-50 transition-all active:scale-[0.98]">
+                    Huỷ đăng ký
+                </button>
+                <button onclick="switchScreen(2)"
+                    class="flex-1 py-3 px-4 bg-black text-white font-bold text-sm rounded-xl hover:bg-gray-800 transition-all active:scale-[0.98]">
+                    Tiếp tục
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== SCREEN 2: XÁC NHẬN ĐƠN HÀNG (MÃ GIẢM GIÁ) ==================== -->
+        <div id="screen-2" class="flex-1 flex flex-col overflow-hidden hidden">
+            <!-- Topbar Header -->
+            <div class="px-4 py-3 flex items-center gap-3 bg-white shrink-0 border-b border-gray-50">
+                <button onclick="switchScreen(1)" class="text-gray-800 text-xl font-bold hover:opacity-70">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <h1 class="text-lg font-bold text-gray-900">Xác nhận thanh toán</h1>
+            </div>
+
+            <!-- Scrollable Body -->
+            <div class="flex-1 overflow-y-auto px-4 py-3 space-y-4 bg-gray-50/50">
+
+                <!-- Selected Package Card -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <div
+                            class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-bold shrink-0">
+                            <i class="fa-solid fa-certificate"></i>
+                        </div>
+                        <div>
+                            <h3 id="order-package-title" class="text-xs font-bold text-gray-900">Chứng thư số tổ chức 1
+                                năm</h3>
+                            <p id="order-package-sub" class="text-[10px] text-gray-500">Loại CTS: Intrust • MST:
+                                0220330440</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Discount Code Input Section -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+                    <label class="text-xs font-bold text-gray-900 block">Mã giảm giá</label>
+
+                    <div class="flex gap-2">
+                        <div class="relative flex-1">
+                            <input id="discount-input" type="text" placeholder="Nhập mã ưu đãi..."
+                                oninput="onDiscountInput(this)"
+                                class="w-full pl-3 pr-8 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono font-bold tracking-wide focus:outline-none focus:border-black transition-all">
+                            <button id="btn-clear-code" onclick="clearDiscountCode()"
+                                class="absolute inset-y-0 right-2.5 flex items-center text-gray-400 hover:text-gray-600 hidden">
+                                <i class="fa-solid fa-circle-xmark text-sm"></i>
+                            </button>
+                        </div>
+                        <button id="btn-apply-code" onclick="applyDiscountCode()"
+                            class="py-2.5 px-4 bg-black text-white font-bold text-xs rounded-xl hover:bg-gray-800 transition-all active:scale-95 shrink-0">
+                            Áp dụng
+                        </button>
+                    </div>
+
+
+
+                    <!-- Discount Applied Banner / Status Message -->
+                    <div id="discount-status-box" class="hidden rounded-xl p-2.5 text-xs flex items-start gap-2">
+                        <i id="discount-status-icon" class="fa-solid fa-circle-check text-xs mt-0.5 shrink-0"></i>
+                        <div id="discount-status-text" class="leading-tight"></div>
+                    </div>
+                </div>
+
+                <!-- Price Calculation Breakdown Card -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-2.5">
+                    <h3 class="text-xs font-bold text-gray-900 pb-1 border-b border-gray-100">Chi tiết thanh toán</h3>
+
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-500">Giá gốc gói dịch vụ</span>
+                        <span id="summary-base-price" class="font-medium text-gray-800">800.000 VNĐ</span>
+                    </div>
+
+                    <div id="row-discount"
+                        class="flex justify-between items-center text-xs text-emerald-600 hidden font-medium">
+                        <span>Giảm giá (<span id="applied-code-name">CASSO</span>)</span>
+                        <span id="summary-discount-val">-720.000 VNĐ</span>
+                    </div>
+
+                    <div id="row-after-discount" class="flex justify-between items-center text-xs text-gray-700 hidden">
+                        <span class="text-gray-500">Giá sau giảm</span>
+                        <span id="summary-after-discount" class="font-medium">80.000 VNĐ</span>
+                    </div>
+
+                    <div class="flex justify-between items-center text-xs">
+                        <span class="text-gray-500">Thuế GTGT (VAT 10%)</span>
+                        <span id="summary-vat" class="font-medium text-gray-800">80.000 VNĐ</span>
+                    </div>
+
+                    <div class="pt-2 border-t border-gray-100 flex justify-between items-center">
+                        <span class="text-xs font-bold text-gray-900">Tổng tiền thanh toán</span>
+                        <span id="summary-final-total" class="text-base font-extrabold text-gray-900">880.000 VNĐ</span>
+                    </div>
+                </div>
+
+                <!-- VAT Invoice Toggle Card -->
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 space-y-3">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-xs font-bold text-gray-900 block">Xuất hóa đơn GTGT</span>
+                            <span class="text-[10px] text-gray-500">Gửi hóa đơn điện tử qua email</span>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input id="toggle-invoice" type="checkbox" onchange="toggleInvoiceForm()"
+                                class="sr-only peer">
+                            <div
+                                class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black">
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Invoice Input Form (Hidden by default) -->
+                    <div id="invoice-form" class="space-y-2.5 pt-2 border-t border-gray-100 hidden">
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-500 block mb-0.5">Tên đơn vị / Người mua <span
+                                    class="text-red-500">*</span></label>
+                            <input id="inv-name" type="text" value="CÔNG TY TEST 0220330440"
+                                placeholder="Nhập tên đơn vị hoặc người mua"
+                                class="w-full px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold focus:outline-none focus:border-black transition-all">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-500 block mb-0.5">Mã số thuế <span
+                                    class="text-red-500">*</span></label>
+                            <input id="inv-tax" type="text" value="0220330440" placeholder="Nhập mã số thuế"
+                                class="w-full px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-mono font-semibold focus:outline-none focus:border-black transition-all">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-500 block mb-0.5">Địa chỉ xuất hóa đơn <span
+                                    class="text-red-500">*</span></label>
+                            <input id="inv-address" type="text" value="325 Nguyễn Huệ, TP Hồ Chí Minh"
+                                placeholder="Nhập địa chỉ xuất hóa đơn"
+                                class="w-full px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold focus:outline-none focus:border-black transition-all">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-gray-500 block mb-0.5">Email nhận hóa đơn <span
+                                    class="text-red-500">*</span></label>
+                            <input id="inv-email" type="email" value="lephuongtuyet111@gmail.com"
+                                placeholder="Nhập email nhận hóa đơn"
+                                class="w-full px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold focus:outline-none focus:border-black transition-all">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Bottom Action Buttons -->
+            <div class="p-4 bg-white border-t border-gray-100 shrink-0 flex gap-3">
+                <button onclick="switchScreen(1)"
+                    class="flex-1 py-3 px-4 border border-black text-black font-bold text-sm rounded-xl hover:bg-gray-50 transition-all active:scale-[0.98]">
+                    Hủy
+                </button>
+                <button onclick="proceedToCheckout()" id="btn-submit-checkout"
+                    class="flex-1 py-3 px-4 bg-black text-white font-bold text-sm rounded-xl hover:bg-gray-800 transition-all active:scale-[0.98]">
+                    Thanh toán
+                </button>
+            </div>
+        </div>
+
+        <!-- ==================== SCREEN 3: THANH TOÁN QR ==================== -->
+        <div id="screen-3" class="flex-1 flex flex-col overflow-hidden hidden">
+            <!-- Topbar Header -->
+            <div class="px-4 py-3 flex items-center gap-3 bg-white shrink-0">
+                <button onclick="cancelQRPayment()" class="text-gray-800 text-xl font-bold hover:opacity-70">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <h1 class="text-base font-bold text-gray-900">Đăng ký chứng thư số</h1>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto px-4 py-2 bg-white flex flex-col">
+
+                <!-- 5-Step Process Bar -->
+                <div class="my-2">
+                    <div class="flex items-center justify-between relative px-2">
+                        <div class="absolute left-6 right-6 top-3 h-[2px] bg-gray-200 -z-0"></div>
+                        <div class="absolute left-6 w-1/2 top-3 h-[2px] bg-black z-0"></div>
+
+                        <!-- Step 1 -->
+                        <div class="flex flex-col items-center gap-1 z-10">
+                            <div
+                                class="w-6 h-6 rounded-full bg-black text-white text-[10px] font-bold flex items-center justify-center">
+                                1</div>
+                            <span class="text-[8px] font-medium text-gray-700">Yêu cầu đăng ký</span>
+                        </div>
+                        <!-- Step 2 -->
+                        <div class="flex flex-col items-center gap-1 z-10">
+                            <div
+                                class="w-6 h-6 rounded-full bg-black text-white text-[10px] font-bold flex items-center justify-center">
+                                2</div>
+                            <span class="text-[8px] font-medium text-gray-700">eKYC</span>
+                        </div>
+                        <!-- Step 3 (Active) -->
+                        <div class="flex flex-col items-center gap-1 z-10">
+                            <div
+                                class="w-6 h-6 rounded-full bg-black text-white text-[10px] font-bold flex items-center justify-center ring-4 ring-gray-100">
+                                3</div>
+                            <span class="text-[8px] font-bold text-black">Thanh toán</span>
+                        </div>
+                        <!-- Step 4 -->
+                        <div class="flex flex-col items-center gap-1 z-10">
+                            <div
+                                class="w-6 h-6 rounded-full bg-gray-200 text-gray-500 text-[10px] font-bold flex items-center justify-center">
+                                4</div>
+                            <span class="text-[8px] font-medium text-gray-400">Kích hoạt</span>
+                        </div>
+                        <!-- Step 5 -->
+                        <div class="flex flex-col items-center gap-1 z-10">
+                            <div
+                                class="w-6 h-6 rounded-full bg-gray-200 text-gray-500 text-[10px] font-bold flex items-center justify-center">
+                                5</div>
+                            <span class="text-[8px] font-medium text-gray-400">Hoàn tất</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-xs text-gray-700 text-center my-2">
+                    Vui lòng <strong>thanh toán gói cước</strong> để chuyển bước Kích hoạt
+                </p>
+
+                <!-- Tabs: Mã QR / Chuyển khoản -->
+                <div class="bg-gray-100 p-1 rounded-xl flex mb-3">
+                    <button class="flex-1 py-1.5 bg-white text-black font-bold text-xs rounded-lg shadow-sm">
+                        Mã QR
+                    </button>
+                    <button onclick="showToast('Chuyển khoản thủ công đang được cập nhật')"
+                        class="flex-1 py-1.5 text-gray-500 font-bold text-xs rounded-lg hover:text-black">
+                        Chuyển khoản
+                    </button>
+                </div>
+
+                <!-- Timer Countdown (15:00) -->
+                <div class="text-center mb-2">
+                    <span id="qr-timer" class="text-xl font-bold text-red-600 font-mono">14:56</span>
+                </div>
+
+                <!-- Dynamic QR Box -->
+                <div class="flex flex-col items-center justify-center mb-3">
+                    <div class="p-3 bg-white rounded-2xl border border-gray-100 shadow-md flex flex-col items-center">
+                        <div class="flex items-center gap-1 mb-2">
+                            <span class="text-red-600 font-black text-xs italic tracking-tighter">VIETQR</span>
+                            <span
+                                class="bg-amber-400 text-blue-900 font-black text-[9px] px-1 py-0.5 rounded tracking-tighter">PRO</span>
+                        </div>
+
+                        <!-- Canvas / SVG Dynamic QR Placeholder -->
+                        <div
+                            class="relative w-44 h-44 bg-white p-2 border border-gray-200 rounded-xl flex items-center justify-center overflow-hidden">
+                            <img id="qr-img-placeholder"
+                                src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=CASID_PAYMENT_0220330440_AMOUNT_880000"
+                                alt="VietQR Code" class="w-full h-full object-contain">
+                            <div class="absolute bg-white rounded-full p-1 border shadow-sm">
+                                <span class="text-red-600 font-black text-[10px]">V</span>
+                            </div>
+                        </div>
+
+                        <!-- Payment Amount Badge below QR -->
+                        <div class="mt-2 text-center">
+                            <span class="text-[10px] text-gray-500 block">Số tiền cần thanh toán</span>
+                            <span id="qr-display-amount" class="text-sm font-extrabold text-gray-900 font-mono">880.000
+                                VNĐ</span>
+                        </div>
+
+                        <!-- Partner logos -->
+                        <div class="flex items-center justify-center gap-4 mt-2 pt-2 border-t border-gray-100 w-full">
+                            <span class="text-[9px] font-bold text-blue-600 italic">napas<span
+                                    class="text-amber-500">247</span></span>
+                            <span class="text-[9px] font-bold text-red-600 flex items-center gap-0.5"><i
+                                    class="fa-solid fa-star text-[7px]"></i> MB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons: Huỷ / Lưu ảnh QR -->
+                <div class="flex gap-3 mb-4">
+                    <button onclick="cancelQRPayment()"
+                        class="flex-1 py-2.5 border border-black text-black font-bold text-xs rounded-xl hover:bg-gray-50 active:scale-95">
+                        Huỷ
+                    </button>
+                    <button onclick="showToast('Đã lưu mã QR vào thư viện ảnh!')"
+                        class="flex-1 py-2.5 border border-black text-black font-bold text-xs rounded-xl hover:bg-gray-50 active:scale-95">
+                        Lưu ảnh QR
+                    </button>
+                </div>
+
+                <div class="border-t border-gray-100 pt-3 mt-auto">
+                    <p class="text-[10px] text-gray-500 text-center mb-2">
+                        Nhấn vào logo ngân hàng để thanh toán trực tiếp trên ứng dụng
+                    </p>
+
+                    <!-- Bank Apps Grid -->
+                    <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
+                        <div onclick="simulateAppPayment('Vietcombank')"
+                            class="flex flex-col items-center shrink-0 cursor-pointer group">
+                            <div
+                                class="relative w-11 h-11 rounded-xl bg-emerald-800 text-white flex items-center justify-center font-bold text-[9px] border shadow-sm group-hover:scale-105 transition-all">
+                                VCB
+                                <span
+                                    class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[7px]"><i
+                                        class="fa-solid fa-bolt"></i></span>
+                            </div>
+                            <span class="text-[9px] font-medium text-gray-600 mt-1">VCB</span>
+                        </div>
+                        <div onclick="simulateAppPayment('BIDV')"
+                            class="flex flex-col items-center shrink-0 cursor-pointer group">
+                            <div
+                                class="relative w-11 h-11 rounded-xl bg-teal-700 text-white flex items-center justify-center font-bold text-[9px] border shadow-sm group-hover:scale-105 transition-all">
+                                BIDV
+                                <span
+                                    class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[7px]"><i
+                                        class="fa-solid fa-bolt"></i></span>
+                            </div>
+                            <span class="text-[9px] font-medium text-gray-600 mt-1">BIDV</span>
+                        </div>
+                        <div onclick="simulateAppPayment('VietinBank')"
+                            class="flex flex-col items-center shrink-0 cursor-pointer group">
+                            <div
+                                class="relative w-11 h-11 rounded-xl bg-blue-700 text-white flex items-center justify-center font-bold text-[9px] border shadow-sm group-hover:scale-105 transition-all">
+                                CTG
+                                <span
+                                    class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[7px]"><i
+                                        class="fa-solid fa-bolt"></i></span>
+                            </div>
+                            <span class="text-[9px] font-medium text-gray-600 mt-1">Vietin</span>
+                        </div>
+                        <div onclick="simulateAppPayment('ACB')"
+                            class="flex flex-col items-center shrink-0 cursor-pointer group">
+                            <div
+                                class="relative w-11 h-11 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-[9px] border shadow-sm group-hover:scale-105 transition-all">
+                                ACB
+                                <span
+                                    class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[7px]"><i
+                                        class="fa-solid fa-bolt"></i></span>
+                            </div>
+                            <span class="text-[9px] font-medium text-gray-600 mt-1">ACB</span>
+                        </div>
+                        <div onclick="simulateAppPayment('MB Bank')"
+                            class="flex flex-col items-center shrink-0 cursor-pointer group">
+                            <div
+                                class="relative w-11 h-11 rounded-xl bg-indigo-900 text-white flex items-center justify-center font-bold text-[9px] border shadow-sm group-hover:scale-105 transition-all">
+                                MB
+                                <span
+                                    class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 text-white rounded-full flex items-center justify-center text-[7px]"><i
+                                        class="fa-solid fa-bolt"></i></span>
+                            </div>
+                            <span class="text-[9px] font-medium text-gray-600 mt-1">MB</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ORDER COMPLETE / SUCCESS MODAL (Overlay) -->
+        <div id="modal-success"
+            class="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+            <div
+                class="bg-white rounded-3xl p-6 text-center shadow-2xl max-w-[320px] w-full transform transition-all animate-bounce-in">
+                <div
+                    class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-3">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-1">Thanh toán thành công!</h3>
+                <p class="text-xs text-gray-600 mb-4 leading-relaxed">
+                    Yêu cầu đăng ký Chứng thư số của bạn đã được thanh toán và ghi nhận ưu đãi chính thức.
+                </p>
+                <div class="bg-gray-50 rounded-xl p-3 text-left text-xs space-y-1.5 mb-4 border">
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Mã đơn hàng:</span>
+                        <span class="font-mono font-bold">ORD-2026-8891</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-500">Số tiền đã trả:</span>
+                        <span id="success-paid-amount" class="font-bold text-emerald-600">88.000 VNĐ</span>
+                    </div>
+                    <div id="success-discount-row" class="flex justify-between">
+                        <span class="text-gray-500">Ưu đãi áp dụng:</span>
+                        <span id="success-code-name" class="font-bold text-gray-900">CASSO</span>
+                    </div>
+                </div>
+                <button onclick="closeSuccessModal()"
+                    class="w-full py-3 bg-black text-white font-bold text-sm rounded-xl hover:bg-gray-800">
+                    Hoàn thành
+                </button>
+            </div>
+        </div>
+
+        <!-- Custom Toast Banner Inside Phone Container -->
+        <div id="custom-toast"
+            class="absolute top-12 left-4 right-4 z-50 bg-gray-900/95 backdrop-blur-md text-white rounded-2xl p-3 shadow-xl flex items-center gap-2.5 transform -translate-y-6 opacity-0 transition-all duration-300 pointer-events-none hidden border border-gray-800">
+            <i id="custom-toast-icon" class="text-xs shrink-0 text-amber-400 fa-solid fa-circle-info"></i>
+            <span id="custom-toast-msg" class="text-[11px] font-semibold leading-snug"></span>
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT LOGIC IMPLEMENTING SPECIFICATION & FAKE DATA -->
+    <script>
+        // MOCK DATA FOR PACKAGES (BR-01)
+        const PACKAGES = {
+            'intrust_12m': {
+                id: 'pkg_intrust_12m',
+                name: 'Chứng thư số tổ chức 1 năm',
+                type: 'Intrust',
+                durationMonths: 12,
+                basePrice: 800000,
+                vatRate: 0.10
+            },
+            'cmc_3m': {
+                id: 'pkg_cmc_3m',
+                name: 'Chứng thư số CMC 3 tháng',
+                type: 'CMC',
+                durationMonths: 3,
+                basePrice: 100000,
+                vatRate: 0.10
+            },
+            'cmc_6m': {
+                id: 'pkg_cmc_6m',
+                name: 'Chứng thư số CMC 6 tháng',
+                type: 'CMC',
+                durationMonths: 6,
+                basePrice: 450000,
+                vatRate: 0.10
+            }
+        };
+
+        // MOCK DISCOUNT CODES RULES (BR-01, BR-02, BR-03)
+        const DISCOUNT_RULES = {
+            'CASSO': {
+                code: 'CASSO',
+                discountPercent: 0.90,
+                applicablePackages: ['pkg_intrust_12m'],
+                status: 'ACTIVE',
+                usageLimit: 10,
+                consumedCount: 2
+            },
+            'CASSO1': {
+                code: 'CASSO1',
+                discountPercent: 0.99,
+                applicablePackages: ['pkg_intrust_12m'],
+                status: 'ACTIVE',
+                usageLimit: 10,
+                consumedCount: 1
+            },
+            'CASSO2': {
+                code: 'CASSO2',
+                discountPercent: 1.00, // 100% off -> total 0đ
+                applicablePackages: ['pkg_intrust_12m', 'pkg_cmc_3m'],
+                status: 'ACTIVE',
+                usageLimit: 10,
+                consumedCount: 0
+            },
+            'J2TEAM01': {
+                code: 'J2TEAM01',
+                discountPercent: 1.00,
+                applicablePackages: ['pkg_cmc_3m'], // Only applicable to CMC 3 months!
+                status: 'ACTIVE',
+                usageLimit: 1,
+                consumedCount: 0
+            },
+            'OUT_OF_STOCK': {
+                code: 'OUT_OF_STOCK',
+                discountPercent: 0.50,
+                applicablePackages: ['pkg_intrust_12m'],
+                status: 'ACTIVE',
+                usageLimit: 5,
+                consumedCount: 5 // Stock exhausted!
+            },
+            'USED_CODE': {
+                code: 'USED_CODE',
+                discountPercent: 0.50,
+                applicablePackages: ['pkg_intrust_12m'],
+                status: 'ACTIVE',
+                usageLimit: 100,
+                consumedCount: 10,
+                isCustomerAlreadyUsed: true // BR-03 simulation
+            }
+        };
+
+        // STATE MANAGEMENT
+        let currentScreen = 1;
+        let selectedPackageKey = 'intrust_12m';
+        let appliedDiscount = null;
+        let qrTimerInterval = null;
+        let qrSecondsRemaining = 900; // 15 minutes = 900 seconds (BR-07)
+
+        // ON PAGE LOAD
+        window.onload = function () {
+            onPackageChange();
+        };
+
+        function switchScreen(screenNum) {
+            currentScreen = screenNum;
+            document.getElementById('screen-1').classList.add('hidden');
+            document.getElementById('screen-2').classList.add('hidden');
+            document.getElementById('screen-3').classList.add('hidden');
+
+            document.getElementById(`screen-${screenNum}`).classList.remove('hidden');
+
+            // Update top bar tabs
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`tab-scr-${i}`);
+                if (i === screenNum) {
+                    btn.className = "py-1.5 px-2 rounded-lg font-semibold bg-black text-white text-center transition-all";
+                } else {
+                    btn.className = "py-1.5 px-2 rounded-lg font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 text-center transition-all";
+                }
+            }
+
+            if (screenNum === 3) {
+                startQRTimer();
+            } else {
+                stopQRTimer();
+            }
+        }
+
+        function onPackageChange() {
+            selectedPackageKey = document.getElementById('package-selector').value;
+            const pkg = PACKAGES[selectedPackageKey];
+
+            document.getElementById('screen1-base-price').textContent = formatCurrency(pkg.basePrice);
+            document.getElementById('order-package-title').textContent = pkg.name;
+            document.getElementById('order-package-sub').textContent = `Loại CTS: ${pkg.type} • MST: 0220330440`;
+
+            // If discount code was applied, re-validate quote for new package
+            if (appliedDiscount) {
+                applyDiscountCode();
+            } else {
+                calculatePrices();
+            }
+        }
+
+        function fillAndApply(code) {
+            document.getElementById('discount-input').value = code;
+            document.getElementById('btn-clear-code').classList.remove('hidden');
+            applyDiscountCode();
+        }
+
+        function onDiscountInput(input) {
+            input.value = input.value.toUpperCase();
+            const btnClear = document.getElementById('btn-clear-code');
+            if (input.value.trim().length > 0) {
+                btnClear.classList.remove('hidden');
+            } else {
+                btnClear.classList.add('hidden');
+                if (appliedDiscount) {
+                    clearDiscountCode();
+                }
+            }
+        }
+
+        function clearDiscountCode() {
+            document.getElementById('discount-input').value = '';
+            document.getElementById('btn-clear-code').classList.add('hidden');
+            appliedDiscount = null;
+
+            const statusBox = document.getElementById('discount-status-box');
+            statusBox.classList.add('hidden');
+
+            calculatePrices();
+            showToast('Đã xóa mã giảm giá', 'fa-solid fa-circle-info text-blue-400');
+        }
+
+        // BR-05: APPLY ONLY FAILS / CALCULATES TEMPORARY QUOTE
+        function applyDiscountCode() {
+            const rawCode = document.getElementById('discount-input').value.trim().toUpperCase();
+            const pkg = PACKAGES[selectedPackageKey];
+            const statusBox = document.getElementById('discount-status-box');
+            const statusIcon = document.getElementById('discount-status-icon');
+            const statusText = document.getElementById('discount-status-text');
+
+            if (!rawCode) {
+                clearDiscountCode();
+                return;
+            }
+
+            document.getElementById('btn-clear-code').classList.remove('hidden');
+
+            // Check rule database
+            const rule = DISCOUNT_RULES[rawCode];
+
+            if (!rule) {
+                appliedDiscount = null;
+                showDiscountError(statusBox, statusIcon, statusText, 'Mã giảm giá không tồn tại hoặc không hợp lệ.');
+                calculatePrices();
+                return;
+            }
+
+            // BR-01: Package matching check
+            if (!rule.applicablePackages.includes(pkg.id)) {
+                appliedDiscount = null;
+                showDiscountError(statusBox, statusIcon, statusText, `Mã "${rawCode}" không áp dụng cho gói ${pkg.name}.`);
+                calculatePrices();
+                return;
+            }
+
+            // BR-02: Usage limit check
+            if (rule.consumedCount >= rule.usageLimit) {
+                appliedDiscount = null;
+                showDiscountError(statusBox, statusIcon, statusText, `Mã "${rawCode}" đã hết lượt sử dụng.`);
+                calculatePrices();
+                return;
+            }
+
+            // BR-03: Single usage per customer check
+            if (rule.isCustomerAlreadyUsed) {
+                appliedDiscount = null;
+                showDiscountError(statusBox, statusIcon, statusText, `Bạn đã từng hưởng ưu đãi cho gói này.`);
+                calculatePrices();
+                return;
+            }
+
+            // SUCCESS APPLY TEMPORARY QUOTE (BR-05)
+            appliedDiscount = rule;
+
+            statusBox.className = "rounded-xl p-2.5 text-xs flex items-start gap-2 bg-emerald-50 text-emerald-800 border border-emerald-200";
+            statusIcon.className = "fa-solid fa-circle-check text-xs mt-0.5 shrink-0 text-emerald-600";
+            statusText.innerHTML = `<strong>Áp dụng thành công mã ${rule.code}!</strong> Giảm ${(rule.discountPercent * 100)}% giá trị gói.`;
+            statusBox.classList.remove('hidden');
+
+            calculatePrices();
+            showToast(`Đã áp dụng mã ${rule.code}`, 'fa-solid fa-circle-check text-emerald-400');
+        }
+
+        function showDiscountError(box, icon, text, msg) {
+            box.className = "rounded-xl p-2.5 text-xs flex items-start gap-2 bg-rose-50 text-rose-800 border border-rose-200";
+            icon.className = "fa-solid fa-circle-exclamation text-xs mt-0.5 shrink-0 text-rose-600";
+            text.innerHTML = `<strong>Lỗi áp dụng mã:</strong> ${msg}`;
+            box.classList.remove('hidden');
+        }
+
+        // PRICE CALCULATION FORMULA AS SPECIFIED IN SECTION 5
+        function calculatePrices() {
+            const pkg = PACKAGES[selectedPackageKey];
+            const subtotalAmount = pkg.basePrice;
+
+            let discountAmount = 0;
+            if (appliedDiscount) {
+                discountAmount = Math.min(subtotalAmount, Math.round(subtotalAmount * appliedDiscount.discountPercent));
+            }
+
+            const amountAfterDiscount = Math.max(0, subtotalAmount - discountAmount);
+            const vatAmount = Math.round(amountAfterDiscount * pkg.vatRate);
+            const finalAmount = amountAfterDiscount + vatAmount;
+
+            // DOM Updates
+            document.getElementById('summary-base-price').textContent = formatCurrency(subtotalAmount);
+
+            if (appliedDiscount && discountAmount > 0) {
+                document.getElementById('row-discount').classList.remove('hidden');
+                document.getElementById('row-after-discount').classList.remove('hidden');
+                document.getElementById('applied-code-name').textContent = appliedDiscount.code;
+                document.getElementById('summary-discount-val').textContent = `-${formatCurrency(discountAmount)}`;
+                document.getElementById('summary-after-discount').textContent = formatCurrency(amountAfterDiscount);
+            } else {
+                document.getElementById('row-discount').classList.add('hidden');
+                document.getElementById('row-after-discount').classList.add('hidden');
+            }
+
+            document.getElementById('summary-vat').textContent = formatCurrency(vatAmount);
+            document.getElementById('summary-final-total').textContent = formatCurrency(finalAmount);
+
+            // Update Submit button text
+            const btnSubmit = document.getElementById('btn-submit-checkout');
+            if (finalAmount < 2000) {
+                btnSubmit.textContent = "Hoàn tất đơn hàng";
+            } else {
+                btnSubmit.textContent = "Thanh toán";
+            }
+
+            // Update QR Screen amount display
+            document.getElementById('qr-display-amount').textContent = formatCurrency(finalAmount);
+            document.getElementById('qr-img-placeholder').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=CASID_PAYMENT_0220330440_AMOUNT_${finalAmount}`;
+
+            return finalAmount;
+        }
+
+        function toggleInvoiceForm() {
+            const isChecked = document.getElementById('toggle-invoice').checked;
+            const form = document.getElementById('invoice-form');
+            const inputs = form.querySelectorAll('input');
+            if (isChecked) {
+                form.classList.remove('hidden');
+                inputs.forEach(input => input.setAttribute('required', 'required'));
+            } else {
+                form.classList.add('hidden');
+                inputs.forEach(input => input.removeAttribute('required'));
+            }
+        }
+
+        // BR-06 / BR-10 / BR-8.3: CHECKOUT PROCEED LOGIC
+        function proceedToCheckout() {
+            const isInvoiceChecked = document.getElementById('toggle-invoice').checked;
+            if (isInvoiceChecked) {
+                const name = document.getElementById('inv-name').value.trim();
+                const tax = document.getElementById('inv-tax').value.trim();
+                const address = document.getElementById('inv-address').value.trim();
+                const email = document.getElementById('inv-email').value.trim();
+
+                if (!name || !tax || !address || !email) {
+                    showToast('Vui lòng nhập đầy đủ thông tin hóa đơn!', 'fa-solid fa-circle-exclamation text-rose-400');
+                    if (!name) document.getElementById('inv-name').focus();
+                    else if (!tax) document.getElementById('inv-tax').focus();
+                    else if (!address) document.getElementById('inv-address').focus();
+                    else if (!email) document.getElementById('inv-email').focus();
+                    return;
+                }
+            }
+
+            const finalAmount = calculatePrices();
+
+            // BR-10: If finalAmount < 2000 VNĐ -> Skip QR, consume discount atomic & complete order
+            if (finalAmount < 2000) {
+                showToast('Hoàn tất đơn hàng!', 'fa-solid fa-bolt text-amber-400');
+                setTimeout(() => {
+                    openSuccessModal(finalAmount);
+                }, 600);
+            } else {
+                // BR-06: Create 15-minute reservation and move to QR screen
+                switchScreen(3);
+                showToast('Đã tạo giữ mã giảm giá (15 phút)', 'fa-solid fa-clock text-emerald-400');
+            }
+        }
+
+        // TIMER COUNTDOWN FOR QR RESERVATION (BR-07, BR-09)
+        function startQRTimer() {
+            stopQRTimer();
+            qrSecondsRemaining = 900; // 15 mins
+            updateTimerDisplay();
+
+            qrTimerInterval = setInterval(() => {
+                qrSecondsRemaining--;
+                if (qrSecondsRemaining <= 0) {
+                    stopQRTimer();
+                    triggerQRExpire();
+                } else {
+                    updateTimerDisplay();
+                }
+            }, 1000);
+        }
+
+        function stopQRTimer() {
+            if (qrTimerInterval) {
+                clearInterval(qrTimerInterval);
+                qrTimerInterval = null;
+            }
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(qrSecondsRemaining / 60);
+            const s = qrSecondsRemaining % 60;
+            document.getElementById('qr-timer').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        // BR-09: RELEASE RESERVATION ON TIMEOUT OR CANCEL
+        function cancelQRPayment() {
+            stopQRTimer();
+            showToast('Đã hủy giao dịch & giải phóng giữ mã', 'fa-solid fa-circle-info text-amber-400');
+            switchScreen(2);
+        }
+
+        function triggerQRExpire() {
+            stopQRTimer();
+            // Clear discount code per BR-09
+            clearDiscountCode();
+            switchScreen(2);
+            showToast('Hết thời hạn 15 phút QR! Đã xóa mã & khôi phục giá gốc', 'fa-solid fa-circle-exclamation text-rose-400');
+        }
+
+        function simulateAppPayment(bankName) {
+            showToast(`Đang mở app ${bankName}...`);
+            setTimeout(() => {
+                simulatePaymentSuccess();
+            }, 1200);
+        }
+
+        function simulatePaymentSuccess() {
+            stopQRTimer();
+            const finalAmount = calculatePrices();
+            openSuccessModal(finalAmount);
+        }
+
+        function openSuccessModal(amount) {
+            document.getElementById('success-paid-amount').textContent = formatCurrency(amount);
+            const discountRow = document.getElementById('success-discount-row');
+            if (appliedDiscount) {
+                discountRow.classList.remove('hidden');
+                document.getElementById('success-code-name').textContent = appliedDiscount.code;
+            } else {
+                discountRow.classList.add('hidden');
+            }
+            document.getElementById('modal-success').classList.remove('hidden');
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('modal-success').classList.add('hidden');
+            switchScreen(1);
+            clearDiscountCode();
+            showToast('Đơn hàng đã hoàn thành!', 'fa-solid fa-circle-check text-emerald-400');
+        }
+
+        function formatCurrency(val) {
+            return new Intl.NumberFormat('vi-VN').format(val) + ' VNĐ';
+        }
+
+        let toastTimeout = null;
+        function showToast(msg, iconClass = "fa-solid fa-circle-info text-amber-400") {
+            const toast = document.getElementById('custom-toast');
+            const toastMsg = document.getElementById('custom-toast-msg');
+            const toastIcon = document.getElementById('custom-toast-icon');
+
+            if (toast && toastMsg) {
+                toastMsg.textContent = msg;
+                if (toastIcon) toastIcon.className = iconClass;
+
+                toast.classList.remove('hidden');
+                toast.offsetHeight; // force reflow
+                toast.classList.remove('-translate-y-6', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+
+                if (toastTimeout) clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('-translate-y-6', 'opacity-0');
+                    setTimeout(() => toast.classList.add('hidden'), 300);
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+
+</html>
