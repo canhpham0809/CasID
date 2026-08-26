@@ -4,22 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý ủy quyền - Casso ID</title>
+    <title>Quản lý Ủy quyền - Casso ID</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Outfit:wght@600;700;800;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body, input, select, textarea, button, span, p, div, h1, h2, h3, h4, h5, h6, strong, label, input::placeholder, textarea::placeholder {
+        body,
+        input,
+        select,
+        textarea,
+        button,
+        span,
+        p,
+        div,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        strong,
+        label,
+        input::placeholder,
+        textarea::placeholder {
             font-family: 'Roboto', sans-serif !important;
         }
 
-        /* Giả lập khung viền điện thoại */
         .phone-container {
             width: 375px;
             height: 812px;
         }
 
-        /* Ẩn thanh cuộn */
         .scrollbar-none::-webkit-scrollbar {
             display: none;
         }
@@ -28,17 +45,66 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+
+        /* Toggle switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e2e8f0;
+            transition: .2s ease-in-out;
+            border-radius: 20px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .2s ease-in-out;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+        }
+
+        input:checked+.toggle-slider {
+            background-color: #000000;
+        }
+
+        input:checked+.toggle-slider:before {
+            transform: translateX(14px);
+        }
     </style>
 </head>
 
-<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+<body class="bg-gray-100 flex justify-center items-center min-h-screen p-2 sm:p-4">
 
+    <!-- Mobile Device Container -->
     <div
         class="phone-container bg-white shadow-2xl rounded-[40px] overflow-hidden flex flex-col relative border-[8px] border-black">
 
         <!-- Status Bar -->
-        <div class="flex justify-between items-center px-6 pt-3 pb-2 text-xs font-bold text-black bg-white z-10">
-            <span>15:34</span>
+        <div
+            class="flex justify-between items-center px-6 pt-3 pb-2 text-xs font-bold text-black bg-white z-10 shrink-0">
+            <span id="current-time">15:15</span>
             <div class="flex items-center gap-1.5">
                 <i class="fa-solid fa-signal text-[10px]"></i>
                 <span class="text-[9px] font-bold mr-0.5">5G</span>
@@ -47,766 +113,1276 @@
         </div>
 
         <!-- Header -->
-        <div class="px-4 py-3 flex items-center justify-between bg-white border-b border-gray-50 z-10">
-            <div class="flex items-center gap-4">
-                <button class="text-gray-700 text-lg hover:opacity-70" onclick="handleHeaderBack()">
-                    <i class="fa-solid fa-arrow-left"></i>
-                </button>
-                <h1 id="page-title" class="text-[17px] font-bold text-gray-800">Quản lý ủy quyền</h1>
-            </div>
-            <!-- Top Right Button inside list view -->
-            <button id="btn-top-create" onclick="showFormView()"
-                class="text-[10px] font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full px-3.5 py-1.5 transition-all flex items-center active:scale-95">
-                <span>Tạo ủy quyền</span>
+        <div class="px-4 py-3 flex items-center gap-3 bg-white border-b border-gray-100 z-10 shrink-0">
+            <button class="text-gray-700 text-base hover:opacity-70 p-1 active:scale-95 transition-transform"
+                onclick="handleHeaderBack()">
+                <i class="fa-solid fa-arrow-left"></i>
             </button>
+            <h1 id="page-title" class="text-[17px] font-bold text-gray-900 leading-tight">Ủy quyền</h1>
         </div>
 
         <!-- Main Content Area -->
-        <div class="flex-1 overflow-y-auto bg-gray-50/50 relative">
+        <div class="flex-1 overflow-y-auto bg-gray-50/60 relative pb-28">
 
-            <!-- 1. VIEW: LIST DELEGATIONS -->
-            <div id="view-list" class="p-4 flex flex-col gap-4">
-                <!-- Welcome/Explanation Card -->
-                <div class="bg-gray-100/60 rounded-md p-3 flex items-start gap-2.5 shadow-sm">
-                    <i class="fa-solid fa-circle-info text-gray-500 text-xs mt-0.5"></i>
-                    <div class="flex-1">
-                        <p class="text-[10px] text-gray-600 leading-normal font-medium">
-                            Cho phép người được uỷ quyền thấy và truy cập các yêu cầu ký được gửi tới người uỷ quyền
-                        </p>
-                    </div>
+            <!-- ========================================== -->
+            <!-- 1. VIEW: LIST OF DELEGATIONS (CLEAN & PROMINENT PILLS) -->
+            <!-- ========================================== -->
+            <div id="view-list" class="p-3 flex flex-col gap-2.5">
+
+                <!-- Prominent Entity Selector Pills (with Active Delegation Count Badges) -->
+                <div id="entity-tabs-container" class="flex gap-2 overflow-x-auto scrollbar-none py-1">
+                    <!-- Populated dynamically via JS -->
                 </div>
 
-                <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mt-1">Danh sách đã ủy quyền</h3>
-
-                <!-- Delegation Cards list container -->
-                <div id="delegation-list" class="flex flex-col gap-3">
-                    <!-- Dynamic cards will be rendered here -->
+                <!-- Delegation Cards List Container -->
+                <div id="delegation-list-container" class="flex flex-col gap-2.5 mt-1">
+                    <!-- Dynamic delegation cards will render here -->
                 </div>
+
             </div>
 
-            <!-- 2. VIEW: CREATE/DETAIL DELEGATION FORM -->
-            <div id="view-form" class="p-5 flex flex-col gap-4 hidden">
-                <!-- Subtitle "Uỷ quyền" -->
-                <div class="text-center text-[12px] text-gray-500 font-semibold uppercase tracking-wider mb-0.5">Uỷ
-                    quyền</div>
+            <!-- ========================================== -->
+            <!-- 2. VIEW: CREATE / EDIT / DETAIL FORM -->
+            <!-- ========================================== -->
+            <div id="view-form" class="p-3.5 flex flex-col gap-3 hidden">
 
-                <!-- Delegator Profile Card -->
-                <div
-                    class="flex items-center gap-3 bg-gray-50/70 border border-gray-150/40 px-4 py-3 rounded-full shadow-sm mx-1">
+                <form id="delegation-form" onsubmit="handleFormSubmit(event)" class="flex flex-col gap-3">
+
+                    <!-- Status Alert Banner (Khi Chờ xác nhận hoặc Bị từ chối) -->
+                    <div id="form-status-alert" class="hidden"></div>
+
+                    <!-- 0. FIELD: NGƯỜI ỦY QUYỀN (READ-ONLY DISPLAY LABEL) -->
                     <div
-                        class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-white shrink-0 overflow-hidden">
-                        <i class="fa-solid fa-shield-halved text-white text-xs"></i>
-                    </div>
-                    <span class="text-[13px] font-bold text-gray-800 tracking-wide">NGUYEN VAN A</span>
-                </div>
-
-                <!-- Subtitle "Cho" -->
-                <div class="text-center text-[12px] text-gray-500 font-semibold uppercase tracking-wider my-0.5">Cho
-                </div>
-
-                <form onsubmit="submitForm(event)" class="flex flex-col gap-4">
-                    <!-- Textbox CCCD with icon -->
-                    <div id="deleg-input-wrapper" class="relative w-full">
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                            <i class="fa-regular fa-id-card text-gray-400 text-sm"></i>
-                        </div>
-                        <input type="text" id="input-cccd" maxlength="12" inputmode="numeric"
-                            placeholder="Căn cước công dân"
-                            class="w-full pl-10 pr-4 py-3 bg-white border border-black rounded-md text-[13px] placeholder-gray-400 focus:outline-none transition-all font-mono">
-                    </div>
-
-                    <!-- Recipient Profile Card (hidden by default) -->
-                    <div id="deleg-recipient-card" onclick="enableEditRecipientDeleg()"
-                        class="flex items-center gap-3 bg-gray-50/70 border border-gray-150/40 px-4 py-3 rounded-full shadow-sm mx-1 shrink-0 hidden cursor-pointer hover:bg-gray-100 transition-all duration-200">
-                        <div id="deleg-recipient-avatar"
-                            class="w-8 h-8 rounded-full bg-black text-white text-[10px] font-black flex items-center justify-center shrink-0">
-                            QC
-                        </div>
-                        <span id="deleg-recipient-name" class="text-[13px] font-bold text-gray-800 tracking-wide">PHAM HOANG QUANG CANH</span>
-                    </div>
-
-                    <!-- Expiry Date / Duration Selection -->
-                    <div class="flex flex-col gap-2 mt-1 bg-gray-50/50 border border-gray-100 rounded-lg p-3">
-                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Thời gian hiệu
-                            lực</label>
-
-                        <div class="grid grid-cols-2 gap-2">
-                            <div class="flex flex-col gap-1">
-                                <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Từ ngày
-                                    giờ</label>
-                                <input type="datetime-local" id="input-start-date" required
-                                    class="w-full px-2.5 py-2 bg-white border border-gray-200 rounded-md text-[11px] text-gray-700 focus:outline-none focus:border-black transition-all">
+                        class="bg-white rounded-xl p-3 border border-gray-100 shadow-sm flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div id="form-delegator-badge"
+                                class="w-5 h-5 rounded-full bg-black text-white text-[9px] font-black flex items-center justify-center shrink-0">
+                                NA
                             </div>
-                            <div class="flex flex-col gap-1" id="end-date-container">
-                                <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Đến ngày
-                                    giờ</label>
-                                <input type="datetime-local" id="input-end-date" required
-                                    class="w-full px-2.5 py-2 bg-white border border-gray-200 rounded-md text-[11px] text-gray-700 focus:outline-none focus:border-black transition-all">
-                            </div>
+                            <span id="form-delegator-name" class="text-[12px] font-bold text-gray-900">
+                                NGUYỄN VĂN AN
+                            </span>
                         </div>
+                    </div>
 
-                        <div class="flex items-center gap-2 mt-1.5">
-                            <input type="checkbox" id="checkbox-indefinite" onchange="toggleIndefinite(this)"
-                                class="w-4 h-4 text-black border-gray-300 rounded focus:ring-black accent-black cursor-pointer">
-                            <label for="checkbox-indefinite"
-                                class="text-[11px] font-semibold text-gray-700 cursor-pointer select-none">
-                                Vô thời hạn
+                    <!-- 1. FIELD: NGƯỜI ĐƯỢC ỦY QUYỀN (CCCD -> AUTO VALIDATE ON BLUR/INPUT) -->
+                    <div class="bg-white rounded-xl p-3 border border-gray-100 shadow-sm flex flex-col gap-2">
+                        <div class="flex items-center justify-between">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                                ỦY QUYỀN CHO
                             </label>
+                            <span id="cccd-error-label" class="text-[9.5px] font-bold text-red-500 hidden">
+                                <i class="fa-solid fa-circle-exclamation mr-0.5"></i>Số CCCD không đúng
+                            </span>
+                        </div>
+
+                        <!-- Clean Input CCCD mode without extra buttons -->
+                        <div id="cccd-input-wrapper" class="flex flex-col gap-1">
+                            <div class="relative w-full">
+                                <input type="text" id="input-cccd" maxlength="12" inputmode="numeric"
+                                    placeholder="Nhập số CCCD (12 số)" oninput="handleCccdInput(this.value)"
+                                    onblur="validateCccdOnBlur()"
+                                    class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[12px] placeholder-gray-400 focus:outline-none focus:border-black transition-all font-mono">
+                            </div>
+                        </div>
+
+                        <!-- Verified CasID Profile Card -->
+                        <div id="verified-recipient-card"
+                            class="flex items-center justify-between bg-gray-50 border border-gray-200 px-3 py-2 rounded-xl hidden">
+                            <div class="flex items-center gap-2.5">
+                                <div id="recipient-avatar"
+                                    class="w-8 h-8 rounded-full bg-gray-800 text-white text-[10.5px] font-bold flex items-center justify-center shrink-0 shadow-sm">
+                                    VH
+                                </div>
+                                <div class="flex flex-col text-left">
+                                    <div class="flex items-center gap-1">
+                                        <span id="recipient-name" class="text-[12px] font-bold text-gray-900">Nguyễn Văn
+                                            Hùng</span>
+                                        <i class="fa-solid fa-circle-check text-emerald-500 text-[10px]"></i>
+                                    </div>
+                                    <span id="recipient-casid-info"
+                                        class="text-[9px] text-gray-400 font-mono">022303008786</span>
+                                </div>
+                            </div>
+
+                            <button type="button" onclick="changeRecipient()"
+                                class="px-2.5 py-1 bg-white hover:bg-gray-100 border border-gray-200 rounded-lg text-[9.5px] font-bold text-gray-600 shrink-0 shadow-xs">
+                                Đổi
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Permissions Section -->
-                    <div class="flex flex-col gap-2.5 bg-gray-50/50 border border-gray-100 rounded-lg p-3">
-                        <label class="text-[10.5px] font-bold text-gray-600 block">Phân quyền ủy quyền</label>
+                    <!-- 2. FIELD: TÀI SẢN ỦY QUYỀN & REAL BRAND ICONS -->
+                    <div class="bg-white rounded-xl p-3 border border-gray-100 shadow-sm flex flex-col gap-2.5">
+                        <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                            Tài sản ủy quyền
+                        </label>
 
-                        <div class="flex flex-col gap-3">
-                            <!-- Permission 1 -->
+                        <!-- Asset Main Dropdown -->
+                        <div class="relative">
+                            <select id="select-asset-type" onchange="handleAssetTypeChange(this.value)"
+                                class="w-full pl-3 pr-8 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[11.5px] font-bold text-gray-800 focus:outline-none focus:border-black appearance-none transition-all cursor-pointer">
+                                <option value="bank">Ngân hàng</option>
+                                <option value="cert">Chứng Thư Số</option>
+                                <option value="invoice">Hóa Đơn Điện Tử</option>
+                                <option value="identity">Định danh</option>
+                            </select>
+                            <div
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
+                                <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                            </div>
+                        </div>
+
+                        <!-- SUB-ASSETS MULTI-SELECT CHECKLIST WITH REAL LOGOS -->
+                        <div id="sub-asset-wrapper" class="flex flex-col gap-1.5 mt-0.5 pt-2 border-t border-gray-100">
                             <div class="flex items-center justify-between">
-                                <span class="text-[11px] text-gray-700 font-medium">Được phép xem tài liệu</span>
-                                <label class="relative inline-flex items-center cursor-pointer select-none">
-                                    <input type="checkbox" id="perm-view" checked class="sr-only peer">
-                                    <div
-                                        class="w-7 h-4 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-black">
-                                    </div>
-                                </label>
+                                <span id="sub-asset-label"
+                                    class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                                    Danh sách tài sản
+                                </span>
+                                <button type="button" onclick="toggleSelectAllSubAssets()" id="btn-toggle-all-sub"
+                                    class="text-[9.5px] font-bold text-blue-600 hover:text-blue-800">
+                                    Chọn tất cả
+                                </button>
                             </div>
 
-                            <!-- Permission 2 -->
-                            <div class="flex items-center justify-between">
-                                <span class="text-[11px] text-gray-700 font-medium">Được nhận thông báo khi có tài
-                                    liệu</span>
-                                <label class="relative inline-flex items-center cursor-pointer select-none">
-                                    <input type="checkbox" id="perm-noti" checked class="sr-only peer">
-                                    <div
-                                        class="w-7 h-4 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-black">
-                                    </div>
-                                </label>
-                            </div>
-
-                            <!-- Permission 3 -->
-                            <div class="flex items-center justify-between">
-                                <span class="text-[11px] text-gray-700 font-medium">Được phép ký / từ chối tài
-                                    liệu</span>
-                                <label class="relative inline-flex items-center cursor-pointer select-none">
-                                    <input type="checkbox" id="perm-sign" checked class="sr-only peer">
-                                    <div
-                                        class="w-7 h-4 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-black">
-                                    </div>
-                                </label>
+                            <div id="sub-assets-checkbox-list"
+                                class="flex flex-col gap-1.5 max-h-52 overflow-y-auto scrollbar-none">
+                                <!-- Dynamic multi-select items rendered with real brand logos via JS -->
                             </div>
                         </div>
                     </div>
 
-                    <!-- Action buttons -->
-                    <div class="flex flex-col gap-2 mt-1">
-                        <!-- Submit Button -->
-                        <button type="submit" id="btn-submit"
-                            class="w-full py-3 bg-black hover:bg-gray-900 text-white text-[15px] font-bold rounded-md transition-all active:scale-[0.98]">
-                            Tiếp tục
+                    <!-- 3. FIELD: THỜI GIAN ỦY QUYỀN (NGÀY & GIỜ) -->
+                    <div class="bg-white rounded-xl p-3 border border-gray-100 shadow-sm flex flex-col gap-2.5">
+                        <div class="flex items-center justify-between">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                                Thời hạn hiệu lực
+                            </label>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[10.5px] font-medium text-gray-600">Vô thời hạn</span>
+                                <label class="toggle-switch shrink-0">
+                                    <input type="checkbox" id="checkbox-indefinite"
+                                        onchange="handleIndefiniteToggle(this.checked)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <!-- CỘT TỪ NGÀY & GIỜ -->
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-[9.5px] font-bold text-gray-600 uppercase tracking-wider">Từ ngày & Giờ</label>
+                                <input type="date" id="input-start-date" required
+                                    class="w-full px-2 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-[11px] text-gray-800 focus:outline-none focus:border-black transition-all">
+                                <div class="relative w-full">
+                                    <input type="time" id="input-start-time" value="00:00"
+                                        class="w-full px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-[11px] text-gray-800 focus:outline-none focus:border-black transition-all font-mono">
+                                </div>
+                            </div>
+
+                            <!-- CỘT ĐẾN NGÀY & GIỜ -->
+                            <div class="flex flex-col gap-1.5" id="end-date-container">
+                                <label class="text-[9.5px] font-bold text-gray-600 uppercase tracking-wider">Đến ngày & Giờ</label>
+                                <input type="date" id="input-end-date" required
+                                    class="w-full px-2 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-[11px] text-gray-800 focus:outline-none focus:border-black transition-all">
+                                <div class="relative w-full">
+                                    <input type="time" id="input-end-time" value="23:59"
+                                        class="w-full px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-[11px] text-gray-800 focus:outline-none focus:border-black transition-all font-mono">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. CTA ACTION BUTTONS (LƯU LẠI, TẠM DỪNG, XÓA ỦY QUYỀN) -->
+                    <div class="flex flex-col gap-1.5 pt-1">
+                        <!-- Primary CTA Button: Lưu / Lưu lại -->
+                        <button type="submit" id="btn-submit-form"
+                            class="w-full py-2.5 bg-black hover:bg-gray-900 text-white text-[12px] font-bold rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1.5">
+                            <span id="btn-submit-text">Lưu lại</span>
                         </button>
 
-                        <!-- Disable Button -->
-                        <button type="button" id="btn-form-disable" onclick="disableEditingDelegation()"
-                            class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 text-[15px] font-bold rounded-md transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 hidden">
-                            Vô hiệu hóa ủy quyền
+                        <!-- Detail Mode Secondary Button: Tạm dừng / Tiếp tục ủy quyền -->
+                        <button type="button" id="btn-toggle-pause" onclick="handlePauseToggleClick()"
+                            class="w-full py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 text-[11.5px] font-bold rounded-lg transition-all active:scale-[0.98] border border-amber-200 hidden flex items-center justify-center gap-1.5">
+                            <i id="btn-toggle-pause-icon" class="fa-solid fa-pause text-[9.5px]"></i>
+                            <span id="btn-toggle-pause-text">Tạm dừng ủy quyền</span>
+                        </button>
+
+                        <!-- Detail Mode Danger Button: Xóa ủy quyền -->
+                        <button type="button" id="btn-delete-delegation" onclick="handleDeleteClick()"
+                            class="w-full py-2 bg-red-50 hover:bg-red-100 text-red-600 text-[11.5px] font-bold rounded-lg transition-all active:scale-[0.98] border border-red-200 hidden flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-trash-can text-[9.5px]"></i>
+                            <span>Xóa ủy quyền</span>
                         </button>
                     </div>
+
                 </form>
 
-                <!-- History Logs Section -->
-                <div id="history-section" class="mt-2 bg-gray-50/50 border border-gray-100 rounded-xl p-3.5 hidden">
-                    <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-2.5">Lịch sử hoạt
-                        động</label>
-                    <div id="history-list" class="border-l border-gray-200 pl-3 flex flex-col gap-3">
-                        <!-- Dynamic history logs go here -->
-                    </div>
-                </div>
             </div>
+
         </div>
 
-        <!-- Custom Toast alert -->
-        <div id="custom-toast"
-            class="absolute top-12 left-4 right-4 z-50 bg-gray-900/95 backdrop-blur-md text-white rounded-2xl p-3.5 shadow-xl flex items-center gap-2.5 transform -translate-y-6 opacity-0 transition-all duration-300 pointer-events-none hidden border border-gray-800">
-            <i id="custom-toast-icon" class="text-xs shrink-0 text-emerald-400 fa-solid fa-circle-info"></i>
-            <span id="custom-toast-msg" class="text-[11px] font-semibold leading-snug">Đã cập nhật trạng thái!</span>
-        </div>
-
-        <!-- Custom Confirm Modal -->
+        <!-- ========================================== -->
+        <!-- CONFIRM MODAL (TẠM DỪNG / KHÔI PHỤC / XÓA) -->
+        <!-- ========================================== -->
         <div id="confirm-modal"
-            class="absolute inset-0 z-50 bg-black/40 flex items-center justify-center p-6 transition-all duration-200 opacity-0 pointer-events-none rounded-[40px]">
+            class="absolute inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6 transition-all duration-200 opacity-0 pointer-events-none rounded-[40px]">
             <div
-                class="bg-white rounded-2xl p-4 w-full max-w-[280px] shadow-xl transform scale-90 transition-transform duration-200 flex flex-col gap-3.5">
-                <div class="flex flex-col gap-1 text-center">
-                    <h4 class="text-sm font-bold text-gray-800">Vô hiệu hóa ủy quyền?</h4>
-                    <p class="text-[10px] text-gray-500 leading-relaxed">
-                        Bạn có chắc chắn muốn vô hiệu hóa quyền ký duyệt thay thế của người này?
-                    </p>
+                class="bg-white rounded-2xl p-4 w-full max-w-[280px] shadow-xl transform scale-90 transition-transform duration-200 flex flex-col gap-3 text-center">
+                <div class="flex flex-col gap-1">
+                    <h4 id="modal-title" class="text-sm font-bold text-gray-900">Xác nhận</h4>
+                    <p id="modal-desc" class="text-[11px] text-gray-500 leading-relaxed"></p>
                 </div>
-                <div class="flex gap-2 text-xs font-bold">
+                <div class="flex gap-2 text-xs font-bold pt-1">
                     <button type="button" onclick="closeConfirmModal()"
-                        class="flex-1 py-2.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold text-[14px] transition-colors">
+                        class="flex-1 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-[12px] transition-colors">
                         Bỏ qua
                     </button>
-                    <button type="button" onclick="executeDisableDelegation()"
-                        class="flex-1 py-2.5 rounded-lg bg-black hover:bg-gray-900 text-white font-bold text-[14px] transition-colors">
+                    <button type="button" id="modal-confirm-btn" onclick="executeModalAction()"
+                        class="flex-1 py-2 rounded-lg bg-black hover:bg-gray-900 text-white font-bold text-[12px] transition-colors shadow-sm">
                         Đồng ý
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Bottom Navigation Bar (active tab: Cấp quyền) -->
+        <!-- ========================================== -->
+        <!-- BOTTOM NAVIGATION BAR (Active tab: Ủy quyền) -->
+        <!-- ========================================== -->
         <div
-            class="bg-white border-t border-gray-100 px-2 py-2 flex justify-around items-center text-[10px] text-gray-400 font-medium pb-5 z-10">
-            <button onclick="showComingSoon()" class="flex flex-col items-center gap-1 w-16 text-gray-400">
-                <i class="fa-solid fa-house text-lg"></i>
+            class="bg-white border-t border-gray-100 px-2 py-2 flex justify-around items-center text-[10px] text-gray-400 font-medium pb-5 z-10 shrink-0">
+            <button onclick="window.location.href='index.html'"
+                class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
+                <i class="fa-solid fa-house text-base"></i>
                 <span>Trang chủ</span>
             </button>
-            <button onclick="window.location.href='index.html'"
-                class="flex flex-col items-center gap-1 w-16 text-gray-400">
-                <i class="fa-solid fa-server text-lg"></i>
+            <button onclick="window.location.href='casID-sign-data.html'"
+                class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
+                <i class="fa-solid fa-server text-base"></i>
                 <span>Dữ liệu</span>
             </button>
             <button class="flex flex-col items-center gap-1 w-16 text-black">
                 <i class="fa-solid fa-qrcode text-lg text-black"></i>
-                <span class="font-bold">Cấp quyền</span>
+                <span class="font-bold">Ủy quyền</span>
             </button>
             <button onclick="window.location.href='casID-sign-noti.html'"
-                class="flex flex-col items-center gap-1 w-16 text-gray-400 relative">
+                class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700 relative">
                 <div class="relative">
-                    <i class="fa-solid fa-bell text-lg"></i>
+                    <i class="fa-solid fa-bell text-base"></i>
                     <span id="footer-noti-badge"
-                        class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center border border-white hidden">
+                        class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center border border-white">
                         2
                     </span>
                 </div>
                 <span>Thông báo</span>
             </button>
-            <button onclick="showComingSoon()" class="flex flex-col items-center gap-1 w-16 text-gray-400">
-                <i class="fa-solid fa-circle-user text-lg"></i>
+            <button onclick="showToast('Tính năng Hồ sơ đang phát triển')"
+                class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
+                <i class="fa-solid fa-circle-user text-base"></i>
                 <span>Hồ sơ</span>
             </button>
         </div>
 
+        <!-- Floating Toast Alert -->
+        <div id="custom-toast"
+            class="absolute top-12 left-4 right-4 z-50 bg-gray-900/95 backdrop-blur-md text-white rounded-xl p-3 shadow-2xl flex items-center gap-2 transform -translate-y-6 opacity-0 transition-all duration-300 pointer-events-none hidden border border-gray-800">
+            <i id="custom-toast-icon" class="text-xs shrink-0 text-emerald-400 fa-solid fa-circle-check"></i>
+            <span id="custom-toast-msg" class="text-[11px] font-semibold leading-snug"></span>
+        </div>
+
     </div>
 
+    <!-- ========================================== -->
+    <!-- JAVASCRIPT LOGIC -->
+    <!-- ========================================== -->
     <script>
-        // Persistence logic for signing delegations
-        function getSigningDelegations() {
-            const stored = localStorage.getItem('signing_delegations');
-            if (stored) return JSON.parse(stored);
-            const defaultMock = [
+        // MOCK DATABASE & DEFINITIONS
+        const DELEGATOR_PROFILES = {
+            'personal': { name: 'NGUYỄN VĂN AN', short: 'Nguyễn Văn An', badge: 'NA', pillBg: 'bg-black text-white' },
+            'casso': { name: 'CÔNG TY CASSO', short: 'Công Ty Casso', badge: 'C', pillBg: 'bg-purple-50 text-purple-900 border-purple-100' },
+            'a4b': { name: 'CÔNG TY A4B', short: 'Công Ty A4B', badge: 'AB', pillBg: 'bg-blue-50 text-blue-900 border-blue-100' }
+        };
+
+        const MOCK_RECIPIENTS = {
+            '022303008786': { name: 'Nguyễn Văn Hùng', avatar: 'VH', cccd: '022303008786' },
+            '030987654321': { name: 'Hoàng Thị Mai', avatar: 'TM', cccd: '030987654321' },
+            '079201004567': { name: 'Lê Quốc Trung', avatar: 'QT', cccd: '079201004567' },
+            '012345678910': { name: 'Nguyễn Văn An', avatar: 'NA', cccd: '012345678910' }
+        };
+
+        // REAL BRAND LOGOS & ASSET DEFINITIONS
+        const ASSET_DEFINITIONS = {
+            'bank': {
+                label: 'Ngân hàng',
+                brandText: 'BANK',
+                subOptions: [
+                    { id: 'vcb', name: 'Vietcombank', code: '0123456789', brandText: 'VCB', logoUrl: 'assets/vcb.png', brandBg: 'bg-emerald-700 text-white' },
+                    { id: 'tcb', name: 'Techcombank', code: '1903456789', brandText: 'TCB', logoUrl: 'assets/tcb.png', brandBg: 'bg-red-600 text-white' },
+                    { id: 'mb', name: 'MB Bank', code: '8888999922', brandText: 'MB', logoUrl: 'assets/mb.png', brandBg: 'bg-blue-800 text-white' },
+                    { id: 'acb', name: 'ACB', code: '987654321', brandText: 'ACB', logoUrl: 'assets/acb.png', brandBg: 'bg-blue-600 text-white' }
+                ]
+            },
+            'cert': {
+                label: 'Chứng Thư Số',
+                brandText: 'CAS',
+                subOptions: [
+                    { id: 'cas_cert', name: 'CAS CERT', code: '5404...8910', brandText: 'CAS', logoUrl: 'assets/cas_cert.png', brandBg: 'bg-white' },
+                    { id: 'hilo_ca', name: 'HILO CA', code: '2819...9941', brandText: 'HILO', logoUrl: 'assets/hilo.png', brandBg: 'bg-white' }
+                ]
+            },
+            'invoice': {
+                label: 'Hóa Đơn Điện Tử',
+                brandText: 'xInv',
+                subOptions: [
+                    { id: 'xinvoice', name: 'xInvoice', code: 'CN Hồ Chí Minh', brandText: 'xInv', logoUrl: 'assets/xinvoice.png', brandBg: 'bg-white' },
+                    { id: 'hilo_inv', name: 'HILO Invoice', code: 'Trụ sở chính', brandText: 'HILO', logoUrl: 'assets/hilo.png', brandBg: 'bg-white' }
+                ]
+            },
+            'identity': {
+                label: 'Định danh',
+                brandText: 'Casso',
+                subOptions: [
+                    { id: 'id_login', name: 'Đăng nhập Casso Account', code: 'Casso Identity System', brandText: 'Casso', logoUrl: 'assets/casso.png', brandBg: 'bg-white' }
+                ]
+            }
+        };
+
+        // HELPER TO RENDER CIRCLE LOGO (IMAGE / SHARP SVG BADGE)
+        function renderOptionCircleIcon(opt, sizeClass = 'w-8 h-8') {
+            // 1. VIETCOMBANK EXACT USER LOGO
+            if (opt.id === 'vcb') {
+                return `
+                    <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
+                        <img src="assets/vcb.png" alt="Vietcombank" class="w-full h-full object-contain rounded-full">
+                    </div>
+                `;
+            }
+
+            // 2. TECHCOMBANK EXACT USER LOGO
+            if (opt.id === 'tcb') {
+                return `
+                    <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
+                        <img src="assets/tcb.png" alt="Techcombank" class="w-full h-full object-contain rounded-full">
+                    </div>
+                `;
+            }
+
+            // 3. MB BANK EXACT USER LOGO
+            if (opt.id === 'mb') {
+                return `
+                    <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
+                        <img src="assets/mb.png" alt="MB" class="w-full h-full object-contain rounded-full">
+                    </div>
+                `;
+            }
+
+            // 4. ACB EXACT USER LOGO
+            if (opt.id === 'acb') {
+                return `
+                    <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
+                        <img src="assets/acb.png" alt="ACB" class="w-full h-full object-contain rounded-full">
+                    </div>
+                `;
+            }
+
+            // 5. HILO EXACT USER LOGO
+            if (opt.id === 'hilo_ca' || opt.id === 'hilo_inv' || opt.logoType === 'hilo' || (opt.id && opt.id.includes('hilo'))) {
+                return `
+                    <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
+                        <img src="assets/hilo.png" alt="HILO" class="w-full h-full object-contain rounded-full">
+                    </div>
+                `;
+            }
+
+            // 6. XINVOICE EXACT USER LOGO
+            if (opt.id === 'xinvoice' || opt.logoType === 'xinvoice') {
+                return `
+                    <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
+                        <img src="assets/xinvoice.png" alt="xInvoice" class="w-full h-full object-contain rounded-full">
+                    </div>
+                `;
+            }
+
+            // 7. CAS CERT EXACT USER LOGO
+            if (opt.id === 'cas_cert' || opt.logoType === 'cas_cert') {
+                return `
+                    <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
+                        <img src="assets/cas_cert.png" alt="CAS CERT" class="w-full h-full object-contain rounded-full">
+                    </div>
+                `;
+            }
+
+            // 8. CASSO ACCOUNT EXACT USER LOGO
+            if (opt.id === 'id_login' || opt.logoType === 'casid' || opt.id === 'casid' || opt.id === 'casso') {
+                return `
+                    <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
+                        <img src="assets/casso.png" alt="Casso Account" class="w-full h-full object-contain rounded-full">
+                    </div>
+                `;
+            }
+
+            // 9. Logo Image URL
+            if (opt.logoUrl) {
+                return `
+                    <div class="${sizeClass} rounded-full bg-white p-0.5 flex items-center justify-center border border-gray-200 shadow-xs overflow-hidden shrink-0">
+                        <img src="${opt.logoUrl}" alt="${opt.name}" class="w-full h-full object-contain rounded-full" onerror="this.parentElement.innerHTML='<span class=\\'font-black text-[8px] text-gray-800\\'>${opt.brandText}</span>'">
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="${sizeClass} rounded-full ${opt.brandBg || 'bg-gray-800 text-white'} flex items-center justify-center font-bold text-[8.5px] border border-white shadow-xs shrink-0">
+                    ${opt.brandText || 'ID'}
+                </div>
+            `;
+        }
+
+        // INITIAL DEFAULT DATA (PERSISTED IN LOCALSTORAGE)
+        function initializeDelegationsData() {
+            const stored = localStorage.getItem('casso_central_delegations_v6');
+            if (stored) {
+                try { return JSON.parse(stored); } catch (e) { }
+            }
+
+            const initialList = [
                 {
-                    id: 1,
-                    name: "Nguyễn Văn Hùng",
-                    cccd: "022303008786",
-                    durationText: "1 Ngày",
-                    expiryText: "Hết hạn lúc 17/07/2026 12:30",
-                    status: "active",
-                    startDate: "2026-07-16T12:30",
-                    endDate: "2026-07-17T12:30",
+                    id: 101,
+                    delegatorKey: 'personal',
+                    recipient: { name: 'Nguyễn Văn Hùng', cccd: '022303008786', avatar: 'VH' },
+                    assetType: 'bank',
+                    subAssetIds: ['vcb', 'tcb'],
+                    startDate: '2026-08-01',
+                    startTime: '08:00',
+                    endDate: '2026-12-31',
+                    endTime: '18:00',
                     isIndefinite: false,
-                    history: [
-                        { time: "16/07/2026 12:30", note: "Khởi tạo ủy quyền" }
-                    ]
+                    status: 'active'
                 },
                 {
-                    id: 2,
-                    name: "Trần Thị Tuyết",
-                    cccd: "031204900123",
-                    durationText: "7 Ngày",
-                    expiryText: "Hết hạn lúc 10/07/2026 17:43",
-                    status: "expired",
-                    startDate: "2026-07-03T17:43",
-                    endDate: "2026-07-10T17:43",
+                    id: 102,
+                    delegatorKey: 'casso',
+                    recipient: { name: 'Hoàng Thị Mai', cccd: '030987654321', avatar: 'TM' },
+                    assetType: 'cert',
+                    subAssetIds: ['cas_cert'],
+                    startDate: '2026-08-15',
+                    startTime: '08:00',
+                    endDate: '',
+                    endTime: '',
+                    isIndefinite: true,
+                    status: 'pending'
+                },
+                {
+                    id: 103,
+                    delegatorKey: 'casso',
+                    recipient: { name: 'Lê Quốc Trung', cccd: '079201004567', avatar: 'QT' },
+                    assetType: 'cert',
+                    subAssetIds: ['cas_cert'],
+                    startDate: '2026-08-10',
+                    startTime: '08:00',
+                    endDate: '2026-09-10',
+                    endTime: '18:00',
                     isIndefinite: false,
-                    history: [
-                        { time: "03/07/2026 17:43", note: "Khởi tạo ủy quyền" },
-                        { time: "10/07/2026 17:43", note: "Hết hạn hiệu lực" }
-                    ]
+                    status: 'active'
+                },
+                {
+                    id: 104,
+                    delegatorKey: 'a4b',
+                    recipient: { name: 'Nguyễn Văn Hùng', cccd: '022303008786', avatar: 'VH' },
+                    assetType: 'invoice',
+                    subAssetIds: ['xinvoice'],
+                    startDate: '2026-07-01',
+                    startTime: '08:00',
+                    endDate: '2026-08-01',
+                    endTime: '18:00',
+                    isIndefinite: false,
+                    status: 'active'
+                },
+                {
+                    id: 105,
+                    delegatorKey: 'personal',
+                    recipient: { name: 'Trần Thu Hà', cccd: '030198009988', avatar: 'TH' },
+                    assetType: 'bank',
+                    subAssetIds: ['mb', 'acb'],
+                    startDate: '2026-08-20',
+                    startTime: '09:00',
+                    endDate: '2026-11-20',
+                    endTime: '18:00',
+                    isIndefinite: false,
+                    status: 'pending'
                 }
             ];
-            localStorage.setItem('signing_delegations', JSON.stringify(defaultMock));
-            return defaultMock;
+
+            localStorage.setItem('casso_central_delegations_v6', JSON.stringify(initialList));
+            return initialList;
         }
 
-        let delegationsData = [];
-
-        let isFormView = false;
-        let selectedItem = null;
+        // STATE VARIABLES
+        let delegationsList = [];
+        let currentFilterEntity = 'personal'; // Default selected entity: Nguyễn Văn An
+        let isFormViewActive = false;
         let editingDelegationId = null;
+        let currentVerifiedRecipient = null;
+        let pendingModalAction = null;
 
+        // ON LOAD INITIALIZATION
         window.onload = function () {
-            delegationsData = getSigningDelegations();
-            updateFooterNotiBadge();
-            renderDelegations();
+            delegationsList = initializeDelegationsData();
+            updateLiveTime();
+            renderEntityTabs();
+            renderDelegationList();
+
+            setupDefaultDates();
+            handleAssetTypeChange('bank');
         };
 
-        function renderDelegations() {
-            const container = document.getElementById('delegation-list');
+        function updateLiveTime() {
+            const timeEl = document.getElementById('current-time');
+            if (!timeEl) return;
+            const now = new Date();
+            const hrs = String(now.getHours()).padStart(2, '0');
+            const mins = String(now.getMinutes()).padStart(2, '0');
+            timeEl.textContent = `${hrs}:${mins}`;
+        }
+
+        function setupDefaultDates() {
+            const now = new Date();
+            const startInput = document.getElementById('input-start-date');
+            const startTimeInput = document.getElementById('input-start-time');
+            const endInput = document.getElementById('input-end-date');
+            const endTimeInput = document.getElementById('input-end-time');
+
+            if (startInput) startInput.value = formatDateForInput(now);
+            if (startTimeInput) startTimeInput.value = "00:00";
+
+            if (endInput) {
+                const nextMonth = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+                endInput.value = formatDateForInput(nextMonth);
+            }
+            if (endTimeInput) endTimeInput.value = "23:59";
+        }
+
+        function formatDateForInput(date) {
+            const yr = date.getFullYear();
+            const mo = String(date.getMonth() + 1).padStart(2, '0');
+            const da = String(date.getDate()).padStart(2, '0');
+            return `${yr}-${mo}-${da}`;
+        }
+
+        function formatDisplayDate(dStr) {
+            if (!dStr) return '';
+            const parts = dStr.split('-');
+            if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+            return dStr;
+        }
+
+        // ========================================================
+        // 1. PROMINENT ENTITY PILLS WITH ACTIVE RED COUNT BADGES
+        // ========================================================
+        function renderEntityTabs() {
+            const tabsContainer = document.getElementById('entity-tabs-container');
+            if (!tabsContainer) return;
+
+            const entities = [
+                { key: 'personal', name: 'Nguyễn Văn An', avatar: 'NA', avatarBg: 'bg-white text-black' },
+                { key: 'casso', name: 'Công Ty Casso', avatar: 'C', avatarBg: 'bg-purple-200 text-purple-800' },
+                { key: 'a4b', name: 'Công Ty A4B', avatar: 'AB', avatarBg: 'bg-gray-100 text-gray-700' }
+            ];
+
+            tabsContainer.innerHTML = entities.map(ent => {
+                const activeCount = delegationsList.filter(d => d.delegatorKey === ent.key && d.status === 'active').length;
+                const isActive = (currentFilterEntity === ent.key);
+
+                const activeStyles = "bg-black text-white shadow-md border border-black";
+                const inactiveStyles = "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50";
+
+                const badgeHtml = activeCount > 0
+                    ? `<span class="min-w-[16px] h-4 bg-red-500 text-white rounded-full text-[9px] font-bold flex items-center justify-center px-1 shadow-xs">${activeCount}</span>`
+                    : '';
+
+                return `
+                    <button onclick="filterByEntity('${ent.key}')" id="filter-tab-${ent.key}"
+                        class="px-3.5 py-1.5 rounded-full flex items-center gap-2 font-bold text-[11px] shrink-0 transition-all cursor-pointer ${isActive ? activeStyles : inactiveStyles}">
+                        <div class="w-5 h-5 rounded-full ${isActive ? 'bg-white text-black' : ent.avatarBg} text-[9px] font-black flex items-center justify-center shrink-0">
+                            ${ent.avatar}
+                        </div>
+                        <span class="tracking-wide">${ent.name}</span>
+                        ${badgeHtml}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function filterByEntity(entKey) {
+            currentFilterEntity = entKey;
+            renderEntityTabs();
+            renderDelegationList();
+        }
+
+        // ========================================================
+        // 2. LIST RENDERING (BOTTOM CREATE BUTTON & EMPTY CARD)
+        // ========================================================
+        function renderDelegationList() {
+            const container = document.getElementById('delegation-list-container');
             if (!container) return;
 
-            container.innerHTML = "";
+            // Apply Filters (by active entity tab)
+            let filtered = delegationsList.filter(item => {
+                return item.delegatorKey === currentFilterEntity;
+            });
 
-            if (delegationsData.length === 0) {
+            container.innerHTML = '';
+
+            if (filtered.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center p-8 bg-white border border-gray-155 rounded-2xl text-gray-400 flex flex-col gap-2 items-center justify-center mt-2">
-                        <i class="fa-solid fa-folder-open text-2xl text-gray-300"></i>
-                        <p class="text-[11px]">Chưa có danh sách ủy quyền nào</p>
+                    <div class="mt-4 p-6 bg-[#f8f9fa] border border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center text-center">
+                        <i class="fa-solid fa-shield-halved text-[28px] text-gray-300 mb-2"></i>
+                        <p class="text-[11px] text-gray-400 font-medium mb-3.5">Bạn chưa có ủy quyền nào</p>
+                        <button onclick="showCreateFormView()"
+                            class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1">
+                            <span>Tạo ủy quyền mới +</span>
+                        </button>
                     </div>
                 `;
                 return;
             }
 
-            delegationsData.forEach(item => {
-                let statusBadge = "";
-                const isPending = item.status === 'pending';
-                const isRejected = item.status === 'rejected';
-                const isActive = item.status === 'active';
+            filtered.forEach(item => {
+                const assetDef = ASSET_DEFINITIONS[item.assetType] || ASSET_DEFINITIONS['cert'];
+                const selectedIds = item.subAssetIds || (item.subAssetId ? [item.subAssetId] : []);
 
-                if (isPending) {
-                    statusBadge = `<span class="bg-amber-50 text-amber-700 text-[8.5px] font-bold px-2 py-0.5 rounded-full border border-amber-100">Chờ xác nhận</span>`;
-                } else if (isRejected) {
-                    statusBadge = `<span class="bg-red-50 text-red-700 text-[8.5px] font-bold px-2 py-0.5 rounded-full border border-red-100">Từ chối</span>`;
-                } else if (isActive) {
-                    statusBadge = `<span class="bg-emerald-50 text-emerald-700 text-[8.5px] font-bold px-2 py-0.5 rounded-full border border-emerald-100">Đang hiệu lực</span>`;
-                } else {
-                    statusBadge = `<span class="bg-gray-150 text-gray-500 text-[8.5px] font-semibold px-2 py-0.5 rounded-full border border-gray-200">Hết hiệu lực</span>`;
+                // Construct Circular Icon(s) Cluster with real images
+                let iconClusterHtml = '';
+
+                if (selectedIds.length > 0 && assetDef.subOptions) {
+                    const matched = assetDef.subOptions.filter(o => selectedIds.includes(o.id));
+                    if (matched.length > 0) {
+                        iconClusterHtml = `
+                            <div class="flex items-center -space-x-2 shrink-0 py-0.5">
+                                ${matched.map(opt => renderOptionCircleIcon(opt, 'w-8 h-8')).join('')}
+                            </div>
+                        `;
+                    }
                 }
 
-                const timeColorClass = isActive ? 'text-emerald-600' : 'text-gray-400';
+                if (!iconClusterHtml) {
+                    iconClusterHtml = renderOptionCircleIcon({ brandText: assetDef.brandText, brandBg: 'bg-black text-white' }, 'w-8 h-8');
+                }
+
+                // Status Badge
+                let statusBadge = '';
+                if (item.status === 'active') {
+                    statusBadge = `<span class="text-[8.5px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">Hiệu lực</span>`;
+                } else if (item.status === 'pending') {
+                    statusBadge = `<span class="text-[8.5px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">Chờ xác nhận</span>`;
+                } else if (item.status === 'rejected') {
+                    statusBadge = `<span class="text-[8.5px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-200">Đã từ chối</span>`;
+                } else if (item.status === 'inactive') {
+                    statusBadge = `<span class="text-[8.5px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded border border-gray-200">Tạm dừng</span>`;
+                } else {
+                    statusBadge = `<span class="text-[8.5px] font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded">Hết hạn</span>`;
+                }
+
+                // Duration Text: Từ ngày tới ngày
+                const startStr = formatDisplayDate(item.startDate);
+                const endStr = item.isIndefinite ? 'Vô thời hạn' : formatDisplayDate(item.endDate);
+                let durationText = '';
+                if (startStr && endStr) {
+                    durationText = `${startStr} - ${endStr}`;
+                } else {
+                    durationText = endStr || startStr || 'Vô thời hạn';
+                }
 
                 const card = document.createElement('div');
-                card.className = "bg-white rounded-xl p-3.5 border border-gray-100 shadow-sm flex items-center justify-between gap-3 cursor-pointer hover:bg-gray-55/60 active:scale-[0.99] transition-all";
-                card.onclick = () => showDetailView(item);
+                card.className = "bg-white rounded-xl p-2.5 border border-gray-150 shadow-sm flex items-center justify-between gap-2.5 cursor-pointer hover:border-black/30 transition-all active:scale-[0.99]";
+                card.onclick = () => showEditFormView(item.id);
+
                 card.innerHTML = `
-                    <div class="flex flex-col gap-1 text-left flex-1">
-                        <h4 class="text-xs font-bold text-gray-800">${item.name || "Người nhận ủy quyền"}</h4>
-                        <p class="text-[9.5px] text-gray-400 font-mono">CCCD: ${item.cccd}</p>
-                        <p class="text-[9px] ${timeColorClass} font-semibold mt-0.5 flex items-center gap-1">
-                            ${item.expiryText}
-                        </p>
+                    <!-- Left: Circular Brand Icons Cluster -->
+                    ${iconClusterHtml}
+
+                    <!-- Middle: Recipient & Info (No delegator tag chip per user request) -->
+                    <div class="flex flex-col flex-1 min-w-0">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[12px] font-bold text-gray-900 truncate">${item.recipient.name}</span>
+                        </div>
+                        <div class="text-[9.5px] text-gray-400 font-mono mt-0.5">
+                            <span>CCCD: ${item.recipient.cccd}</span>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2 shrink-0">
+
+                    <!-- Right: Status & Time (Từ ngày - Tới ngày) -->
+                    <div class="flex flex-col items-end gap-1 shrink-0">
                         ${statusBadge}
+                        <span class="text-[8.5px] text-gray-400 font-medium">${durationText}</span>
                     </div>
                 `;
+
                 container.appendChild(card);
             });
+
+            // Append Bottom Full-Width Create Button (Slim & Sleek)
+            const bottomActionDiv = document.createElement('div');
+            bottomActionDiv.className = "pt-2 pb-1";
+            bottomActionDiv.innerHTML = `
+                <button onclick="showCreateFormView()"
+                    class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1">
+                    <span>Tạo ủy quyền mới +</span>
+                </button>
+            `;
+            container.appendChild(bottomActionDiv);
         }
 
-        window.showDetailView = function (item) {
-            selectedItem = item;
-            editingDelegationId = item.id;
+        // ========================================================
+        // 3. FORM VIEW LOGIC (CREATE & EDIT & DETAIL ACTIONS)
+        // ========================================================
+        function updateFormDelegatorLabel(delegatorKey) {
+            const profile = DELEGATOR_PROFILES[delegatorKey] || DELEGATOR_PROFILES['personal'];
+            const badgeEl = document.getElementById('form-delegator-badge');
+            const nameEl = document.getElementById('form-delegator-name');
+            if (badgeEl) {
+                badgeEl.textContent = profile.badge || 'NA';
+                if (delegatorKey === 'personal') badgeEl.className = "w-5 h-5 rounded-full bg-black text-white text-[9px] font-black flex items-center justify-center shrink-0";
+                else if (delegatorKey === 'casso') badgeEl.className = "w-5 h-5 rounded-full bg-purple-600 text-white text-[9px] font-black flex items-center justify-center shrink-0";
+                else badgeEl.className = "w-5 h-5 rounded-full bg-blue-600 text-white text-[9px] font-black flex items-center justify-center shrink-0";
+            }
+            if (nameEl) nameEl.textContent = profile.name;
+        }
 
-            isFormView = true;
+        function showCreateFormView() {
+            isFormViewActive = true;
+            editingDelegationId = null;
+            currentVerifiedRecipient = null;
+
             document.getElementById('view-list').classList.add('hidden');
             document.getElementById('view-form').classList.remove('hidden');
-            document.getElementById('btn-top-create').classList.add('hidden');
+            document.getElementById('page-title').textContent = "Tạo ủy quyền";
+
+            updateFormDelegatorLabel(currentFilterEntity);
+            clearCccdError();
+
+            const statusAlert = document.getElementById('form-status-alert');
+            if (statusAlert) statusAlert.classList.add('hidden');
+
+            document.getElementById('input-cccd').value = '';
+            document.getElementById('cccd-input-wrapper').classList.remove('hidden');
+            document.getElementById('verified-recipient-card').classList.add('hidden');
+
+            document.getElementById('select-asset-type').value = 'bank';
+            handleAssetTypeChange('bank');
+
+            setupDefaultDates();
+            document.getElementById('checkbox-indefinite').checked = false;
+            handleIndefiniteToggle(false);
+
+            document.getElementById('btn-submit-text').textContent = "Lưu lại";
+            document.getElementById('btn-toggle-pause').classList.add('hidden');
+            document.getElementById('btn-delete-delegation').classList.add('hidden');
+        }
+
+        function showEditFormView(delId) {
+            const item = delegationsList.find(d => d.id === delId);
+            if (!item) return;
+
+            isFormViewActive = true;
+            editingDelegationId = delId;
+
+            document.getElementById('view-list').classList.add('hidden');
+            document.getElementById('view-form').classList.remove('hidden');
             document.getElementById('page-title').textContent = "Chi tiết ủy quyền";
 
-            document.getElementById('input-cccd').value = item.cccd;
+            updateFormDelegatorLabel(item.delegatorKey);
+            clearCccdError();
 
-            // Handle edit mode recipient profile card setup
-            const cccd = item.cccd || '';
-            let verifiedUser = { name: item.name || 'Phạm Văn Nam', avatar: 'QC' };
-            if (cccd === '012345678910' || cccd === '0123456789') {
-                verifiedUser = { name: 'PHAM HOANG QUANG CANH', avatar: 'QC' };
-            } else if (cccd === '022303008786') {
-                verifiedUser = { name: 'NGUYEN VAN B', avatar: 'VB' };
-            } else if (cccd === '0309876543') {
-                verifiedUser = { name: 'HOANG THI MAI', avatar: 'TM' };
-            } else {
-                // Generate simple avatar initials from the name
-                const words = verifiedUser.name.split(' ');
-                if (words.length >= 2) {
-                    verifiedUser.avatar = (words[words.length-2][0] + words[words.length-1][0]).toUpperCase();
-                } else if (words.length === 1) {
-                    verifiedUser.avatar = words[0].substring(0, 2).toUpperCase();
-                }
-            }
-
-            document.getElementById('deleg-input-wrapper').classList.add('hidden');
-            const recipientCard = document.getElementById('deleg-recipient-card');
-            recipientCard.classList.remove('hidden');
-            document.getElementById('deleg-recipient-avatar').textContent = verifiedUser.avatar;
-            document.getElementById('deleg-recipient-name').textContent = verifiedUser.name;
-            isVerifiedRecipientDeleg = true;
-
-            const startInput = document.getElementById('input-start-date');
-            const endInput = document.getElementById('input-end-date');
-            const indefiniteCheckbox = document.getElementById('checkbox-indefinite');
-
-            if (startInput && item.startDate) startInput.value = item.startDate;
-            if (indefiniteCheckbox) {
-                indefiniteCheckbox.checked = !!item.isIndefinite;
-                toggleIndefinite(indefiniteCheckbox);
-            }
-            if (endInput && !item.isIndefinite && item.endDate) endInput.value = item.endDate;
-
-            document.getElementById('perm-view').checked = item.permView !== false;
-            document.getElementById('perm-noti').checked = item.permNoti !== false;
-            document.getElementById('perm-sign').checked = item.permSign !== false;
-
-            const isExpired = item.status === 'expired';
-            setFormFieldsDisabled(false); // Keep fields enabled so they can edit/reactivate
-
-            const submitBtn = document.getElementById('btn-submit');
-            const disableBtn = document.getElementById('btn-form-disable');
-
-            if (submitBtn) {
-                submitBtn.classList.remove('hidden');
-                submitBtn.textContent = "Lưu thay đổi";
-            }
-
-            if (disableBtn) {
-                if (isExpired) {
-                    disableBtn.classList.add('hidden');
+            // Status Banner Alert
+            const statusAlert = document.getElementById('form-status-alert');
+            if (statusAlert) {
+                if (item.status === 'pending') {
+                    statusAlert.className = "p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-2.5 text-[11px] text-amber-800 font-medium";
+                    statusAlert.innerHTML = `
+                        <i class="fa-solid fa-clock text-amber-600 text-sm shrink-0"></i>
+                        <span>Đang chờ người nhận (<b>${item.recipient.name}</b>) xác nhận ủy quyền.</span>
+                    `;
+                    statusAlert.classList.remove('hidden');
+                } else if (item.status === 'rejected') {
+                    statusAlert.className = "p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-2.5 text-[11px] text-red-800 font-medium";
+                    statusAlert.innerHTML = `
+                        <i class="fa-solid fa-circle-xmark text-red-600 text-sm shrink-0"></i>
+                        <span>Người nhận (<b>${item.recipient.name}</b>) đã từ chối yêu cầu ủy quyền này.</span>
+                    `;
+                    statusAlert.classList.remove('hidden');
                 } else {
-                    disableBtn.classList.remove('hidden');
+                    statusAlert.classList.add('hidden');
                 }
             }
 
-            renderHistorySection(item);
-        };
+            // 1. Recipient
+            currentVerifiedRecipient = item.recipient;
+            document.getElementById('cccd-input-wrapper').classList.add('hidden');
+            const card = document.getElementById('verified-recipient-card');
+            card.classList.remove('hidden');
+            document.getElementById('recipient-avatar').textContent = item.recipient.avatar || 'ID';
+            document.getElementById('recipient-name').textContent = item.recipient.name;
+            document.getElementById('recipient-casid-info').textContent = item.recipient.cccd;
 
-        function setFormFieldsDisabled(disabled) {
-            document.getElementById('input-cccd').disabled = disabled;
-            document.getElementById('input-start-date').disabled = disabled;
-            const endInput = document.getElementById('input-end-date');
-            const checkbox = document.getElementById('checkbox-indefinite');
-            if (disabled) {
-                if (endInput) endInput.disabled = true;
-                if (checkbox) checkbox.disabled = true;
-            } else {
-                if (checkbox) checkbox.disabled = false;
-                if (checkbox) toggleIndefinite(checkbox);
-            }
+            // 2. Asset Type & Multi-select Sub assets
+            document.getElementById('select-asset-type').value = item.assetType;
+            handleAssetTypeChange(item.assetType);
 
-            document.getElementById('perm-view').disabled = disabled;
-            document.getElementById('perm-noti').disabled = disabled;
-            document.getElementById('perm-sign').disabled = disabled;
-
-            const inputs = [
-                document.getElementById('input-cccd'),
-                document.getElementById('input-start-date'),
-                document.getElementById('input-end-date')
-            ];
-            inputs.forEach(inp => {
-                if (inp) {
-                    if (disabled) inp.classList.add('bg-gray-50', 'text-gray-500');
-                    else inp.classList.remove('bg-gray-50', 'text-gray-500');
-                }
+            const selectedIds = item.subAssetIds || (item.subAssetId ? [item.subAssetId] : []);
+            document.querySelectorAll('.sub-asset-chk').forEach(chk => {
+                chk.checked = selectedIds.includes(chk.value);
             });
+
+            // 3. Duration & Time
+            if (item.startDate) document.getElementById('input-start-date').value = item.startDate;
+            if (item.startTime) document.getElementById('input-start-time').value = item.startTime;
+            else document.getElementById('input-start-time').value = "00:00";
+
+            const indefChk = document.getElementById('checkbox-indefinite');
+            indefChk.checked = !!item.isIndefinite;
+            handleIndefiniteToggle(indefChk.checked);
+
+            if (item.endDate && !item.isIndefinite) {
+                document.getElementById('input-end-date').value = item.endDate;
+                if (item.endTime) document.getElementById('input-end-time').value = item.endTime;
+                else document.getElementById('input-end-time').value = "23:59";
+            }
+
+            // 4. Action Buttons (Lưu lại, Tạm dừng / Khôi phục, Xóa ủy quyền)
+            document.getElementById('btn-submit-text').textContent = "Lưu lại";
+
+            const pauseBtn = document.getElementById('btn-toggle-pause');
+            const pauseText = document.getElementById('btn-toggle-pause-text');
+            const pauseIcon = document.getElementById('btn-toggle-pause-icon');
+            const deleteBtn = document.getElementById('btn-delete-delegation');
+
+            if (item.status === 'pending') {
+                pauseBtn.classList.add('hidden');
+                deleteBtn.classList.remove('hidden');
+                deleteBtn.innerHTML = `<i class="fa-solid fa-ban text-[9.5px]"></i><span>Hủy lời mời ủy quyền</span>`;
+                deleteBtn.className = "w-full py-2 bg-red-50 hover:bg-red-100 text-red-700 text-[11.5px] font-bold rounded-lg transition-all active:scale-[0.98] border border-red-200 flex items-center justify-center gap-1.5";
+            } else if (item.status === 'rejected') {
+                pauseBtn.classList.add('hidden');
+                deleteBtn.classList.remove('hidden');
+                deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can text-[9.5px]"></i><span>Xóa ủy quyền này</span>`;
+                deleteBtn.className = "w-full py-2 bg-red-50 hover:bg-red-100 text-red-700 text-[11.5px] font-bold rounded-lg transition-all active:scale-[0.98] border border-red-200 flex items-center justify-center gap-1.5";
+            } else {
+                pauseBtn.classList.remove('hidden');
+                deleteBtn.classList.remove('hidden');
+                deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can text-[9.5px]"></i><span>Xóa ủy quyền</span>`;
+                deleteBtn.className = "w-full py-2 bg-red-50 hover:bg-red-100 text-red-700 text-[11.5px] font-bold rounded-lg transition-all active:scale-[0.98] border border-red-200 flex items-center justify-center gap-1.5";
+
+                if (item.status === 'active') {
+                    pauseText.textContent = "Tạm dừng ủy quyền";
+                    pauseIcon.className = "fa-solid fa-pause text-[9.5px]";
+                    pauseBtn.className = "w-full py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 text-[11.5px] font-bold rounded-lg transition-all active:scale-[0.98] border border-amber-200 flex items-center justify-center gap-1.5";
+                } else {
+                    pauseText.textContent = "Tiếp tục ủy quyền";
+                    pauseIcon.className = "fa-solid fa-play text-[9.5px]";
+                    pauseBtn.className = "w-full py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[11.5px] font-bold rounded-lg transition-all active:scale-[0.98] border border-emerald-200 flex items-center justify-center gap-1.5";
+                }
+            }
         }
 
-        function renderHistorySection(item) {
-            const section = document.getElementById('history-section');
-            const list = document.getElementById('history-list');
-            if (!section || !list) return;
-            if (!item.history || item.history.length === 0) {
-                section.classList.add('hidden');
+        function handleHeaderBack() {
+            if (isFormViewActive) {
+                isFormViewActive = false;
+                document.getElementById('view-form').classList.add('hidden');
+                document.getElementById('view-list').classList.remove('hidden');
+                document.getElementById('page-title').textContent = "Ủy quyền";
+                renderEntityTabs();
+                renderDelegationList();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // ========================================================
+        // 4. FORM INTERACTION HANDLERS (AUTO-VALIDATE ON BLUR/INPUT)
+        // ========================================================
+        function setCccdError(msg) {
+            const inp = document.getElementById('input-cccd');
+            const errLabel = document.getElementById('cccd-error-label');
+            if (inp) {
+                inp.classList.add('border-red-400', 'bg-red-50/20', 'focus:border-red-500');
+                inp.classList.remove('border-gray-200', 'bg-gray-50');
+            }
+            if (errLabel) {
+                errLabel.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-0.5"></i>${msg}`;
+                errLabel.classList.remove('hidden');
+            }
+            showToast(msg, 'fa-solid fa-circle-exclamation text-red-400');
+        }
+
+        function clearCccdError() {
+            const inp = document.getElementById('input-cccd');
+            const errLabel = document.getElementById('cccd-error-label');
+            if (inp) {
+                inp.classList.remove('border-red-400', 'bg-red-50/20', 'focus:border-red-500');
+                inp.classList.add('border-gray-200', 'bg-gray-50');
+            }
+            if (errLabel) {
+                errLabel.classList.add('hidden');
+            }
+        }
+
+        function handleCccdInput(val) {
+            const cleanVal = val.trim();
+            clearCccdError();
+            if (cleanVal.length === 12) {
+                verifyCccdNow(false);
+            }
+        }
+
+        function validateCccdOnBlur() {
+            const inp = document.getElementById('input-cccd');
+            const val = inp ? inp.value.trim() : '';
+            if (!val) {
+                clearCccdError();
                 return;
             }
-            section.classList.remove('hidden');
-            list.innerHTML = "";
-            item.history.forEach(h => {
-                let dotColor = "bg-emerald-500";
-                if (h.note.toLowerCase().includes("vô hiệu") || h.note.toLowerCase().includes("hết hạn") || h.note.toLowerCase().includes("hủy")) {
-                    dotColor = "bg-red-500";
-                } else if (h.note.toLowerCase().includes("chỉnh sửa") || h.note.toLowerCase().includes("cập nhật")) {
-                    dotColor = "bg-blue-500";
-                }
-                list.innerHTML += `
-                    <div class="relative flex flex-col text-left gap-0.5 pl-1.5">
-                        <span class="absolute -left-[16.5px] top-1.5 w-2 h-2 rounded-full ${dotColor} border border-white"></span>
-                        <span class="text-[10px] font-bold text-gray-700">${h.note}</span>
-                        <span class="text-[8.5px] text-gray-400 font-mono">${h.time}</span>
-                    </div>
-                `;
-            });
+            if (currentVerifiedRecipient) {
+                clearCccdError();
+                return;
+            }
+            verifyCccdNow(true);
         }
 
-        window.closeConfirmModal = function () {
-            const modal = document.getElementById('confirm-modal');
-            if (modal) {
-                modal.classList.add('pointer-events-none', 'opacity-0');
-                modal.querySelector('div').classList.add('scale-90');
-            }
-        };
+        function verifyCccdNow(isOnBlur = false) {
+            const inp = document.getElementById('input-cccd');
+            const cccd = inp ? inp.value.trim() : '';
 
-        window.disableEditingDelegation = function () {
+            if (!cccd || cccd.length !== 12 || !/^\d+$/.test(cccd)) {
+                if (isOnBlur) {
+                    setCccdError('Số CCCD không hợp lệ (phải đủ 12 số)!');
+                }
+                return;
+            }
+
+            let found = MOCK_RECIPIENTS[cccd];
+            if (!found) {
+                setCccdError('Không tìm thấy CasID với số CCCD này!');
+                return;
+            }
+
+            clearCccdError();
+            currentVerifiedRecipient = found;
+            document.getElementById('cccd-input-wrapper').classList.add('hidden');
+            const card = document.getElementById('verified-recipient-card');
+            card.classList.remove('hidden');
+            document.getElementById('recipient-avatar').textContent = found.avatar;
+            document.getElementById('recipient-name').textContent = found.name;
+            document.getElementById('recipient-casid-info').textContent = found.cccd;
+
+            showToast(`Đã tìm thấy: ${found.name}`, 'fa-solid fa-circle-check text-emerald-400');
+        }
+
+        function changeRecipient() {
+            currentVerifiedRecipient = null;
+            document.getElementById('cccd-input-wrapper').classList.remove('hidden');
+            document.getElementById('verified-recipient-card').classList.add('hidden');
+            clearCccdError();
+            const inp = document.getElementById('input-cccd');
+            if (inp) {
+                inp.value = '';
+                inp.focus();
+            }
+        }
+
+        function handleAssetTypeChange(assetType) {
+            const assetDef = ASSET_DEFINITIONS[assetType];
+            if (!assetDef) return;
+
+            const subWrapper = document.getElementById('sub-asset-wrapper');
+            const subLabel = document.getElementById('sub-asset-label');
+            const listContainer = document.getElementById('sub-assets-checkbox-list');
+
+            if (assetDef.subOptions && assetDef.subOptions.length > 0) {
+                subWrapper.classList.remove('hidden');
+                subLabel.textContent = `Danh sách ${assetDef.label.toLowerCase()}`;
+
+                listContainer.innerHTML = assetDef.subOptions.map(opt => {
+                    const textHtml = (assetType === 'bank')
+                        ? `<span class="text-[12.5px] font-bold text-gray-800 font-mono tracking-tight">${opt.code}</span>`
+                        : `<div class="flex flex-col">
+                               <span class="text-[12px] font-bold text-gray-900 leading-tight">${opt.name}</span>
+                               ${(opt.code && opt.id !== 'id_login') ? `<span class="text-[9px] text-gray-400 font-mono">${opt.code}</span>` : ''}
+                           </div>`;
+
+                    return `
+                        <label class="flex items-center justify-between p-2.5 bg-gray-50 hover:bg-gray-100/80 rounded-xl border border-gray-200 cursor-pointer transition-all">
+                            <div class="flex items-center gap-2.5">
+                                <input type="checkbox" value="${opt.id}" class="sub-asset-chk w-4 h-4 rounded text-black accent-black cursor-pointer" checked>
+                                ${renderOptionCircleIcon(opt, 'w-8 h-8')}
+                                ${textHtml}
+                            </div>
+                        </label>
+                    `;
+                }).join('');
+            } else {
+                subWrapper.classList.add('hidden');
+                listContainer.innerHTML = '';
+            }
+        }
+
+        function toggleSelectAllSubAssets() {
+            const checkboxes = document.querySelectorAll('.sub-asset-chk');
+            if (checkboxes.length === 0) return;
+            const allChecked = Array.from(checkboxes).every(c => c.checked);
+            checkboxes.forEach(c => c.checked = !allChecked);
+            const btn = document.getElementById('btn-toggle-all-sub');
+            if (btn) btn.textContent = allChecked ? 'Chọn tất cả' : 'Bỏ chọn';
+        }
+
+        function handleIndefiniteToggle(isIndefinite) {
+            const endInput = document.getElementById('input-end-date');
+            const endTimeInput = document.getElementById('input-end-time');
+            const endContainer = document.getElementById('end-date-container');
+            if (isIndefinite) {
+                if (endInput) { endInput.disabled = true; endInput.required = false; }
+                if (endTimeInput) { endTimeInput.disabled = true; }
+                if (endContainer) endContainer.classList.add('opacity-30');
+            } else {
+                if (endInput) { endInput.disabled = false; endInput.required = true; }
+                if (endTimeInput) { endTimeInput.disabled = false; }
+                if (endContainer) endContainer.classList.remove('opacity-30');
+            }
+        }
+
+        // ========================================================
+        // 5. SUBMIT FORM & DETAIL ACTIONS HANDLERS
+        // ========================================================
+        function handleFormSubmit(event) {
+            event.preventDefault();
+
+            if (!currentVerifiedRecipient) {
+                showToast('Vui lòng nhập số CCCD người nhận!', 'fa-solid fa-circle-exclamation text-amber-400');
+                const inp = document.getElementById('input-cccd');
+                if (inp) inp.focus();
+                return;
+            }
+
+            const delegatorKey = editingDelegationId
+                ? (delegationsList.find(d => d.id === editingDelegationId)?.delegatorKey || currentFilterEntity)
+                : currentFilterEntity;
+            const assetType = document.getElementById('select-asset-type').value;
+            const assetDef = ASSET_DEFINITIONS[assetType];
+
+            // Get all selected sub-assets
+            const selectedSubIds = Array.from(document.querySelectorAll('.sub-asset-chk:checked')).map(c => c.value);
+
+            if (assetDef.subOptions && assetDef.subOptions.length > 0 && selectedSubIds.length === 0) {
+                showToast('Vui lòng chọn ít nhất 1 tài sản để ủy quyền!', 'fa-solid fa-circle-exclamation text-amber-400');
+                return;
+            }
+
+            const startDateVal = document.getElementById('input-start-date').value;
+            const startTimeVal = document.getElementById('input-start-time').value || '00:00';
+            const endDateVal = document.getElementById('input-end-date').value;
+            const endTimeVal = document.getElementById('input-end-time').value || '23:59';
+            const isIndefinite = document.getElementById('checkbox-indefinite').checked;
+
+            if (!isIndefinite) {
+                const startDt = new Date(`${startDateVal}T${startTimeVal}`);
+                const endDt = new Date(`${endDateVal}T${endTimeVal}`);
+                if (endDt <= startDt) {
+                    showToast('Thời gian kết thúc phải sau thời gian bắt đầu!', 'fa-solid fa-circle-exclamation text-red-500');
+                    return;
+                }
+            }
+
+            if (editingDelegationId) {
+                const item = delegationsList.find(d => d.id === editingDelegationId);
+                if (item) {
+                    item.delegatorKey = delegatorKey;
+                    item.recipient = currentVerifiedRecipient;
+                    item.assetType = assetType;
+                    item.subAssetIds = selectedSubIds;
+                    item.startDate = startDateVal;
+                    item.startTime = startTimeVal;
+                    item.endDate = isIndefinite ? '' : endDateVal;
+                    item.endTime = isIndefinite ? '' : endTimeVal;
+                    item.isIndefinite = isIndefinite;
+
+                    saveDelegationsToStorage();
+                    showToast(`Đã lưu thay đổi ủy quyền!`, 'fa-solid fa-circle-check text-emerald-400');
+                }
+            } else {
+                const newId = Date.now();
+                const newDeleg = {
+                    id: newId,
+                    delegatorKey: delegatorKey,
+                    recipient: currentVerifiedRecipient,
+                    assetType: assetType,
+                    subAssetIds: selectedSubIds,
+                    startDate: startDateVal,
+                    startTime: startTimeVal,
+                    endDate: isIndefinite ? '' : endDateVal,
+                    endTime: isIndefinite ? '' : endTimeVal,
+                    isIndefinite: isIndefinite,
+                    status: 'pending' // Chờ người nhận xác nhận
+                };
+
+                delegationsList.unshift(newDeleg);
+                currentFilterEntity = delegatorKey; // auto navigate to that entity
+                saveDelegationsToStorage();
+
+                // Tạo thông báo gửi tới người nhận trong casID-sign-noti
+                addDelegationInviteNotification(newDeleg);
+
+                showToast(`Đã gửi ủy quyền (Chờ xác nhận)!`, 'fa-solid fa-paper-plane text-amber-400');
+            }
+
+            handleHeaderBack();
+        }
+
+        // TỰ ĐỘNG TẠO THÔNG BÁO CHO NGƯỜI NHẬN
+        function addDelegationInviteNotification(deleg) {
+            const delegatorProfile = DELEGATOR_PROFILES[deleg.delegatorKey] || DELEGATOR_PROFILES['personal'];
+            const assetDef = ASSET_DEFINITIONS[deleg.assetType];
+            const assetTypeName = assetDef ? (assetDef.label || assetDef.title || 'Tài sản') : 'Tài sản';
+
+            let subNames = '';
+            if (assetDef && assetDef.subOptions && deleg.subAssetIds && deleg.subAssetIds.length > 0) {
+                const names = assetDef.subOptions
+                    .filter(opt => deleg.subAssetIds.includes(opt.id))
+                    .map(opt => opt.name);
+                if (names.length > 0) {
+                    subNames = ` (${names.join(', ')})`;
+                }
+            }
+
+            let appNotis = [];
+            try {
+                appNotis = JSON.parse(localStorage.getItem('app_notifications') || '[]');
+            } catch (e) { }
+
+            const newNoti = {
+                id: 'noti_central_invite_' + deleg.id,
+                type: 'delegation_invite_central',
+                delegationId: deleg.id,
+                title: `Lời mời nhận uỷ quyền ${assetTypeName}`,
+                message: `${delegatorProfile.name} muốn uỷ quyền ${assetTypeName}${subNames} cho bạn.`,
+                sender: delegatorProfile.name,
+                delegatorKey: deleg.delegatorKey,
+                recipient: deleg.recipient,
+                cccd: deleg.recipient.cccd,
+                assetType: deleg.assetType,
+                subAssetIds: deleg.subAssetIds,
+                startDate: deleg.startDate,
+                startTime: deleg.startTime,
+                endDate: deleg.endDate,
+                endTime: deleg.endTime,
+                isIndefinite: deleg.isIndefinite,
+                status: 'pending',
+                time: 'Vừa xong',
+                createdAt: new Date().toLocaleString('vi-VN')
+            };
+
+            appNotis.unshift(newNoti);
+            localStorage.setItem('app_notifications', JSON.stringify(appNotis));
+        }
+
+        // Tạm dừng / Khôi phục Modal Handler
+        function handlePauseToggleClick() {
             if (!editingDelegationId) return;
+            const item = delegationsList.find(d => d.id === editingDelegationId);
+            if (!item) return;
+
+            if (item.status === 'active') {
+                document.getElementById('modal-title').textContent = "Tạm dừng ủy quyền?";
+                document.getElementById('modal-desc').textContent = `Tạm thời dừng quyền ủy quyền của ${item.recipient.name}. Bạn có thể khôi phục lại bất kỳ lúc nào.`;
+                document.getElementById('modal-confirm-btn').className = "flex-1 py-2 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-[12px] transition-colors";
+                document.getElementById('modal-confirm-btn').textContent = "Tạm dừng";
+
+                pendingModalAction = () => {
+                    item.status = 'inactive';
+                    saveDelegationsToStorage();
+                    showToast(`Đã tạm dừng ủy quyền!`, 'fa-solid fa-circle-check text-amber-400');
+                    handleHeaderBack();
+                };
+            } else {
+                document.getElementById('modal-title').textContent = "Tiếp tục ủy quyền?";
+                document.getElementById('modal-desc').textContent = `Khôi phục hiệu lực ủy quyền cho ${item.recipient.name}.`;
+                document.getElementById('modal-confirm-btn').className = "flex-1 py-2 rounded-lg bg-black hover:bg-gray-900 text-white font-bold text-[12px] transition-colors";
+                document.getElementById('modal-confirm-btn').textContent = "Tiếp tục";
+
+                pendingModalAction = () => {
+                    item.status = 'active';
+                    saveDelegationsToStorage();
+                    showToast(`Đã tiếp tục ủy quyền!`, 'fa-solid fa-circle-check text-emerald-400');
+                    handleHeaderBack();
+                };
+            }
+
+            openConfirmModal();
+        }
+
+        // Xóa ủy quyền Modal Handler
+        function handleDeleteClick() {
+            if (!editingDelegationId) return;
+            const item = delegationsList.find(d => d.id === editingDelegationId);
+            if (!item) return;
+
+            document.getElementById('modal-title').textContent = "Xóa ủy quyền?";
+            document.getElementById('modal-desc').textContent = `Bạn có chắc chắn muốn xóa ủy quyền của ${item.recipient.name}? Hành động này không thể hoàn tác.`;
+            document.getElementById('modal-confirm-btn').className = "flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-[12px] transition-colors";
+            document.getElementById('modal-confirm-btn').textContent = "Xóa vĩnh viễn";
+
+            pendingModalAction = () => {
+                delegationsList = delegationsList.filter(d => d.id !== editingDelegationId);
+                saveDelegationsToStorage();
+                showToast(`Đã xóa ủy quyền thành công!`, 'fa-solid fa-circle-check text-emerald-400');
+                handleHeaderBack();
+            };
+
+            openConfirmModal();
+        }
+
+        function saveDelegationsToStorage() {
+            localStorage.setItem('casso_central_delegations_v6', JSON.stringify(delegationsList));
+        }
+
+        function openConfirmModal() {
             const modal = document.getElementById('confirm-modal');
             if (modal) {
                 modal.classList.remove('pointer-events-none', 'opacity-0');
                 modal.querySelector('div').classList.remove('scale-90');
             }
-        };
+        }
 
-        window.executeDisableDelegation = function () {
+        function closeConfirmModal() {
+            const modal = document.getElementById('confirm-modal');
+            if (modal) {
+                modal.classList.add('pointer-events-none', 'opacity-0');
+                modal.querySelector('div').classList.add('scale-90');
+                pendingModalAction = null;
+            }
+        }
+
+        function executeModalAction() {
+            if (typeof pendingModalAction === 'function') {
+                pendingModalAction();
+            }
             closeConfirmModal();
-            if (!editingDelegationId) return;
-            const item = delegationsData.find(d => d.id === editingDelegationId);
-            if (!item) return;
-            item.status = "expired";
-            const now = new Date();
-            const formattedNow = formatDisplayDateTime(formatLocalDateTime(now));
-            item.expiryText = `Vô hiệu hóa lúc ${formattedNow}`;
-            if (!item.history) item.history = [];
-            item.history.push({ time: formattedNow, note: "Vô hiệu hóa ủy quyền" });
-            localStorage.setItem('signing_delegations', JSON.stringify(delegationsData));
-            showListView();
-            renderDelegations();
-            showToast(`Đã vô hiệu hóa ủy quyền của ${item.name}!`, "fa-solid fa-circle-check text-emerald-400");
-        };
-
-        function formatLocalDateTime(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            return `${year}-${month}-${day}T${hours}:${minutes}`;
         }
 
-        function formatDisplayDateTime(dtStr) {
-            if (!dtStr) return "";
-            const dt = new Date(dtStr);
-            if (isNaN(dt.getTime())) return "";
-            const day = String(dt.getDate()).padStart(2, '0');
-            const month = String(dt.getMonth() + 1).padStart(2, '0');
-            const year = dt.getFullYear();
-            const hours = String(dt.getHours()).padStart(2, '0');
-            const minutes = String(dt.getMinutes()).padStart(2, '0');
-            return `${day}/${month}/${year} ${hours}:${minutes}`;
-        }
-
-        window.toggleIndefinite = function (checkbox) {
-            const endInput = document.getElementById('input-end-date');
-            const endContainer = document.getElementById('end-date-container');
-            if (checkbox.checked) {
-                if (endInput) { endInput.disabled = true; endInput.required = false; endInput.value = ""; }
-                if (endContainer) endContainer.classList.add('opacity-40');
-            } else {
-                if (endInput) {
-                    endInput.disabled = false; endInput.required = true;
-                    const startVal = document.getElementById('input-start-date').value;
-                    let baseDate = new Date();
-                    if (startVal) { const parsed = new Date(startVal); if (!isNaN(parsed.getTime())) baseDate = parsed; }
-                    const defaultEnd = new Date(baseDate.getTime() + 24 * 60 * 60 * 1000);
-                    endInput.value = formatLocalDateTime(defaultEnd);
-                }
-                if (endContainer) endContainer.classList.remove('opacity-40');
-            }
-        };
-
-        let isVerifiedRecipientDeleg = false;
-        function resetRecipientStatusDeleg() {
-            isVerifiedRecipientDeleg = false;
-            const inputWrapper = document.getElementById('deleg-input-wrapper');
-            const recipientCard = document.getElementById('deleg-recipient-card');
-            const submitBtn = document.getElementById('btn-submit');
-            const inputField = document.getElementById('input-cccd');
-
-            if (inputWrapper) inputWrapper.classList.remove('hidden');
-            if (recipientCard) recipientCard.classList.add('hidden');
-            if (submitBtn) submitBtn.textContent = 'Tiếp tục';
-            if (inputField) inputField.disabled = false;
-        }
-
-        function enableEditRecipientDeleg() {
-            document.getElementById('deleg-input-wrapper').classList.remove('hidden');
-            document.getElementById('deleg-recipient-card').classList.add('hidden');
-            const submitBtn = document.getElementById('btn-submit');
-            if (submitBtn) {
-                submitBtn.textContent = 'Tiếp tục';
-            }
-            isVerifiedRecipientDeleg = false;
-            const input = document.getElementById('input-cccd');
-            if (input) {
-                input.disabled = false;
-                input.focus();
-            }
-        }
-
-        function showFormView() {
-            isFormView = true;
-            editingDelegationId = null;
-            selectedItem = null;
-            document.getElementById('view-list').classList.add('hidden');
-            document.getElementById('view-form').classList.remove('hidden');
-            document.getElementById('btn-top-create').classList.add('hidden');
-            document.getElementById('page-title').textContent = "Thực hiện uỷ quyền";
-            document.getElementById('input-cccd').value = "";
-            setFormFieldsDisabled(false);
-
-            document.getElementById('perm-view').checked = true;
-            document.getElementById('perm-noti').checked = true;
-            document.getElementById('perm-sign').checked = true;
-
-            const disableBtn = document.getElementById('btn-form-disable');
-            resetRecipientStatusDeleg();
-            if (disableBtn) disableBtn.classList.add('hidden');
-            document.getElementById('history-section').classList.add('hidden');
-            const now = new Date();
-            const startInput = document.getElementById('input-start-date');
-            const endInput = document.getElementById('input-end-date');
-            const indefiniteCheckbox = document.getElementById('checkbox-indefinite');
-            if (startInput) startInput.value = formatLocalDateTime(now);
-            if (endInput) { const defaultEnd = new Date(now.getTime() + 24 * 60 * 60 * 1000); endInput.value = formatLocalDateTime(defaultEnd); }
-            if (indefiniteCheckbox) { indefiniteCheckbox.checked = false; toggleIndefinite(indefiniteCheckbox); }
-        }
-
-        function showListView() {
-            isFormView = false;
-            document.getElementById('view-list').classList.remove('hidden');
-            document.getElementById('view-form').classList.add('hidden');
-            document.getElementById('btn-top-create').classList.remove('hidden');
-            document.getElementById('page-title').textContent = "Quản lý ủy quyền";
-        }
-
-        function handleHeaderBack() {
-            if (isFormView) showListView();
-            else window.location.href = 'casID-sign-request.html';
-        }
-
-        window.submitForm = function (event) {
-            event.preventDefault();
-            const cccdInput = document.getElementById('input-cccd');
-            const cccd = cccdInput.value.trim();
-            if (cccd.length < 9) { showToast("Vui lòng nhập số CCCD hợp lệ!", "fa-solid fa-circle-exclamation text-amber-500"); return; }
-
-            // Dynamic account searching step
-            if (!isVerifiedRecipientDeleg) {
-                // Mock database checking
-                let verifiedUser = null;
-                if (cccd === '012345678910' || cccd === '0123456789') {
-                    verifiedUser = { name: 'PHAM HOANG QUANG CANH', avatar: 'QC' };
-                } else if (cccd === '022303008786') {
-                    verifiedUser = { name: 'NGUYEN VAN B', avatar: 'VB' };
-                } else if (cccd === '0309876543') {
-                    verifiedUser = { name: 'HOANG THI MAI', avatar: 'TM' };
-                }
-
-                if (verifiedUser) {
-                    // Hide input and show card
-                    document.getElementById('deleg-input-wrapper').classList.add('hidden');
-                    const recipientCard = document.getElementById('deleg-recipient-card');
-                    recipientCard.classList.remove('hidden');
-                    document.getElementById('deleg-recipient-avatar').textContent = verifiedUser.avatar;
-                    document.getElementById('deleg-recipient-name').textContent = verifiedUser.name;
-
-                    // Switch button state
-                    const submitBtn = document.getElementById('btn-submit');
-                    submitBtn.textContent = editingDelegationId ? 'Lưu thay đổi' : 'Gửi yêu cầu uỷ quyền';
-                    isVerifiedRecipientDeleg = true;
-                    showToast('Đã tìm thấy thông tin tài khoản', 'fa-solid fa-circle-check text-emerald-400');
-                    return;
-                } else {
-                    showToast('Tài khoản không tồn tại', 'fa-solid fa-circle-exclamation text-amber-500');
-                    return;
-                }
-            }
-
-            let name = "Phạm Văn Nam";
-            if (cccd.endsWith("0223") || cccd === "022303008786") name = "Nguyễn Văn Hùng";
-            else if (cccd.endsWith("8888") || cccd === "0309876543") name = "Hoàng Thị Mai";
-            else if (cccd === "012345678910" || cccd === "0123456789") name = "Phạm Hoàng Quang Cảnh";
-
-            const startDateVal = document.getElementById('input-start-date').value;
-            const endDateVal = document.getElementById('input-end-date').value;
-            const isIndefinite = document.getElementById('checkbox-indefinite').checked;
-
-            const permView = document.getElementById('perm-view').checked;
-            const permNoti = document.getElementById('perm-noti').checked;
-            const permSign = document.getElementById('perm-sign').checked;
-
-            let durationText = "", expiryText = "";
-            if (isIndefinite) { durationText = "Vô thời hạn"; expiryText = `Từ ${formatDisplayDateTime(startDateVal)} (Vô thời hạn)`; }
-            else {
-                const startDt = new Date(startDateVal), endDt = new Date(endDateVal);
-                if (isNaN(startDt.getTime()) || isNaN(endDt.getTime())) { showToast("Vui lòng chọn thời gian hợp lệ!", "fa-solid fa-circle-exclamation text-red-500"); return; }
-                if (endDt <= startDt) { showToast("Ngày kết thúc phải sau ngày bắt đầu!", "fa-solid fa-circle-exclamation text-red-500"); return; }
-
-                const nowTime = new Date();
-                if (endDt <= nowTime) { showToast("Ngày kết thúc phải lớn hơn thời gian hiện tại!", "fa-solid fa-circle-exclamation text-red-500"); return; }
-
-                const diffMs = endDt - startDt;
-                const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-                durationText = `${diffDays} Ngày`;
-                expiryText = `Hết hạn lúc ${formatDisplayDateTime(endDateVal)}`;
-            }
-            const now = new Date();
-            const formattedNow = formatDisplayDateTime(formatLocalDateTime(now));
-            if (editingDelegationId) {
-                const item = delegationsData.find(d => d.id === editingDelegationId);
-                if (item) {
-                    item.name = name; item.cccd = cccd; item.durationText = durationText; item.expiryText = expiryText;
-                    item.startDate = startDateVal; item.endDate = isIndefinite ? "" : endDateVal; item.isIndefinite = isIndefinite;
-                    item.permView = permView; item.permNoti = permNoti; item.permSign = permSign;
-
-                    const oldStatus = item.status;
-                    item.status = (isIndefinite || new Date(endDateVal) > new Date()) ? "active" : "expired";
-
-                    if (!item.history) item.history = [];
-                    if (oldStatus === "expired" && item.status === "active") {
-                        item.history.push({ time: formattedNow, note: "Gia hạn / Kích hoạt lại ủy quyền" });
-                    } else {
-                        item.history.push({ time: formattedNow, note: "Chỉnh sửa ủy quyền" });
-                    }
-                }
-                localStorage.setItem('signing_delegations', JSON.stringify(delegationsData));
-                showToast(`Cập nhật ủy quyền thành công cho ${name}!`, "fa-solid fa-circle-check text-emerald-400");
-            } else {
-                const delId = Date.now();
-                const newDeleg = {
-                    id: delId, name: name, cccd: cccd, durationText: durationText, expiryText: expiryText,
-                    status: "pending", startDate: startDateVal, endDate: isIndefinite ? "" : endDateVal, isIndefinite: isIndefinite,
-                    permView: permView, permNoti: permNoti, permSign: permSign,
-                    history: [{ time: formattedNow, note: "Khởi tạo ủy quyền (Chờ xác nhận)" }]
-                };
-                delegationsData.unshift(newDeleg);
-                localStorage.setItem('signing_delegations', JSON.stringify(delegationsData));
-
-                // Dispatch notification for receiving delegation
-                const notis = JSON.parse(localStorage.getItem('app_notifications') || '[]');
-                notis.unshift({
-                    id: 'notisign_' + delId,
-                    type: 'delegation_invite_signing',
-                    title: 'Lời mời nhận uỷ quyền ký số',
-                    message: `canhphq@cas.so muốn uỷ quyền ký số tài liệu cho bạn.`,
-                    sender: 'canhphq@cas.so',
-                    cccd: cccd,
-                    delegationId: delId,
-                    status: 'pending',
-                    time: 'Vừa xong',
-                    createdAt: formattedNow
-                });
-                localStorage.setItem('app_notifications', JSON.stringify(notis));
-
-                showToast(`Khởi tạo ủy quyền thành công cho ${name}!`, "fa-solid fa-circle-check text-emerald-400");
-            }
-            showListView();
-            resetRecipientStatusDeleg();
-            renderDelegations();
-        }
-
-        // Generic Toast helper
+        // ========================================================
+        // 6. TOAST NOTIFICATION HELPER
+        // ========================================================
         let toastTimeout = null;
-        function showToast(msg, iconClass) {
+        function showToast(msg, iconClass = "fa-solid fa-circle-info text-emerald-400") {
             const toast = document.getElementById('custom-toast');
             const toastMsg = document.getElementById('custom-toast-msg');
             const toastIcon = document.getElementById('custom-toast-icon');
 
             if (toast && toastMsg) {
                 toastMsg.textContent = msg;
-                if (toastIcon && iconClass) {
-                    toastIcon.className = iconClass;
-                }
+                if (toastIcon) toastIcon.className = iconClass;
 
                 toast.classList.remove('hidden');
-                toast.offsetHeight; // Force reflow
+                toast.offsetHeight;
                 toast.classList.remove('-translate-y-6', 'opacity-0');
                 toast.classList.add('translate-y-0', 'opacity-100');
 
@@ -817,23 +1393,6 @@
                     setTimeout(() => toast.classList.add('hidden'), 300);
                 }, 3000);
             }
-        }
-
-        function updateFooterNotiBadge() {
-            const badge = document.getElementById('footer-noti-badge');
-            if (badge) {
-                const signedStatus = localStorage.getItem('doc_signed_status');
-                let count = 2;
-                if (signedStatus === 'signed') {
-                    count = 1;
-                }
-                badge.textContent = count;
-                badge.classList.remove('hidden');
-            }
-        }
-
-        function showComingSoon() {
-            showToast('Tính năng đang được phát triển');
         }
     </script>
 </body>
