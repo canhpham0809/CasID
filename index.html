@@ -88,14 +88,24 @@
 
             <!-- Profile Selector Badges Header -->
             <div class="flex items-center gap-2 overflow-x-auto pb-3 pt-1 scrollbar-none">
-                <!-- Personal Active Pill (Nguyễn Văn An) -->
+                <!-- Personal Active Pill (NGUYEN VAN A) -->
                 <div id="badge-personal" onclick="switchEntity('personal')"
                     class="flex items-center gap-2 bg-black text-white px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer border border-black transition-all">
                     <div
                         class="w-5 h-5 rounded-full bg-white text-black text-[9px] font-black flex items-center justify-center shrink-0">
                         NA
                     </div>
-                    <span class="text-[10px] font-bold tracking-wider leading-none">NGUYỄN VĂN AN</span>
+                    <span class="text-[10px] font-bold tracking-wider leading-none">NGUYEN VAN A</span>
+                </div>
+
+                <!-- Bank / Enterprise Demo Pill -->
+                <div id="badge-demo" onclick="showToast('Tài khoản ngân hàng demo')"
+                    class="flex items-center gap-2 bg-[#eef2ff] text-[#312e81] border border-[#e0e7ff] px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-indigo-100 transition-all">
+                    <div
+                        class="w-5 h-5 rounded-full bg-[#c7d2fe] text-[#3730a3] text-[9px] font-black flex items-center justify-center shrink-0">
+                        B
+                    </div>
+                    <span class="text-[10px] font-bold tracking-wider leading-none">BANKUSRDEMO1</span>
                 </div>
 
                 <!-- Enterprise Pill (CANHCASSO...) -->
@@ -105,78 +115,84 @@
                         class="w-5 h-5 rounded-full bg-purple-200 text-purple-800 text-[9px] font-black flex items-center justify-center shrink-0">
                         C
                     </div>
-                    <span class="text-[10px] font-bold tracking-wider leading-none">CANHCASSO</span>
+                    <span class="text-[10px] font-bold tracking-wider leading-none">CÔNG TY CASSO</span>
                 </div>
 
                 <!-- Enterprise 2 Pill (A4B) -->
                 <div id="badge-a4b" onclick="switchEntity('a4b')"
                     class="flex items-center gap-2 bg-white text-gray-500 border border-gray-200 px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-gray-50 transition-all">
                     <div
-                        class="w-5 h-5 rounded-full bg-gray-100 text-gray-700 text-[9px] font-black flex items-center justify-center shrink-0">
+                        class="w-5 h-5 rounded-full bg-blue-100 text-blue-800 text-[9px] font-black flex items-center justify-center shrink-0">
                         AB
                     </div>
-                    <span class="text-[10px] font-bold tracking-wider leading-none">A4B</span>
+                    <span class="text-[10px] font-bold tracking-wider leading-none">CÔNG TY A4B</span>
+                </div>
+
+                <!-- Enterprise 3 Pill (Ủy quyền số) -->
+                <div id="badge-delegated" onclick="switchEntity('delegated')"
+                    class="flex items-center gap-2 bg-white text-gray-500 border border-gray-200 px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-gray-50 transition-all">
+                    <div
+                        class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-black flex items-center justify-center shrink-0">
+                        UQ
+                    </div>
+                    <span class="text-[10px] font-bold tracking-wider leading-none">ỦY QUYỀN SỐ</span>
                 </div>
             </div>
 
-            <!-- Health & Status Score Card (Gauge Meter 100/100) -->
+            <!-- Health & Status Score Card (Gauge Meter 95/100 matching exact UI) -->
             <div
-                class="mt-1 bg-gradient-to-b from-gray-50/80 to-white rounded-3xl p-4 border border-gray-150 shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative overflow-hidden">
-                <div class="flex items-center justify-between">
+                class="mt-1 bg-white rounded-3xl border border-gray-150 shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative overflow-hidden flex flex-col justify-between">
+                <div class="p-4 flex items-center justify-between">
                     <!-- Left: User Identity Info -->
-                    <div class="flex flex-col gap-1 max-w-[170px]">
-                        <h2 id="card-user-name" class="text-sm font-black text-gray-900 tracking-tight leading-snug">
-                            NGUYỄN VĂN AN
+                    <div class="flex flex-col gap-1">
+                        <h2 id="card-user-name" class="text-[17px] font-black text-gray-900 tracking-tight leading-snug">
+                            NGUYEN VAN A
                         </h2>
-                        <span class="text-[10px] text-gray-400 font-medium">Định danh CasID: NA-89021</span>
                     </div>
 
-                    <!-- Right: Semi-circle Gauge Meter -->
-                    <div class="flex flex-col items-center relative w-28">
-                        <svg viewBox="0 0 120 70" class="w-28 overflow-visible">
-                            <!-- Background Track -->
-                            <path d="M 15 65 A 45 45 0 0 1 105 65" fill="none" stroke="#f1f5f9" stroke-width="8"
-                                stroke-linecap="round" />
-                            <!-- Colored Gradient Meter -->
+                    <!-- Right: Semi-circle Gauge Meter (95/100) -->
+                    <div class="flex flex-col items-center relative w-32">
+                        <svg viewBox="0 0 130 75" class="w-32 overflow-visible">
                             <defs>
-                                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stop-color="#f97316" />
-                                    <stop offset="45%" stop-color="#eab308" />
+                                <linearGradient id="gaugeColors" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#ef4444" />
+                                    <stop offset="25%" stop-color="#f97316" />
+                                    <stop offset="50%" stop-color="#eab308" />
+                                    <stop offset="75%" stop-color="#84cc16" />
                                     <stop offset="100%" stop-color="#22c55e" />
                                 </linearGradient>
                             </defs>
-                            <!-- Progress Arc (Full 100%) -->
-                            <path d="M 15 65 A 45 45 0 0 1 105 65" fill="none" stroke="url(#gaugeGradient)"
-                                stroke-width="8" stroke-linecap="round" stroke-dasharray="141.37"
+                            <!-- Background Track -->
+                            <path d="M 15 70 A 50 50 0 0 1 115 70" fill="none" stroke="#f1f5f9" stroke-width="8.5"
+                                stroke-linecap="round" />
+                            <!-- Colored Arc -->
+                            <path d="M 15 70 A 50 50 0 0 1 115 70" fill="none" stroke="url(#gaugeColors)"
+                                stroke-width="8.5" stroke-linecap="round" stroke-dasharray="157"
                                 stroke-dashoffset="0" />
-                            <!-- End indicator point -->
-                            <circle cx="105" cy="65" r="4" fill="white" stroke="#000000" stroke-width="2.5" />
+                            <!-- Indicator Circle at 95% -->
+                            <circle cx="110" cy="54" r="4.5" fill="white" stroke="#000000" stroke-width="2.5" />
                         </svg>
-                        <div class="flex items-baseline gap-0.5 mt-[-18px]">
-                            <span class="text-base font-black text-gray-900">100</span>
-                            <span class="text-[10px] font-bold text-gray-400">/100</span>
+                        <div class="flex items-baseline gap-0.5 mt-[-22px]">
+                            <span class="text-xl font-black text-gray-900">95</span>
+                            <span class="text-[10.5px] font-bold text-gray-400">/100</span>
                         </div>
-                        <div class="text-[9.5px] font-bold text-gray-600 flex items-center gap-1">
+                        <div class="text-[10px] text-gray-600 flex items-center gap-1 mt-0.5">
                             <span>Tình trạng:</span>
-                            <span class="text-emerald-600 font-bold">Ổn định</span>
+                            <span class="text-[#10b981] font-bold">Ổn định</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Bottom Status Text -->
-                <div class="mt-3 pt-2.5 border-t border-gray-100/80 flex items-center justify-between">
-                    <div class="flex items-center gap-1.5 text-[11px] font-bold text-gray-700">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                        <span>Tài khoản đang hoạt động ổn định</span>
-                    </div>
-                    <span class="text-[9px] text-gray-400">Bảo mật cấp 3</span>
+                <!-- Bottom Status Text Bar -->
+                <div class="bg-gray-50/80 px-4 py-2.5 border-t border-gray-100 flex items-center">
+                    <span class="text-[11.5px] font-bold text-gray-800">Tài khoản đang hoạt động ổn định</span>
                 </div>
             </div>
 
             <!-- Section: Trung tâm dữ liệu -->
             <div class="mt-5 flex flex-col gap-2.5">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-[14px] font-black text-gray-900 tracking-tight">Trung tâm dữ liệu</h3>
+                    <h3 class="text-[15px] font-black text-gray-900 tracking-tight">Trung tâm dữ liệu</h3>
                 </div>
 
                 <!-- 4 Cards Grid: Ngân hàng, Chứng thư số, Hóa đơn điện tử, Ủy quyền -->
@@ -205,19 +221,18 @@
                         </div>
                     </div>
 
-                    <!-- 2. Chứng thư số -->
+                    <!-- 2. Chứng thư số (Icon bút ký / 0 nguồn hoặc 1 nguồn) -->
                     <div onclick="window.location.href='casID-sign-ca.html'"
                         class="bg-white rounded-2xl p-3.5 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
                         <div class="flex items-center -space-x-2.5 shrink-0 py-0.5">
                             <div
-                                class="w-8 h-8 rounded-full bg-white p-0.5 flex items-center justify-center border border-gray-200 shadow-xs overflow-hidden shrink-0">
-                                <img src="assets/cas_cert.png" alt="CAS CERT"
-                                    class="w-full h-full object-contain rounded-full">
+                                class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200 text-gray-800 shadow-xs shrink-0">
+                                <i class="fa-solid fa-pen-nib text-sm"></i>
                             </div>
                         </div>
                         <div class="flex flex-col">
                             <span class="text-[12px] font-bold text-gray-900 leading-tight">Chứng thư số</span>
-                            <span class="text-[10px] text-gray-500 font-medium mt-0.5">1 nguồn</span>
+                            <span class="text-[10px] text-gray-500 font-medium mt-0.5">0 nguồn</span>
                         </div>
                     </div>
 
@@ -245,7 +260,7 @@
                         </div>
                     </div>
 
-                    <!-- 4. UỶ QUYỀN TẬP TRUNG (HIỆN AVATAR NGƯỜI ĐƯỢC ỦY QUYỀN & COUNT 4 ỦY QUYỀN) -->
+                    <!-- 4. UỶ QUYỀN TẬP TRUNG -->
                     <div onclick="window.location.href='casID-sign-delegation.html'"
                         class="bg-white rounded-2xl p-3.5 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black hover:shadow-md transition-all cursor-pointer active:scale-[0.98] relative overflow-hidden group">
                         <div id="home-delegation-icons" class="py-0.5">
@@ -256,20 +271,13 @@
                                 </div>
                                 <div
                                     class="w-8 h-8 rounded-full bg-gray-900 text-white font-bold text-[9.5px] flex items-center justify-center border-2 border-white shadow-xs shrink-0">
-                                    TM
-                                </div>
-                                <div
-                                    class="w-8 h-8 rounded-full bg-gray-200 text-gray-700 font-bold text-[9.5px] flex items-center justify-center border-2 border-white shadow-xs shrink-0">
-                                    +2
+                                    TH
                                 </div>
                             </div>
                         </div>
                         <div class="flex flex-col">
-                            <div class="flex items-center gap-1">
-                                <span class="text-[12px] font-bold text-gray-900 leading-tight">Ủy quyền</span>
-
-                            </div>
-                            <span id="home-delegation-count" class="text-[10px] text-gray-500 font-medium mt-0.5">4 ủy
+                            <span class="text-[12px] font-bold text-gray-900 leading-tight">Ủy quyền</span>
+                            <span id="home-delegation-count" class="text-[10px] text-gray-500 font-medium mt-0.5">2 ủy
                                 quyền</span>
                         </div>
                     </div>
@@ -277,33 +285,67 @@
                 </div>
             </div>
 
-            <!-- Promo Banner: QUÀ TẶNG MIỄN PHÍ CAS CERT -->
-            <div onclick="window.location.href='casID-sign-ca.html'"
-                class="mt-5 promo-banner text-white rounded-2xl p-3.5 shadow-md flex items-center justify-between gap-3 cursor-pointer hover:opacity-95 active:scale-[0.99] transition-all">
-                <div class="flex flex-col gap-0.5 flex-1">
-                    <span class="text-[9px] font-black tracking-wider uppercase text-amber-300">QUÀ TẶNG MIỄN PHÍ</span>
-                    <h4 class="text-[12px] font-black leading-tight text-white">20.000 CHỨNG THƯ SỐ CAS CERT</h4>
-                    <p class="text-[9.5px] text-blue-100 mt-0.5">Ký hóa đơn điện tử X Invoice & 100+ app khác</p>
+            <!-- Promo Banner Carousel: QUÀ TẶNG MIỄN PHÍ CAS CERT -->
+            <div class="mt-5 flex gap-2.5 overflow-x-auto scrollbar-none">
+                <!-- Slide 1: QUÀ TẶNG MIỄN PHÍ CAS CERT -->
+                <div onclick="window.location.href='casID-sign-ca.html'"
+                    class="bg-gradient-to-r from-[#1d4ed8] via-[#4338ca] to-[#6366f1] text-white rounded-2xl p-3.5 shadow-md flex flex-col justify-between min-w-[305px] flex-1 cursor-pointer hover:opacity-95 active:scale-[0.99] transition-all relative overflow-hidden">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-black tracking-wider uppercase text-white">QUÀ TẶNG MIỄN PHÍ</span>
+                        <div class="flex items-center gap-1 bg-white/10 backdrop-blur-xs px-2 py-0.5 rounded-full">
+                            <i class="fa-solid fa-pen-nib text-[10px] text-white"></i>
+                            <span class="text-[11px] font-black text-white tracking-tight">CAS CERT</span>
+                            <span class="text-[7.5px] text-blue-200 font-medium">by CMC CA</span>
+                        </div>
+                    </div>
+                    <div class="mt-2 flex flex-col">
+                        <h4 class="text-[13px] font-black leading-tight text-white tracking-tight">
+                            20.000 CHỨNG THƯ SỐ CAS CERT.
+                        </h4>
+                        <p class="text-[10px] text-blue-100 font-medium mt-1">
+                            Ký hóa đơn điện tử X Invoice & 100+ app khác
+                        </p>
+                    </div>
                 </div>
-                <div
-                    class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0 text-white text-base">
-                    <i class="fa-solid fa-gift"></i>
-                </div>
+
+                <!-- Slide 2: Next Carousel Card Peek -->
+                <div class="w-5 min-w-[20px] rounded-2xl bg-gradient-to-br from-[#0284c7] to-[#0f766e] shrink-0 opacity-90"></div>
             </div>
 
             <!-- Section: Hoạt động gần đây -->
             <div class="mt-5 flex flex-col gap-2.5">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-[14px] font-black text-gray-900 tracking-tight">Hoạt động gần đây</h3>
+                    <h3 class="text-[15px] font-black text-gray-900 tracking-tight">Hoạt động gần đây</h3>
                     <button onclick="window.location.href='casID-sign-delegation.html'"
-                        class="text-[10px] font-bold text-blue-600 hover:underline">
-                        Xem tất cả
+                        class="text-[11.5px] font-bold text-emerald-600 hover:underline flex items-center gap-0.5">
+                        <span>Xem thêm</span>
+                        <i class="fa-solid fa-caret-right text-xs"></i>
                     </button>
                 </div>
 
                 <!-- Dynamic Recent Activity List -->
                 <div id="recent-activity-container" class="flex flex-col gap-2">
-                    <!-- Loaded dynamically -->
+                    <!-- Default Activity matching screenshot -->
+                    <div onclick="window.location.href='casID-sign-delegation.html'"
+                        class="bg-white rounded-2xl p-3 border border-gray-150 shadow-xs flex items-center gap-3 hover:bg-gray-50 cursor-pointer transition-all">
+                        <div class="w-10 h-10 rounded-xl bg-white p-1 border border-gray-150 flex items-center justify-center shrink-0 shadow-xs overflow-hidden">
+                            <img src="assets/xinvoice.png" alt="xInvoice" class="w-full h-full object-contain">
+                        </div>
+                        <div class="flex flex-col flex-1 min-w-0">
+                            <div class="flex items-center gap-1.5 font-bold text-[13px] text-gray-900 truncate">
+                                <span>X Invoice</span>
+                                <i class="fa-solid fa-link text-emerald-500 text-[11px]"></i>
+                                <span>XInvoice local</span>
+                            </div>
+                            <div class="mt-0.5">
+                                <span class="inline-block bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">invoice</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-[10px] text-gray-400 font-medium mt-0.5">
+                                <i class="fa-regular fa-clock text-[9.5px]"></i>
+                                <span>7 phút trước</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -311,7 +353,7 @@
 
         <!-- Floating Action Button (FAB +) -->
         <button onclick="window.location.href='casID-sign-delegation.html'" title="Tạo ủy quyền mới"
-            class="absolute bottom-20 right-5 w-12 h-12 bg-black hover:bg-gray-900 text-white rounded-full flex items-center justify-center shadow-xl active:scale-95 transition-all z-10">
+            class="absolute bottom-20 right-5 w-12 h-12 bg-black hover:bg-gray-900 text-white rounded-full flex items-center justify-center shadow-2xl active:scale-95 transition-all z-20">
             <i class="fa-solid fa-plus text-lg"></i>
         </button>
 
@@ -330,7 +372,7 @@
             <button onclick="window.location.href='casID-sign-delegation.html'"
                 class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
                 <i class="fa-solid fa-qrcode text-base"></i>
-                <span>Ủy quyền</span>
+                <span>Cấp quyền</span>
             </button>
             <button onclick="window.location.href='casID-sign-noti.html'"
                 class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700 relative">
@@ -379,7 +421,7 @@
                     badge.textContent = pendingCount;
                     badge.classList.toggle('hidden', pendingCount === 0);
                 }
-            } catch (e) {}
+            } catch (e) { }
         }
 
         function updateLiveTime() {
@@ -391,40 +433,79 @@
             timeEl.textContent = `${hrs}:${mins}`;
         }
 
+        let currentHomeEntity = 'personal';
+
         function switchEntity(ent) {
+            currentHomeEntity = ent;
             const userNameEl = document.getElementById('card-user-name');
+            const badgePersonal = document.getElementById('badge-personal');
+            const badgeCasso = document.getElementById('badge-casso');
+            const badgeA4b = document.getElementById('badge-a4b');
+            const badgeDelegated = document.getElementById('badge-delegated');
+
+            // Reset pill styles
+            if (badgePersonal) badgePersonal.className = "flex items-center gap-2 bg-white text-gray-500 border border-gray-200 px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-gray-50 transition-all";
+            if (badgeCasso) badgeCasso.className = "flex items-center gap-2 bg-purple-50 text-purple-900 border border-purple-100 px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-purple-100 transition-all";
+            if (badgeA4b) badgeA4b.className = "flex items-center gap-2 bg-white text-gray-500 border border-gray-200 px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-gray-50 transition-all";
+            if (badgeDelegated) badgeDelegated.className = "flex items-center gap-2 bg-white text-gray-500 border border-gray-200 px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-gray-50 transition-all";
+
             if (ent === 'casso') {
                 if (userNameEl) userNameEl.textContent = "CÔNG TY TNHH CASSO";
+                if (badgeCasso) badgeCasso.className = "flex items-center gap-2 bg-purple-900 text-white px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer border border-purple-900 transition-all";
                 showToast("Đã chuyển sang tài khoản Doanh nghiệp Casso");
             } else if (ent === 'a4b') {
                 if (userNameEl) userNameEl.textContent = "CÔNG TY CỔ PHẦN A4B";
+                if (badgeA4b) badgeA4b.className = "flex items-center gap-2 bg-blue-900 text-white px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer border border-blue-900 transition-all";
                 showToast("Đã chuyển sang tài khoản Doanh nghiệp A4B");
+            } else if (ent === 'delegated') {
+                if (userNameEl) userNameEl.textContent = "DỮ LIỆU ĐƯỢC ỦY QUYỀN";
+                if (badgeDelegated) badgeDelegated.className = "flex items-center gap-2 bg-emerald-800 text-white px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer border border-emerald-800 transition-all";
+                showToast("Đã chuyển sang mục Ủy quyền số");
             } else {
                 if (userNameEl) userNameEl.textContent = "NGUYỄN VĂN AN";
+                if (badgePersonal) badgePersonal.className = "flex items-center gap-2 bg-black text-white px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer border border-black transition-all";
                 showToast("Đã chuyển sang tài khoản Cá nhân");
             }
+            loadHomeDelegationSummary(ent);
         }
 
-        function loadHomeDelegationSummary() {
+        function loadHomeDelegationSummary(ent = 'personal') {
             const countEl = document.getElementById('home-delegation-count');
             const iconsEl = document.getElementById('home-delegation-icons');
 
-            const stored = localStorage.getItem('casso_central_delegations_v6') || localStorage.getItem('casso_central_delegations_v5') || localStorage.getItem('casso_central_delegations');
+            const stored = localStorage.getItem('casso_central_delegations_v9') || localStorage.getItem('casso_central_delegations_v8');
             let list = [];
             if (stored) {
                 try { list = JSON.parse(stored); } catch (e) { }
             }
 
-            const activeItems = list.filter(i => i.status === 'active');
-            const count = (list.length > 0) ? activeItems.length : 4;
+            if (ent === 'delegated') {
+                const recItems = list.filter(i => i.delegatorKey === 'personal' && i.direction === 'received' && i.status === 'active');
+                const recCount = (list.length > 0) ? recItems.length : 3;
+                if (countEl) countEl.textContent = `${recCount} ủy quyền đã nhận`;
 
+                if (iconsEl) {
+                    iconsEl.innerHTML = `
+                        <div class="flex items-center -space-x-2.5 shrink-0">
+                            <div class="w-8 h-8 rounded-full bg-purple-600 text-white font-black text-[9px] flex items-center justify-center border-2 border-white shadow-xs shrink-0">C</div>
+                            <div class="w-8 h-8 rounded-full bg-blue-600 text-white font-black text-[9px] flex items-center justify-center border-2 border-white shadow-xs shrink-0">AB</div>
+                            <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-700 font-bold text-[9px] flex items-center justify-center border-2 border-white shadow-xs shrink-0">+1</div>
+                        </div>
+                    `;
+                }
+                return;
+            }
+
+            // Sent Delegations (Cấp quyền đi)
+            const sentItems = list.filter(i => (i.delegatorKey === ent) && i.direction !== 'received' && i.status === 'active');
+            const sentCount = (list.length > 0) ? sentItems.length : (ent === 'personal' ? 2 : 1);
             if (countEl) {
-                countEl.textContent = `${count} ủy quyền`;
+                countEl.textContent = `${sentCount} ủy quyền`;
             }
 
             if (iconsEl) {
                 const recipients = [];
-                activeItems.forEach(item => {
+                sentItems.forEach(item => {
                     if (item.recipient && !recipients.find(r => r.cccd === item.recipient.cccd)) {
                         recipients.push(item.recipient);
                     }
@@ -432,8 +513,7 @@
 
                 if (recipients.length === 0) {
                     recipients.push({ name: 'Nguyễn Văn Hùng', avatar: 'VH' });
-                    recipients.push({ name: 'Hoàng Thị Mai', avatar: 'TM' });
-                    recipients.push({ name: 'Lê Quốc Trung', avatar: 'QT' });
+                    recipients.push({ name: 'Trần Thu Hà', avatar: 'TH' });
                 }
 
                 const maxShow = 2;
@@ -461,47 +541,45 @@
             const container = document.getElementById('recent-activity-container');
             if (!container) return;
 
-            const stored = localStorage.getItem('casso_central_delegations_v6') || localStorage.getItem('casso_central_delegations_v5') || localStorage.getItem('casso_central_delegations');
-            let items = [];
-            if (stored) {
-                try { items = JSON.parse(stored); } catch (e) { }
-            }
+            const activities = [
+                {
+                    title: 'X Invoice',
+                    connectedTo: 'XInvoice local',
+                    tag: 'invoice',
+                    time: '7 phút trước',
+                    logo: 'assets/xinvoice.png'
+                },
+                {
+                    title: 'MB Bank',
+                    connectedTo: 'MBBank Corp 8888',
+                    tag: 'bank',
+                    time: '1 giờ trước',
+                    logo: 'assets/mb.png'
+                }
+            ];
 
-            if (items.length === 0) {
-                container.innerHTML = `
-                    <div class="p-6 bg-gray-50 border border-dashed border-gray-200 rounded-2xl text-center text-gray-400 text-[11px]">
-                        Chưa có hoạt động nào
-                    </div>
-                `;
-                return;
-            }
-
-            // Take first 3 activities with circular images
-            container.innerHTML = items.slice(0, 3).map(item => {
-                let logoImg = 'assets/cas_cert.png';
-                if (item.assetType === 'bank') logoImg = 'assets/vcb.png';
-                else if (item.assetType === 'cert') logoImg = 'assets/cas_cert.png';
-                else if (item.assetType === 'invoice') logoImg = 'assets/xinvoice.png';
-                else if (item.assetType === 'identity') logoImg = 'assets/casso.png';
-
-                return `
+            container.innerHTML = activities.map(act => `
                 <div onclick="window.location.href='casID-sign-delegation.html'"
-                    class="bg-white rounded-xl p-2.5 border border-gray-150 shadow-sm flex items-center justify-between gap-2.5 hover:bg-gray-50 cursor-pointer transition-all">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
-                            <img src="${logoImg}" alt="Logo" class="w-full h-full object-contain rounded-full">
+                    class="bg-white rounded-2xl p-3 border border-gray-150 shadow-xs flex items-center gap-3 hover:bg-gray-50 cursor-pointer transition-all">
+                    <div class="w-10 h-10 rounded-xl bg-white p-1 border border-gray-150 flex items-center justify-center shrink-0 shadow-xs overflow-hidden">
+                        <img src="${act.logo}" alt="${act.title}" class="w-full h-full object-contain">
+                    </div>
+                    <div class="flex flex-col flex-1 min-w-0">
+                        <div class="flex items-center gap-1.5 font-bold text-[13px] text-gray-900 truncate">
+                            <span>${act.title}</span>
+                            <i class="fa-solid fa-link text-emerald-500 text-[11px]"></i>
+                            <span>${act.connectedTo}</span>
                         </div>
-                        <div class="flex flex-col">
-                            <span class="text-[11.5px] font-bold text-gray-900">${item.recipient.name}</span>
-                            <span class="text-[9px] text-gray-400 font-mono">${item.recipient.cccd}</span>
+                        <div class="mt-0.5">
+                            <span class="inline-block bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">${act.tag}</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-[10px] text-gray-400 font-medium mt-0.5">
+                            <i class="fa-regular fa-clock text-[9.5px]"></i>
+                            <span>${act.time}</span>
                         </div>
                     </div>
-                    <span class="text-[8.5px] font-bold ${item.status === 'active' ? 'text-emerald-600 bg-emerald-50' : 'text-gray-500 bg-gray-100'} px-2 py-0.5 rounded-full">
-                        ${item.status === 'active' ? 'Hiệu lực' : 'Đã dừng'}
-                    </span>
                 </div>
-            `;
-            }).join('');
+            `).join('');
         }
 
         let toastTimeout = null;

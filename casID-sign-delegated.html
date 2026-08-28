@@ -9,7 +9,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body, input, select, textarea, button, span, p, div, h1, h2, h3, h4, h5, h6, strong, label, input::placeholder, textarea::placeholder {
+        body,
+        input,
+        select,
+        textarea,
+        button,
+        span,
+        p,
+        div,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        strong,
+        label,
+        input::placeholder,
+        textarea::placeholder {
             font-family: 'Roboto', sans-serif !important;
         }
 
@@ -143,19 +160,11 @@
         <!-- 2. VIEW 2: DELEGATED REQUESTS LIST -->
         <div id="view-requests" class="flex-1 flex flex-col overflow-hidden hidden">
             <!-- Header -->
-            <div class="px-4 py-3 flex items-center justify-between bg-white shrink-0">
-                <div class="flex items-center gap-4">
-                    <button class="text-gray-700 text-lg hover:opacity-70"
-                        onclick="window.location.href='index.html'">
-                        <i class="fa-solid fa-arrow-left"></i>
-                    </button>
-                    <h1 class="text-[15px] font-bold text-gray-800">Yêu cầu ký số</h1>
-                </div>
-                <!-- Ủy quyền button top-right -->
-                <button onclick="showMyDelegationsView()"
-                    class="flex items-center text-[10px] font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full px-3.5 py-1.5 transition-all active:scale-95">
-                    <span>Ủy quyền</span>
+            <div class="px-4 py-3 flex items-center gap-4 bg-white shrink-0">
+                <button class="text-gray-700 text-lg hover:opacity-70" onclick="window.location.href='index.html'">
+                    <i class="fa-solid fa-arrow-left"></i>
                 </button>
+                <h1 class="text-[15px] font-bold text-gray-800">Yêu cầu ký số</h1>
             </div>
 
             <!-- Entity Badges container inside list view -->
@@ -284,17 +293,17 @@
                 <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-1">
                     <i class="fa-solid fa-link-slash text-gray-500 text-xl"></i>
                 </div>
-                <h3 class="text-[15px] font-bold text-gray-800">Ngắt liên kết ủy quyền?</h3>
+                <h3 class="text-[15px] font-bold text-gray-800">Xóa ủy quyền?</h3>
                 <p class="text-[11px] text-gray-500 leading-relaxed">Bạn sẽ không còn thấy hoặc thực hiện các yêu cầu ký
                     được ủy quyền bởi <strong id="popup-delegator-name" class="text-gray-800"></strong> nữa.</p>
             </div>
             <div class="flex flex-col gap-2">
                 <button onclick="confirmDisconnect()"
-                    class="w-full py-3 bg-black hover:bg-gray-900 text-white text-sm font-bold rounded-md transition-all active:scale-[0.98]">
-                    Ngắt liên kết
+                    class="w-full py-3 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-xl transition-all active:scale-[0.98]">
+                    Xóa vĩnh viễn
                 </button>
                 <button onclick="closeDisconnectPopup()"
-                    class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-bold rounded-md transition-all active:scale-[0.98]">
+                    class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-bold rounded-xl transition-all active:scale-[0.98]">
                     Huỷ
                 </button>
             </div>
@@ -509,8 +518,9 @@
                     </div>
                     <div class="flex flex-wrap gap-1">${permTags}</div>
                     <button onclick="openDisconnectPopup(${item.id})"
-                        class="w-full py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 text-[11px] font-bold rounded-lg transition-all active:scale-[0.98] flex items-center justify-center">
-                        Ngắt liên kết
+                        class="w-full py-2.5 bg-red-50 hover:bg-red-100 text-red-600 text-[11px] font-bold rounded-lg transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 border border-red-200">
+                        <i class="fa-solid fa-trash-can text-[10px]"></i>
+                        <span>Xóa ủy quyền</span>
                     </button>
                 `;
                     container.appendChild(card);
@@ -549,7 +559,7 @@
                 closeDisconnectPopup();
                 setTimeout(() => {
                     renderMyDelegations();
-                    showToast('Đã ngắt liên kết ủy quyền thành công', 'fa-solid fa-circle-check text-emerald-400');
+                    showToast('Đã xóa ủy quyền thành công', 'fa-solid fa-circle-check text-emerald-400');
                 }, 320);
             }
 
@@ -611,14 +621,12 @@
                     <div class="flex justify-between items-center text-[9px] text-gray-400">
                         <div class="flex items-center gap-1 font-medium">
                             <span>${item.time}</span>
-                            <span class="mx-1">•</span>
-                            <span>${item.fileSize}</span>
                         </div>
                     </div>
 
                     <!-- Note showing who delegated it -->
                     <div class="text-[9.5px] text-gray-600 bg-gray-100/70 rounded px-2 py-1 mt-1 flex items-center gap-1.5 self-start">
-                        <span>Ủy quyền từ: <strong class="font-bold">${item.delegator}</strong></span>
+                        <span><strong class="font-bold">${item.delegator}</strong></span>
                     </div>
                 `;
                     container.appendChild(card);
