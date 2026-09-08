@@ -88,14 +88,14 @@
 
             <!-- Profile Selector Badges Header -->
             <div class="flex items-center gap-2 overflow-x-auto pb-3 pt-1 scrollbar-none">
-                <!-- Personal Active Pill (NGUYEN VAN A) -->
+                <!-- Personal Active Pill (NVA) -->
                 <div id="badge-personal" onclick="switchEntity('personal')"
                     class="flex items-center gap-2 bg-black text-white px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer border border-black transition-all">
                     <div
                         class="w-5 h-5 rounded-full bg-white text-black text-[9px] font-black flex items-center justify-center shrink-0">
-                        NA
+                        NVA
                     </div>
-                    <span class="text-[10px] font-bold tracking-wider leading-none">NGUYEN VAN A</span>
+                    <span class="text-[10px] font-bold tracking-wider leading-none">NVA</span>
                 </div>
 
                 <!-- Bank / Enterprise Demo Pill -->
@@ -105,17 +105,17 @@
                         class="w-5 h-5 rounded-full bg-[#c7d2fe] text-[#3730a3] text-[9px] font-black flex items-center justify-center shrink-0">
                         B
                     </div>
-                    <span class="text-[10px] font-bold tracking-wider leading-none">BANKUSRDEMO1</span>
+                    <span class="text-[10px] font-bold tracking-wider leading-none">BANKDEMO</span>
                 </div>
 
-                <!-- Enterprise Pill (CANHCASSO...) -->
+                <!-- Enterprise Pill (CASSO) -->
                 <div id="badge-casso" onclick="switchEntity('casso')"
                     class="flex items-center gap-2 bg-purple-50 text-purple-900 border border-purple-100 px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-purple-100 transition-all">
                     <div
                         class="w-5 h-5 rounded-full bg-purple-200 text-purple-800 text-[9px] font-black flex items-center justify-center shrink-0">
                         C
                     </div>
-                    <span class="text-[10px] font-bold tracking-wider leading-none">CÔNG TY CASSO</span>
+                    <span class="text-[10px] font-bold tracking-wider leading-none">CASSO</span>
                 </div>
 
                 <!-- Enterprise 2 Pill (A4B) -->
@@ -125,7 +125,7 @@
                         class="w-5 h-5 rounded-full bg-blue-100 text-blue-800 text-[9px] font-black flex items-center justify-center shrink-0">
                         AB
                     </div>
-                    <span class="text-[10px] font-bold tracking-wider leading-none">CÔNG TY A4B</span>
+                    <span class="text-[10px] font-bold tracking-wider leading-none">A4B</span>
                 </div>
 
                 <!-- Enterprise 3 Pill (Ủy quyền số) -->
@@ -145,7 +145,8 @@
                 <div class="p-4 flex items-center justify-between">
                     <!-- Left: User Identity Info -->
                     <div class="flex flex-col gap-1">
-                        <h2 id="card-user-name" class="text-[17px] font-black text-gray-900 tracking-tight leading-snug">
+                        <h2 id="card-user-name"
+                            class="text-[17px] font-black text-gray-900 tracking-tight leading-snug">
                             NGUYEN VAN A
                         </h2>
                     </div>
@@ -195,8 +196,8 @@
                     <h3 class="text-[15px] font-black text-gray-900 tracking-tight">Trung tâm dữ liệu</h3>
                 </div>
 
-                <!-- 4 Cards Grid: Ngân hàng, Chứng thư số, Hóa đơn điện tử, Ủy quyền -->
-                <div class="grid grid-cols-2 gap-2.5">
+                <!-- 6 Cards Grid: Ngân hàng, Chứng thư số, Hóa đơn điện tử, Yêu cầu ký số, Ủy quyền, Xem thêm -->
+                <div class="grid grid-cols-3 gap-2.5">
 
                     <!-- 1. Ngân hàng (5 nguồn với logo VCB, MB, +3) -->
                     <div onclick="showToast('Dữ liệu Ngân hàng đang được kết nối')"
@@ -216,14 +217,15 @@
                             </div>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[12px] font-bold text-gray-900 leading-tight">Ngân hàng</span>
+                            <span class="text-[10.5px] font-bold text-gray-900 leading-tight whitespace-nowrap">Ngân
+                                hàng</span>
                             <span class="text-[10px] text-gray-500 font-medium mt-0.5">5 nguồn</span>
                         </div>
                     </div>
 
                     <!-- 2. Chứng thư số (Icon bút ký / 0 nguồn hoặc 1 nguồn) -->
                     <div onclick="window.location.href='casID-sign-ca.html'"
-                        class="bg-white rounded-2xl p-3.5 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
+                        class="bg-white rounded-2xl p-2.5 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
                         <div class="flex items-center -space-x-2.5 shrink-0 py-0.5">
                             <div
                                 class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200 text-gray-800 shadow-xs shrink-0">
@@ -231,14 +233,15 @@
                             </div>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[12px] font-bold text-gray-900 leading-tight">Chứng thư số</span>
+                            <span class="text-[10.5px] font-bold text-gray-900 leading-tight whitespace-nowrap">Chứng
+                                thư số</span>
                             <span class="text-[10px] text-gray-500 font-medium mt-0.5">0 nguồn</span>
                         </div>
                     </div>
 
                     <!-- 3. Hóa đơn điện tử (3 nguồn với logo xInvoice, Hilo, +1) -->
                     <div onclick="showToast('Dữ liệu Hóa đơn điện tử đang kết nối')"
-                        class="bg-white rounded-2xl p-3.5 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
+                        class="bg-white rounded-2xl p-2.5 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
                         <div class="flex items-center -space-x-2.5 shrink-0 py-0.5">
                             <div
                                 class="w-8 h-8 rounded-full bg-white p-0.5 flex items-center justify-center border border-gray-200 shadow-xs overflow-hidden shrink-0">
@@ -255,14 +258,31 @@
                             </div>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[12px] font-bold text-gray-900 leading-tight">Hóa đơn điện tử</span>
+                            <span class="text-[10.5px] font-bold text-gray-900 leading-tight whitespace-nowrap">Hóa đơn
+                                điện tử</span>
                             <span class="text-[10px] text-gray-500 font-medium mt-0.5">3 nguồn</span>
                         </div>
                     </div>
 
-                    <!-- 4. UỶ QUYỀN TẬP TRUNG -->
+                    <!-- 4. Yêu cầu ký số -->
+                    <div onclick="window.location.href='casID-sign-request.html'"
+                        class="bg-white rounded-2xl p-2.5 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
+                        <div class="flex items-center -space-x-2.5 shrink-0 py-0.5">
+                            <div
+                                class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200 text-gray-800 shadow-xs shrink-0">
+                                <i class="fa-solid fa-file-signature text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[10.5px] font-bold text-gray-900 leading-tight whitespace-nowrap">Yêu cầu
+                                ký số</span>
+                            <span class="text-[10px] text-gray-500 font-medium mt-0.5">0 yêu cầu</span>
+                        </div>
+                    </div>
+
+                    <!-- 5. UỶ QUYỀN TẬP TRUNG -->
                     <div onclick="window.location.href='casID-sign-delegation.html'"
-                        class="bg-white rounded-2xl p-3.5 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black hover:shadow-md transition-all cursor-pointer active:scale-[0.98] relative overflow-hidden group">
+                        class="bg-white rounded-2xl p-2.5 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black hover:shadow-md transition-all cursor-pointer active:scale-[0.98] relative overflow-hidden group">
                         <div id="home-delegation-icons" class="py-0.5">
                             <div class="flex items-center -space-x-2.5 shrink-0">
                                 <div
@@ -276,9 +296,26 @@
                             </div>
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[12px] font-bold text-gray-900 leading-tight">Ủy quyền</span>
+                            <span class="text-[10.5px] font-bold text-gray-900 leading-tight whitespace-nowrap">Ủy
+                                quyền</span>
                             <span id="home-delegation-count" class="text-[10px] text-gray-500 font-medium mt-0.5">2 ủy
                                 quyền</span>
+                        </div>
+                    </div>
+
+                    <!-- 6. Xem thêm -->
+                    <div onclick="window.location.href='casID-sign-data.html'"
+                        class="bg-white rounded-2xl p-2.5 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
+                        <div class="flex items-center -space-x-2.5 shrink-0 py-0.5">
+                            <div
+                                class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200 text-gray-800 shadow-xs shrink-0">
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[10.5px] font-bold text-gray-900 leading-tight whitespace-nowrap">Xem
+                                thêm</span>
+                            <span class="text-[10px] text-gray-500 font-medium mt-0.5">Tất cả</span>
                         </div>
                     </div>
 
@@ -291,7 +328,8 @@
                 <div onclick="window.location.href='casID-sign-ca.html'"
                     class="bg-gradient-to-r from-[#1d4ed8] via-[#4338ca] to-[#6366f1] text-white rounded-2xl p-3.5 shadow-md flex flex-col justify-between min-w-[305px] flex-1 cursor-pointer hover:opacity-95 active:scale-[0.99] transition-all relative overflow-hidden">
                     <div class="flex items-center justify-between">
-                        <span class="text-[10px] font-black tracking-wider uppercase text-white">QUÀ TẶNG MIỄN PHÍ</span>
+                        <span class="text-[10px] font-black tracking-wider uppercase text-white">QUÀ TẶNG MIỄN
+                            PHÍ</span>
                         <div class="flex items-center gap-1 bg-white/10 backdrop-blur-xs px-2 py-0.5 rounded-full">
                             <i class="fa-solid fa-pen-nib text-[10px] text-white"></i>
                             <span class="text-[11px] font-black text-white tracking-tight">CAS CERT</span>
@@ -309,7 +347,9 @@
                 </div>
 
                 <!-- Slide 2: Next Carousel Card Peek -->
-                <div class="w-5 min-w-[20px] rounded-2xl bg-gradient-to-br from-[#0284c7] to-[#0f766e] shrink-0 opacity-90"></div>
+                <div
+                    class="w-5 min-w-[20px] rounded-2xl bg-gradient-to-br from-[#0284c7] to-[#0f766e] shrink-0 opacity-90">
+                </div>
             </div>
 
             <!-- Section: Hoạt động gần đây -->
@@ -328,7 +368,8 @@
                     <!-- Default Activity matching screenshot -->
                     <div onclick="window.location.href='casID-sign-delegation.html'"
                         class="bg-white rounded-2xl p-3 border border-gray-150 shadow-xs flex items-center gap-3 hover:bg-gray-50 cursor-pointer transition-all">
-                        <div class="w-10 h-10 rounded-xl bg-white p-1 border border-gray-150 flex items-center justify-center shrink-0 shadow-xs overflow-hidden">
+                        <div
+                            class="w-10 h-10 rounded-xl bg-white p-1 border border-gray-150 flex items-center justify-center shrink-0 shadow-xs overflow-hidden">
                             <img src="assets/xinvoice.png" alt="xInvoice" class="w-full h-full object-contain">
                         </div>
                         <div class="flex flex-col flex-1 min-w-0">
@@ -338,7 +379,8 @@
                                 <span>XInvoice local</span>
                             </div>
                             <div class="mt-0.5">
-                                <span class="inline-block bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">invoice</span>
+                                <span
+                                    class="inline-block bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">invoice</span>
                             </div>
                             <div class="flex items-center gap-1 text-[10px] text-gray-400 font-medium mt-0.5">
                                 <i class="fa-regular fa-clock text-[9.5px]"></i>
@@ -351,8 +393,8 @@
 
         </div>
 
-        <!-- Floating Action Button (FAB +) -->
-        <button onclick="window.location.href='casID-sign-delegation.html'" title="Tạo ủy quyền mới"
+        <!-- Floating Action Button (FAB +: Vào danh sách tài sản) -->
+        <button onclick="window.location.href='casID-sign-data.html'" title="Danh sách tài sản"
             class="absolute bottom-20 right-5 w-12 h-12 bg-black hover:bg-gray-900 text-white rounded-full flex items-center justify-center shadow-2xl active:scale-95 transition-all z-20">
             <i class="fa-solid fa-plus text-lg"></i>
         </button>
@@ -364,15 +406,15 @@
                 <i class="fa-solid fa-house text-base text-black"></i>
                 <span class="font-bold">Trang chủ</span>
             </button>
-            <button onclick="window.location.href='casID-sign-data.html'"
+            <button onclick="window.location.href='casID-business-list.html'"
                 class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
-                <i class="fa-solid fa-server text-base"></i>
-                <span>Dữ liệu</span>
+                <i class="fa-solid fa-building text-base"></i>
+                <span>Doanh nghiệp</span>
             </button>
             <button onclick="window.location.href='casID-sign-delegation.html'"
                 class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
                 <i class="fa-solid fa-qrcode text-base"></i>
-                <span>Cấp quyền</span>
+                <span>Ủy quyền</span>
             </button>
             <button onclick="window.location.href='casID-sign-noti.html'"
                 class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700 relative">
@@ -473,7 +515,7 @@
             const countEl = document.getElementById('home-delegation-count');
             const iconsEl = document.getElementById('home-delegation-icons');
 
-            const stored = localStorage.getItem('casso_central_delegations_v9') || localStorage.getItem('casso_central_delegations_v8');
+            const stored = localStorage.getItem('casso_central_delegations_v10') || localStorage.getItem('casso_central_delegations_v9') || localStorage.getItem('casso_central_delegations_v8');
             let list = [];
             if (stored) {
                 try { list = JSON.parse(stored); } catch (e) { }

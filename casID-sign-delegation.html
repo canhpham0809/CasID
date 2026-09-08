@@ -319,6 +319,16 @@
                         </button>
                     </div>
 
+                    <!-- 5. ACTIVITY HISTORY / LỊCH SỬ HOẠT ĐỘNG (Bên dưới chi tiết yêu cầu) -->
+                    <div id="form-activity-history-wrapper" class="mt-2 bg-white rounded-xl p-3 border border-gray-100 shadow-xs flex flex-col gap-1.5 hidden">
+                        <div class="text-gray-900 font-bold text-[11px] border-b border-gray-100 pb-1.5">
+                            Lịch sử hoạt động
+                        </div>
+                        <div id="form-activity-list" class="flex flex-col gap-0.5 pt-0.5">
+                            <!-- Dynamic bullet note items -->
+                        </div>
+                    </div>
+
                 </form>
 
             </div>
@@ -373,6 +383,16 @@
                                 Chờ xác nhận
                             </span>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Activity History for Received Detail -->
+                <div id="received-activity-history-wrapper" class="bg-white rounded-2xl p-3.5 border border-gray-150 shadow-xs flex flex-col gap-1.5">
+                    <div class="text-gray-900 font-bold text-[11px] border-b border-gray-100 pb-1.5">
+                        Lịch sử hoạt động
+                    </div>
+                    <div id="received-activity-list" class="flex flex-col gap-0.5 pt-0.5">
+                        <!-- Dynamic bullet note items -->
                     </div>
                 </div>
 
@@ -446,10 +466,10 @@
                 <i class="fa-solid fa-house text-base"></i>
                 <span>Trang chủ</span>
             </button>
-            <button onclick="window.location.href='casID-sign-data.html'"
+            <button onclick="window.location.href='casID-business-list.html'"
                 class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
-                <i class="fa-solid fa-server text-base"></i>
-                <span>Dữ liệu</span>
+                <i class="fa-solid fa-building text-base"></i>
+                <span>Doanh nghiệp</span>
             </button>
             <button class="flex flex-col items-center gap-1 w-16 text-black">
                 <i class="fa-solid fa-qrcode text-lg text-black"></i>
@@ -629,7 +649,7 @@
 
         // INITIAL DEFAULT DATA (PERSISTED IN LOCALSTORAGE)
         function initializeDelegationsData() {
-            const stored = localStorage.getItem('casso_central_delegations_v9');
+            const stored = localStorage.getItem('casso_central_delegations_v10');
             if (stored) {
                 try { return JSON.parse(stored); } catch (e) { }
             }
@@ -648,7 +668,49 @@
                     endDate: '2026-12-31',
                     endTime: '18:00',
                     isIndefinite: false,
-                    status: 'active'
+                    status: 'active',
+                    activities: [
+                        {
+                            id: 'act-101-1',
+                            action: 'create',
+                            title: 'Khởi tạo yêu cầu',
+                            actor: 'Nguyễn Văn An',
+                            time: '08:00 01/08/2026',
+                            details: 'Gửi yêu cầu ủy quyền Ngân hàng (Vietcombank, Techcombank) đến Nguyễn Văn Hùng'
+                        },
+                        {
+                            id: 'act-101-2',
+                            action: 'accept',
+                            title: 'Chấp nhận yêu cầu',
+                            actor: 'Nguyễn Văn Hùng',
+                            time: '08:25 01/08/2026',
+                            details: 'Người nhận đã đồng ý xác nhận nhận ủy quyền'
+                        },
+                        {
+                            id: 'act-101-3',
+                            action: 'edit',
+                            title: 'Chỉnh sửa yêu cầu',
+                            actor: 'Nguyễn Văn An',
+                            time: '14:15 10/08/2026',
+                            details: 'Cập nhật lại hạn mức và tài khoản Techcombank'
+                        },
+                        {
+                            id: 'act-101-4',
+                            action: 'pause',
+                            title: 'Tạm dừng yêu cầu',
+                            actor: 'Nguyễn Văn An',
+                            time: '09:00 15/08/2026',
+                            details: 'Tạm dừng quyền truy cập và sử dụng tài sản'
+                        },
+                        {
+                            id: 'act-101-5',
+                            action: 'resume',
+                            title: 'Tiếp tục yêu cầu',
+                            actor: 'Nguyễn Văn An',
+                            time: '10:00 20/08/2026',
+                            details: 'Khôi phục hiệu lực ủy quyền hoạt động bình thường'
+                        }
+                    ]
                 },
                 {
                     id: 105,
@@ -662,7 +724,17 @@
                     endDate: '2026-11-20',
                     endTime: '18:00',
                     isIndefinite: false,
-                    status: 'pending'
+                    status: 'pending',
+                    activities: [
+                        {
+                            id: 'act-105-1',
+                            action: 'create',
+                            title: 'Khởi tạo yêu cầu',
+                            actor: 'Nguyễn Văn An',
+                            time: '09:00 20/08/2026',
+                            details: 'Gửi yêu cầu ủy quyền MB Bank & ACB đến Trần Thu Hà (Đang chờ xác nhận)'
+                        }
+                    ]
                 },
                 // 2. Nguyễn Văn An - Được ủy quyền (Received)
                 {
@@ -680,7 +752,17 @@
                     endDate: '2026-11-20',
                     endTime: '18:00',
                     isIndefinite: false,
-                    status: 'pending'
+                    status: 'pending',
+                    activities: [
+                        {
+                            id: 'act-200-1',
+                            action: 'create',
+                            title: 'Khởi tạo yêu cầu',
+                            actor: 'NGUYỄN VĂN AN',
+                            time: '09:00 20/08/2026',
+                            details: 'Gửi lời mời nhận ủy quyền MB Bank & ACB cho bạn'
+                        }
+                    ]
                 },
                 {
                     id: 201,
@@ -697,7 +779,33 @@
                     endDate: '2026-12-31',
                     endTime: '18:00',
                     isIndefinite: false,
-                    status: 'active'
+                    status: 'active',
+                    activities: [
+                        {
+                            id: 'act-201-1',
+                            action: 'create',
+                            title: 'Khởi tạo yêu cầu',
+                            actor: 'CÔNG TY TNHH CASSO',
+                            time: '08:00 01/08/2026',
+                            details: 'Cấp quyền ký số Chứng thư số CAS CERT 5404...8910'
+                        },
+                        {
+                            id: 'act-201-2',
+                            action: 'accept',
+                            title: 'Chấp nhận yêu cầu',
+                            actor: 'Bạn (Nguyễn Văn An)',
+                            time: '09:15 01/08/2026',
+                            details: 'Đã đồng ý xác nhận nhận ủy quyền ký số hóa đơn'
+                        },
+                        {
+                            id: 'act-201-3',
+                            action: 'edit',
+                            title: 'Chỉnh sửa yêu cầu',
+                            actor: 'CÔNG TY TNHH CASSO',
+                            time: '11:00 12/08/2026',
+                            details: 'Gia hạn thời gian ủy quyền đến hết ngày 31/12/2026'
+                        }
+                    ]
                 },
                 {
                     id: 202,
@@ -714,7 +822,25 @@
                     endDate: '',
                     endTime: '',
                     isIndefinite: true,
-                    status: 'active'
+                    status: 'active',
+                    activities: [
+                        {
+                            id: 'act-202-1',
+                            action: 'create',
+                            title: 'Khởi tạo yêu cầu',
+                            actor: 'CÔNG TY CỔ PHẦN A4B',
+                            time: '08:00 15/07/2026',
+                            details: 'Ủy quyền xuất hóa đơn xInvoice & Hilo (Vô thời hạn)'
+                        },
+                        {
+                            id: 'act-202-2',
+                            action: 'accept',
+                            title: 'Chấp nhận yêu cầu',
+                            actor: 'Bạn (Nguyễn Văn An)',
+                            time: '08:45 15/07/2026',
+                            details: 'Đã đồng ý xác nhận nhận ủy quyền xuất hóa đơn'
+                        }
+                    ]
                 },
                 {
                     id: 203,
@@ -731,7 +857,17 @@
                     endDate: '2026-11-25',
                     endTime: '18:00',
                     isIndefinite: false,
-                    status: 'pending'
+                    status: 'pending',
+                    activities: [
+                        {
+                            id: 'act-203-1',
+                            action: 'create',
+                            title: 'Khởi tạo yêu cầu',
+                            actor: 'Nguyễn Văn Hùng',
+                            time: '08:00 25/08/2026',
+                            details: 'Ủy quyền tài khoản Vietcombank (Hạn mức 50tr/ngày)'
+                        }
+                    ]
                 },
                 {
                     id: 204,
@@ -748,7 +884,25 @@
                     endDate: '2027-08-10',
                     endTime: '18:00',
                     isIndefinite: false,
-                    status: 'active'
+                    status: 'active',
+                    activities: [
+                        {
+                            id: 'act-204-1',
+                            action: 'create',
+                            title: 'Khởi tạo yêu cầu',
+                            actor: 'CÔNG TY TNHH CASSO',
+                            time: '08:00 10/08/2026',
+                            details: 'Cấp quyền lập lệnh chi ngân hàng Techcombank & MB Bank'
+                        },
+                        {
+                            id: 'act-204-2',
+                            action: 'accept',
+                            title: 'Chấp nhận yêu cầu',
+                            actor: 'Bạn (Nguyễn Văn An)',
+                            time: '08:30 10/08/2026',
+                            details: 'Đã đồng ý nhận ủy quyền chi doanh nghiệp'
+                        }
+                    ]
                 },
                 {
                     id: 205,
@@ -765,7 +919,17 @@
                     endDate: '2026-09-26',
                     endTime: '18:00',
                     isIndefinite: false,
-                    status: 'pending'
+                    status: 'pending',
+                    activities: [
+                        {
+                            id: 'act-205-1',
+                            action: 'create',
+                            title: 'Khởi tạo yêu cầu',
+                            actor: 'Trần Quốc Bảo',
+                            time: '08:00 26/08/2026',
+                            details: 'Ủy quyền ký số Chứng thư số Hilo CA'
+                        }
+                    ]
                 },
                 // 3. Doanh nghiệp Casso
                 {
@@ -780,7 +944,17 @@
                     endDate: '',
                     endTime: '',
                     isIndefinite: true,
-                    status: 'pending'
+                    status: 'pending',
+                    activities: [
+                        {
+                            id: 'act-102-1',
+                            action: 'create',
+                            title: 'Khởi tạo yêu cầu',
+                            actor: 'CÔNG TY TNHH CASSO',
+                            time: '08:00 15/08/2026',
+                            details: 'Cấp quyền ký số CAS CERT cho Hoàng Thị Mai'
+                        }
+                    ]
                 },
                 {
                     id: 103,
@@ -794,7 +968,25 @@
                     endDate: '2026-09-10',
                     endTime: '18:00',
                     isIndefinite: false,
-                    status: 'active'
+                    status: 'active',
+                    activities: [
+                        {
+                            id: 'act-103-1',
+                            action: 'create',
+                            title: 'Khởi tạo yêu cầu',
+                            actor: 'CÔNG TY TNHH CASSO',
+                            time: '08:00 10/08/2026',
+                            details: 'Gửi ủy quyền Chứng thư số CAS CERT cho Lê Quốc Trung'
+                        },
+                        {
+                            id: 'act-103-2',
+                            action: 'accept',
+                            title: 'Chấp nhận yêu cầu',
+                            actor: 'Lê Quốc Trung',
+                            time: '09:00 10/08/2026',
+                            details: 'Lê Quốc Trung đã xác nhận đồng ý nhận ủy quyền'
+                        }
+                    ]
                 },
                 // 4. Doanh nghiệp A4B
                 {
@@ -809,11 +1001,29 @@
                     endDate: '2026-08-01',
                     endTime: '18:00',
                     isIndefinite: false,
-                    status: 'active'
+                    status: 'active',
+                    activities: [
+                        {
+                            id: 'act-104-1',
+                            action: 'create',
+                            title: 'Khởi tạo yêu cầu',
+                            actor: 'CÔNG TY CỔ PHẦN A4B',
+                            time: '08:00 01/07/2026',
+                            details: 'Cấp quyền phát hành hóa đơn điện tử xInvoice cho Nguyễn Văn Hùng'
+                        },
+                        {
+                            id: 'act-104-2',
+                            action: 'accept',
+                            title: 'Chấp nhận yêu cầu',
+                            actor: 'Nguyễn Văn Hùng',
+                            time: '08:30 01/07/2026',
+                            details: 'Nguyễn Văn Hùng đã xác nhận đồng ý nhận ủy quyền'
+                        }
+                    ]
                 }
             ];
 
-            localStorage.setItem('casso_central_delegations_v9', JSON.stringify(initialList));
+            localStorage.setItem('casso_central_delegations_v10', JSON.stringify(initialList));
             return initialList;
         }
 
@@ -885,9 +1095,9 @@
             if (!tabsContainer) return;
 
             const entities = [
-                { key: 'personal', name: 'Nguyễn Văn An', avatar: 'NA', avatarBg: 'bg-white text-black' },
-                { key: 'casso', name: 'Công Ty Casso', avatar: 'C', avatarBg: 'bg-purple-200 text-purple-800' },
-                { key: 'a4b', name: 'Công Ty A4B', avatar: 'AB', avatarBg: 'bg-blue-100 text-blue-800' },
+                { key: 'personal', name: 'NVA', avatar: 'NVA', avatarBg: 'bg-white text-black' },
+                { key: 'casso', name: 'Casso', avatar: 'C', avatarBg: 'bg-purple-200 text-purple-800' },
+                { key: 'a4b', name: 'A4B', avatar: 'AB', avatarBg: 'bg-blue-100 text-blue-800' },
                 { key: 'delegated', name: 'Ủy quyền số', avatar: 'UQ', avatarBg: 'bg-emerald-100 text-emerald-800' }
             ];
 
@@ -1200,6 +1410,9 @@
                 }
             }
 
+            // Render Lịch sử hoạt động cho màn hình Chi tiết nhận ủy quyền
+            renderActivityHistory(item.activities, 'received-activity-list');
+
             // Actions Container
             const actionsEl = document.getElementById('received-detail-actions-container');
             if (actionsEl) {
@@ -1239,6 +1452,29 @@
             if (!item) return;
 
             item.status = isAccept ? 'active' : 'rejected';
+
+            // Ghi nhận lịch sử hoạt động
+            if (!item.activities) item.activities = [];
+            if (isAccept) {
+                item.activities.push({
+                    id: 'act-' + Date.now(),
+                    action: 'accept',
+                    title: 'Chấp nhận yêu cầu',
+                    actor: 'Bạn (' + (item.recipient?.name || 'Người nhận') + ')',
+                    time: formatCurrentTime(),
+                    details: 'Đã đồng ý xác nhận nhận quyền sử dụng tài sản'
+                });
+            } else {
+                item.activities.push({
+                    id: 'act-' + Date.now(),
+                    action: 'reject',
+                    title: 'Từ chối yêu cầu',
+                    actor: 'Bạn (' + (item.recipient?.name || 'Người nhận') + ')',
+                    time: formatCurrentTime(),
+                    details: 'Đã từ chối lời mời ủy quyền'
+                });
+            }
+
             saveDelegationsToStorage();
 
             if (isAccept) {
@@ -1320,6 +1556,10 @@
             document.getElementById('btn-submit-text').textContent = "Lưu lại";
             document.getElementById('btn-toggle-pause').classList.add('hidden');
             document.getElementById('btn-delete-delegation').classList.add('hidden');
+
+            // Ẩn mục Lịch sử hoạt động khi tạo mới
+            const histWrapper = document.getElementById('form-activity-history-wrapper');
+            if (histWrapper) histWrapper.classList.add('hidden');
         }
 
         function showEditFormView(delId) {
@@ -1428,6 +1668,76 @@
                     pauseBtn.className = "w-full py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[11.5px] font-bold rounded-lg transition-all active:scale-[0.98] border border-emerald-200 flex items-center justify-center gap-1.5";
                 }
             }
+
+            // 5. Render Lịch sử hoạt động bên dưới Form
+            const histWrapper = document.getElementById('form-activity-history-wrapper');
+            if (histWrapper) {
+                histWrapper.classList.remove('hidden');
+                renderActivityHistory(item.activities, 'form-activity-list');
+            }
+        }
+
+        // ========================================================
+        // 3B. TIMELINE & ACTIVITY HISTORY RENDERING HELPER
+        // ========================================================
+        function formatCurrentTime() {
+            const now = new Date();
+            const hrs = String(now.getHours()).padStart(2, '0');
+            const mins = String(now.getMinutes()).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            return `${hrs}:${mins} ${day}/${month}/${year}`;
+        }
+
+        function getActionConfig(action) {
+            switch (action) {
+                case 'create':
+                    return { label: 'Khởi tạo yêu cầu' };
+                case 'accept':
+                    return { label: 'Chấp nhận yêu cầu' };
+                case 'reject':
+                    return { label: 'Từ chối yêu cầu' };
+                case 'edit':
+                    return { label: 'Chỉnh sửa yêu cầu' };
+                case 'pause':
+                    return { label: 'Tạm dừng yêu cầu' };
+                case 'resume':
+                    return { label: 'Tiếp tục yêu cầu' };
+                default:
+                    return { label: 'Hoạt động' };
+            }
+        }
+
+        function renderActivityHistory(activities, listElId) {
+            const listEl = document.getElementById(listElId);
+            if (!listEl) return;
+
+            const list = activities || [];
+            if (list.length === 0) {
+                listEl.innerHTML = `
+                    <div class="py-1 text-gray-400 text-[10.5px]">
+                        Chưa có lịch sử hoạt động ghi nhận
+                    </div>
+                `;
+                return;
+            }
+
+            // Render simple bullet notes in reverse order (newest on top)
+            listEl.innerHTML = list.slice().reverse().map(act => {
+                const conf = getActionConfig(act.action);
+                const displayTitle = act.title || conf.label;
+
+                return `
+                    <div class="flex items-center justify-between py-1 text-[11px]">
+                        <div class="flex items-center gap-1.5 text-gray-800 font-medium truncate">
+                            <span class="text-gray-400 font-bold shrink-0">•</span>
+                            <span class="truncate">${displayTitle}</span>
+                        </div>
+                        <span class="text-[9.5px] text-gray-400 font-mono shrink-0 ml-2">${act.time || ''}</span>
+                    </div>
+                `;
+            }).join('');
         }
 
         function handleHeaderBack() {
@@ -1622,6 +1932,7 @@
             const delegatorKey = editingDelegationId
                 ? (delegationsList.find(d => d.id === editingDelegationId)?.delegatorKey || currentFilterEntity)
                 : currentFilterEntity;
+            const delegatorProfile = DELEGATOR_PROFILES[delegatorKey] || DELEGATOR_PROFILES['personal'];
             const assetType = document.getElementById('select-asset-type').value;
             const assetDef = ASSET_DEFINITIONS[assetType];
 
@@ -1661,6 +1972,17 @@
                     item.endTime = isIndefinite ? '' : endTimeVal;
                     item.isIndefinite = isIndefinite;
 
+                    // Ghi nhận lịch sử chỉnh sửa
+                    if (!item.activities) item.activities = [];
+                    item.activities.push({
+                        id: 'act-' + Date.now(),
+                        action: 'edit',
+                        title: 'Chỉnh sửa yêu cầu',
+                        actor: delegatorProfile.name,
+                        time: formatCurrentTime(),
+                        details: `Đã cập nhật thông tin và danh sách tài sản (${assetDef.title || assetDef.label})`
+                    });
+
                     saveDelegationsToStorage();
                     showToast(`Đã lưu thay đổi ủy quyền!`, 'fa-solid fa-circle-check text-emerald-400');
                 }
@@ -1677,7 +1999,17 @@
                     endDate: isIndefinite ? '' : endDateVal,
                     endTime: isIndefinite ? '' : endTimeVal,
                     isIndefinite: isIndefinite,
-                    status: 'pending' // Chờ người nhận xác nhận
+                    status: 'pending', // Chờ người nhận xác nhận
+                    activities: [
+                        {
+                            id: 'act-' + Date.now(),
+                            action: 'create',
+                            title: 'Khởi tạo yêu cầu',
+                            actor: delegatorProfile.name,
+                            time: formatCurrentTime(),
+                            details: `Đã tạo và gửi yêu cầu ủy quyền ${assetDef.title || assetDef.label} đến ${currentVerifiedRecipient.name}`
+                        }
+                    ]
                 };
 
                 delegationsList.unshift(newDeleg);
@@ -1745,6 +2077,7 @@
             if (!editingDelegationId) return;
             const item = delegationsList.find(d => d.id === editingDelegationId);
             if (!item) return;
+            const delegatorProfile = DELEGATOR_PROFILES[item.delegatorKey] || DELEGATOR_PROFILES['personal'];
 
             if (item.status === 'active') {
                 document.getElementById('modal-title').textContent = "Tạm dừng ủy quyền?";
@@ -1754,6 +2087,16 @@
 
                 pendingModalAction = () => {
                     item.status = 'inactive';
+                    if (!item.activities) item.activities = [];
+                    item.activities.push({
+                        id: 'act-' + Date.now(),
+                        action: 'pause',
+                        title: 'Tạm dừng yêu cầu',
+                        actor: delegatorProfile.name,
+                        time: formatCurrentTime(),
+                        details: 'Tạm dừng quyền truy cập và sử dụng tài sản ủy quyền'
+                    });
+
                     saveDelegationsToStorage();
                     showToast(`Đã tạm dừng ủy quyền!`, 'fa-solid fa-circle-check text-amber-400');
                     handleHeaderBack();
@@ -1766,6 +2109,16 @@
 
                 pendingModalAction = () => {
                     item.status = 'active';
+                    if (!item.activities) item.activities = [];
+                    item.activities.push({
+                        id: 'act-' + Date.now(),
+                        action: 'resume',
+                        title: 'Tiếp tục yêu cầu',
+                        actor: delegatorProfile.name,
+                        time: formatCurrentTime(),
+                        details: 'Khôi phục hiệu lực ủy quyền hoạt động bình thường'
+                    });
+
                     saveDelegationsToStorage();
                     showToast(`Đã tiếp tục ủy quyền!`, 'fa-solid fa-circle-check text-emerald-400');
                     handleHeaderBack();
@@ -1797,7 +2150,7 @@
         }
 
         function saveDelegationsToStorage() {
-            localStorage.setItem('casso_central_delegations_v9', JSON.stringify(delegationsList));
+            localStorage.setItem('casso_central_delegations_v10', JSON.stringify(delegationsList));
         }
 
         function openConfirmModal() {

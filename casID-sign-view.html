@@ -242,13 +242,13 @@
                 <!-- Drag Handle bar -->
                 <div class="w-12 h-1 bg-gray-200 rounded-full mx-auto mb-2"></div>
 
-                <h3 class="text-sm font-bold text-gray-800 text-center mb-1 flex items-center justify-center gap-1.5">
+                <h3 id="cert-modal-title" class="text-sm font-bold text-gray-800 text-center mb-1 flex items-center justify-center gap-1.5">
                     <i class="fa-solid fa-id-card text-emerald-600"></i> Chọn chữ ký số CA
                 </h3>
-                <p class="text-[10px] text-gray-400 text-center -mt-2 mb-2">Vui lòng lựa chọn chứng thư số muốn ký</p>
+                <p id="cert-modal-subtitle" class="text-[10px] text-gray-400 text-center -mt-2 mb-2">Vui lòng lựa chọn chứng thư số muốn ký</p>
 
-                <!-- Segmented Tab Controls (Personal vs Corporate vs Delegated) -->
-                <div class="flex bg-gray-100 p-0.5 rounded-xl text-xs font-semibold shrink-0">
+                <!-- Segmented Tab Controls (Personal vs Corporate) - Ẩn khi ở luồng ủy quyền -->
+                <div id="cert-tab-container" class="flex bg-gray-100 p-0.5 rounded-xl text-xs font-semibold shrink-0">
                     <button id="cert-tab-personal" onclick="switchCertTab('personal')"
                         class="flex-1 py-1.5 text-center rounded-lg bg-white shadow-sm text-gray-800 transition-all font-bold">
                         Cá nhân
@@ -256,10 +256,6 @@
                     <button id="cert-tab-corporate" onclick="switchCertTab('corporate')"
                         class="flex-1 py-1.5 text-center rounded-lg text-gray-500 hover:text-gray-800 transition-all">
                         Doanh nghiệp
-                    </button>
-                    <button id="cert-tab-delegated" onclick="switchCertTab('delegated')"
-                        class="flex-1 py-1.5 text-center rounded-lg text-gray-500 hover:text-gray-800 transition-all">
-                        Ủy quyền
                     </button>
                 </div>
 
@@ -303,16 +299,16 @@
                 <!-- Corporate Certificates List -->
                 <div id="cert-list-corporate" class="flex flex-col gap-2.5 max-h-[220px] overflow-y-auto hidden">
                     <!-- Certificate Option 1 (Corporate) -->
-                    <button onclick="selectCertificate('Công ty A4B', 'InTrust-CA', '0102519041')"
+                    <button onclick="selectCertificate('Công ty TNHH Casso', 'VNPT-CA', '0316794479')"
                         class="w-full text-left p-3.5 bg-emerald-50/50 hover:bg-emerald-50 border border-emerald-200/50 rounded-2xl flex items-center justify-between group active:scale-[0.99] transition-all">
                         <div class="flex items-center gap-3">
                             <div
-                                class="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
-                                <i class="fa-solid fa-signature text-sm"></i>
+                                class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+                                <i class="fa-solid fa-building text-sm"></i>
                             </div>
                             <div>
-                                <h4 class="text-xs font-bold text-gray-800">Công ty A4B</h4>
-                                <p class="text-[9px] text-gray-500 mt-0.5">MST: 0102519041 - Nhà cung cấp: InTrust-CA
+                                <h4 class="text-xs font-bold text-gray-800">Công ty TNHH Casso</h4>
+                                <p class="text-[9px] text-gray-500 mt-0.5">MST: 0316794479 - Nhà cung cấp: VNPT-CA
                                 </p>
                             </div>
                         </div>
@@ -321,51 +317,15 @@
                     </button>
 
                     <!-- Certificate Option 2 (Corporate) -->
-                    <button onclick="selectCertificate('Công ty TNHH Casso', 'VNPT-CA', '0316794479')"
+                    <button onclick="selectCertificate('Công ty TNHH Casso', 'Viettel-CA', '0316794479')"
                         class="w-full text-left p-3.5 bg-gray-50 hover:bg-emerald-50/30 border border-gray-200/50 rounded-2xl flex items-center justify-between group active:scale-[0.99] transition-all">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-xl bg-gray-200 flex items-center justify-center text-gray-500">
-                                <i class="fa-solid fa-signature text-sm"></i>
+                                <i class="fa-solid fa-building text-sm"></i>
                             </div>
                             <div>
                                 <h4 class="text-xs font-semibold text-gray-700">Công ty TNHH Casso</h4>
-                                <p class="text-[9px] text-gray-400 mt-0.5">MST: 0316794479 - Nhà cung cấp: VNPT-CA</p>
-                            </div>
-                        </div>
-                        <i
-                            class="fa-solid fa-chevron-right text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform"></i>
-                    </button>
-                </div>
-
-                <!-- Delegated Certificates List -->
-                <div id="cert-list-delegated" class="flex flex-col gap-2.5 max-h-[220px] overflow-y-auto hidden">
-                    <!-- Certificate Option 1 (Delegated) -->
-                    <button onclick="selectCertificate('Nguyễn Văn Hùng', 'CMC-CA', '022303008786')"
-                        class="w-full text-left p-3.5 bg-emerald-50/50 hover:bg-emerald-50 border border-emerald-200/50 rounded-2xl flex items-center justify-between group active:scale-[0.99] transition-all">
-                        <div class="flex items-center gap-3">
-                            <div
-                                class="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
-                                <i class="fa-solid fa-signature text-sm"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-xs font-bold text-gray-800">Nguyễn Văn Hùng</h4>
-                                <p class="text-[9px] text-gray-500 mt-0.5">CCCD: 022303008786 - Nhà cung cấp: CMC-CA</p>
-                            </div>
-                        </div>
-                        <i
-                            class="fa-solid fa-chevron-right text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform"></i>
-                    </button>
-
-                    <!-- Certificate Option 2 (Delegated) -->
-                    <button onclick="selectCertificate('Công ty Casso', 'VNPT-CA', '0309876543')"
-                        class="w-full text-left p-3.5 bg-gray-50 hover:bg-emerald-50/30 border border-gray-200/50 rounded-2xl flex items-center justify-between group active:scale-[0.99] transition-all">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-xl bg-gray-200 flex items-center justify-center text-gray-500">
-                                <i class="fa-solid fa-signature text-sm"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-xs font-semibold text-gray-700">Công ty Casso</h4>
-                                <p class="text-[9px] text-gray-400 mt-0.5">MST: 0309876543 - Nhà cung cấp: VNPT-CA</p>
+                                <p class="text-[9px] text-gray-400 mt-0.5">MST: 0316794479 - Nhà cung cấp: Viettel-CA</p>
                             </div>
                         </div>
                         <i
@@ -496,9 +456,13 @@
                         <span id="sig-info-type" class="font-semibold text-gray-800">CTS Cá nhân</span>
                     </div>
                     <div class="flex justify-between items-start gap-4">
-                        <span class="text-gray-400 font-medium shrink-0">Ký bởi:</span>
+                        <span class="text-gray-400 font-medium shrink-0">Chủ tài sản / CTS:</span>
                         <span id="sig-info-signer" class="font-semibold text-gray-800 text-right leading-tight">CÔNG TY
                             TNHH CASSO</span>
+                    </div>
+                    <div class="flex justify-between items-start gap-4">
+                        <span class="text-gray-400 font-medium shrink-0">Người thực hiện ký:</span>
+                        <span id="sig-info-actual-signer" class="font-semibold text-emerald-700 text-right leading-tight">Nguyễn Văn Hùng (Người được ủy quyền)</span>
                     </div>
                     <div class="flex justify-between items-start gap-4">
                         <span class="text-gray-400 font-medium shrink-0">Đơn vị cấp CTS:</span>
@@ -617,17 +581,129 @@
         // ─── CA CERTIFICATE & PIN FLOW ────────────────────────────────
         let selectedProvider = "";
         let selectedDetails = "";
+        let selectedSigner = "";
 
         function openCertificateModal() {
             const modal = document.getElementById('certificate-modal');
             const sheet = document.getElementById('certificate-sheet');
+            const tabContainer = document.getElementById('cert-tab-container');
+            const subTitleEl = document.getElementById('cert-modal-subtitle');
+            const titleEl = document.getElementById('cert-modal-title');
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const isDeleg = urlParams.get('delegated') === 'true' || localStorage.getItem('active_entity') === 'delegated';
+            const delegatorType = urlParams.get('delegator_type'); // 'personal' or 'corporate'
+            const delegatorName = urlParams.get('delegator') || (delegatorType === 'corporate' ? 'Công ty TNHH ABC Logistics' : 'Nguyễn Văn An');
+
+            const listPersonal = document.getElementById('cert-list-personal');
+            const listCorporate = document.getElementById('cert-list-corporate');
+
+            if (isDeleg) {
+                // ẨN hoàn toàn thanh chọn tab khi ở luồng ủy quyền
+                if (tabContainer) tabContainer.classList.add('hidden');
+
+                const isCorpDelegator = delegatorType === 'corporate' || 
+                                        delegatorType === 'company' || 
+                                        delegatorName.toLowerCase().includes('công ty') ||
+                                        delegatorName.toLowerCase().includes('tnhh') ||
+                                        delegatorName.toLowerCase().includes('cp');
+
+                if (isCorpDelegator) {
+                    // CHỈ hiển thị Chứng thư số Doanh nghiệp của bên ủy quyền
+                    if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-building text-blue-600"></i> Chứng thư số Doanh nghiệp`;
+                    if (subTitleEl) subTitleEl.innerHTML = `Được ủy quyền bởi <strong class="text-gray-800">${delegatorName}</strong>`;
+
+                    listCorporate.innerHTML = `
+                        <!-- Corporate Cert 1 -->
+                        <button onclick="selectCertificate('${delegatorName}', 'VNPT-CA', '0316794479')"
+                            class="w-full text-left p-3.5 bg-blue-50/50 hover:bg-blue-50 border border-blue-200/50 rounded-2xl flex items-center justify-between group active:scale-[0.99] transition-all">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+                                    <i class="fa-solid fa-building text-sm"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-gray-800">${delegatorName}</h4>
+                                    <p class="text-[9px] text-gray-500 mt-0.5">MST: 0316794479 - Nhà cung cấp: VNPT-CA</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </button>
+
+                        <!-- Corporate Cert 2 -->
+                        <button onclick="selectCertificate('${delegatorName}', 'Viettel-CA', '0316794479')"
+                            class="w-full text-left p-3.5 bg-gray-50 hover:bg-blue-50/30 border border-gray-200/50 rounded-2xl flex items-center justify-between group active:scale-[0.99] transition-all">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl bg-gray-200 flex items-center justify-center text-gray-500">
+                                    <i class="fa-solid fa-building text-sm"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-semibold text-gray-700">${delegatorName}</h4>
+                                    <p class="text-[9px] text-gray-400 mt-0.5">MST: 0316794479 - Nhà cung cấp: Viettel-CA</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </button>
+                    `;
+                    listCorporate.classList.remove('hidden');
+                    listPersonal.classList.add('hidden');
+                } else {
+                    // CHỈ hiển thị Chứng thư số Cá nhân của bên ủy quyền
+                    if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-user-shield text-emerald-600"></i> Chứng thư số Cá nhân`;
+                    if (subTitleEl) subTitleEl.innerHTML = `Được ủy quyền bởi <strong class="text-gray-800">${delegatorName}</strong>`;
+
+                    listPersonal.innerHTML = `
+                        <!-- Personal Cert 1 -->
+                        <button onclick="selectCertificate('${delegatorName}', 'CMC-CA', '022303008786')"
+                            class="w-full text-left p-3.5 bg-emerald-50/50 hover:bg-emerald-50 border border-emerald-200/50 rounded-2xl flex items-center justify-between group active:scale-[0.99] transition-all">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                    <i class="fa-solid fa-signature text-sm"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-gray-800">${delegatorName}</h4>
+                                    <p class="text-[9px] text-gray-500 mt-0.5">CCCD: 022303008786 - Nhà cung cấp: CMC-CA</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </button>
+
+                        <!-- Personal Cert 2 -->
+                        <button onclick="selectCertificate('${delegatorName}', 'VNPT-CA', '022303008786')"
+                            class="w-full text-left p-3.5 bg-gray-50 hover:bg-emerald-50/30 border border-gray-200/50 rounded-2xl flex items-center justify-between group active:scale-[0.99] transition-all">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-xl bg-gray-200 flex items-center justify-center text-gray-500">
+                                    <i class="fa-solid fa-signature text-sm"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-semibold text-gray-700">${delegatorName}</h4>
+                                    <p class="text-[9px] text-gray-400 mt-0.5">CCCD: 022303008786 - Nhà cung cấp: VNPT-CA</p>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-xs text-gray-400 group-hover:translate-x-0.5 transition-transform"></i>
+                        </button>
+                    `;
+                    listPersonal.classList.remove('hidden');
+                    listCorporate.classList.add('hidden');
+                }
+            } else {
+                // Luồng ký trực tiếp không ủy quyền
+                if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-id-card text-emerald-600"></i> Chọn chữ ký số CA`;
+                if (subTitleEl) subTitleEl.textContent = "Vui lòng lựa chọn chứng thư số muốn ký";
+                if (tabContainer) tabContainer.classList.remove('hidden');
+
+                const activeEntity = localStorage.getItem('active_entity') || 'personal';
+                if (activeEntity === 'casso' || activeEntity === 'a4b') {
+                    switchCertTab('corporate');
+                } else {
+                    switchCertTab('personal');
+                }
+            }
+
             if (modal && sheet) {
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
-                setTimeout(() => {
-                    sheet.classList.remove('translate-y-full');
-                    sheet.classList.add('translate-y-0');
-                }, 10);
+                sheet.classList.remove('translate-y-full');
+                sheet.classList.add('translate-y-0');
             }
         }
 
@@ -643,8 +719,6 @@
                 }, 300);
             }
         }
-
-        let selectedSigner = "";
 
         function selectCertificate(signer, provider, details) {
             selectedSigner = signer;
@@ -663,21 +737,19 @@
         function switchCertTab(tabType) {
             const tabPersonal = document.getElementById('cert-tab-personal');
             const tabCorporate = document.getElementById('cert-tab-corporate');
-            const tabDelegated = document.getElementById('cert-tab-delegated');
 
             const listPersonal = document.getElementById('cert-list-personal');
             const listCorporate = document.getElementById('cert-list-corporate');
-            const listDelegated = document.getElementById('cert-list-delegated');
+
+            if (!tabPersonal || !tabCorporate || !listPersonal || !listCorporate) return;
 
             // Reset tab styles
             tabPersonal.className = "flex-1 py-1.5 text-center rounded-lg text-gray-500 hover:text-gray-800 transition-all";
             tabCorporate.className = "flex-1 py-1.5 text-center rounded-lg text-gray-500 hover:text-gray-800 transition-all";
-            if (tabDelegated) tabDelegated.className = "flex-1 py-1.5 text-center rounded-lg text-gray-500 hover:text-gray-800 transition-all";
 
             // Hide lists
             listPersonal.classList.add('hidden');
             listCorporate.classList.add('hidden');
-            if (listDelegated) listDelegated.classList.add('hidden');
 
             // Show selected
             if (tabType === 'personal') {
@@ -686,9 +758,6 @@
             } else if (tabType === 'corporate') {
                 tabCorporate.className = "flex-1 py-1.5 text-center rounded-lg bg-white shadow-sm text-gray-800 transition-all font-bold";
                 listCorporate.classList.remove('hidden');
-            } else if (tabType === 'delegated') {
-                if (tabDelegated) tabDelegated.className = "flex-1 py-1.5 text-center rounded-lg bg-white shadow-sm text-gray-800 transition-all font-bold";
-                if (listDelegated) listDelegated.classList.remove('hidden');
             }
         }
 
@@ -987,6 +1056,7 @@
             const nameEl = document.getElementById('sig-info-name');
             const typeEl = document.getElementById('sig-info-type');
             const signerEl = document.getElementById('sig-info-signer');
+            const actualSignerEl = document.getElementById('sig-info-actual-signer');
             const providerEl = document.getElementById('sig-info-provider');
 
             const statusEl = document.getElementById('sig-info-status');
@@ -994,6 +1064,9 @@
             const docValidityEl = document.getElementById('sig-info-doc-validity');
             const timestampEl = document.getElementById('sig-info-timestamp');
             const timeEl = document.getElementById('sig-info-time');
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const isDeleg = urlParams.get('delegated') === 'true' || localStorage.getItem('active_entity') === 'delegated';
 
             if (i === 2) {
                 // Signature 2 is INVALID! (For UI Rejection/Error test case)
@@ -1009,6 +1082,11 @@
                 if (nameEl) nameEl.textContent = "Signature-7a891e45-1234-5678-bcde-f123456789ab";
                 if (typeEl) typeEl.textContent = "CTS Cá nhân";
                 if (signerEl) signerEl.textContent = "CÔNG TY TNHH CASSO";
+                if (actualSignerEl) {
+                    actualSignerEl.innerHTML = isDeleg ? 
+                        `Nguyễn Văn Hùng <span class="text-[8px] bg-amber-100 text-amber-800 px-1 py-0.2 rounded ml-0.5 font-bold">Người được ủy quyền</span>` : 
+                        `Phạm Hoàng Quang Cảnh <span class="text-[8px] bg-blue-100 text-blue-800 px-1 py-0.2 rounded ml-0.5 font-bold">Chủ sở hữu</span>`;
+                }
                 if (providerEl) providerEl.textContent = "Viettel-CA SHA2";
 
                 if (statusEl) {
@@ -1040,8 +1118,13 @@
                 }
 
                 if (nameEl) nameEl.textContent = "Signature-2f401c92-6027-4305-8f88-a20454bd17aa";
-                if (typeEl) typeEl.textContent = "CTS Cá nhân";
-                if (signerEl) signerEl.textContent = "CÔNG TY TNHH CASSO";
+                if (typeEl) typeEl.textContent = isDeleg ? "CTS Ủy quyền số" : "CTS Cá nhân";
+                if (signerEl) signerEl.textContent = isDeleg ? "NGUYỄN VĂN AN (Chủ tài sản)" : "CÔNG TY TNHH CASSO";
+                if (actualSignerEl) {
+                    actualSignerEl.innerHTML = isDeleg ? 
+                        `Nguyễn Văn Hùng <span class="text-[8px] bg-amber-100 text-amber-800 px-1 py-0.2 rounded ml-0.5 font-bold">Người được ủy quyền</span>` : 
+                        `Phạm Hoàng Quang Cảnh <span class="text-[8px] bg-blue-100 text-blue-800 px-1 py-0.2 rounded ml-0.5 font-bold">Chủ sở hữu</span>`;
+                }
                 if (providerEl) providerEl.textContent = "Viettel-CA SHA2";
 
                 if (statusEl) {
@@ -1150,6 +1233,79 @@
             }
         }
 
+        function getSignerOrRejectorInfo(isReject = false) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isDeleg = urlParams.get('delegated') === 'true' || 
+                            localStorage.getItem('active_entity') === 'delegated' ||
+                            localStorage.getItem('delegated_signed_status') === (isReject ? 'rejected' : 'signed');
+            
+            if (isDeleg) {
+                return {
+                    name: 'Nguyễn Văn Hùng',
+                    roleBadge: 'Người được ủy quyền',
+                    delegationInfo: 'Ký thay theo ủy quyền của NGUYỄN VĂN AN (CCCD: 022303008786)',
+                    delegationRejectInfo: 'Từ chối theo ủy quyền của NGUYỄN VĂN AN (CCCD: 022303008786)',
+                    isDelegated: true
+                };
+            } else {
+                const entity = localStorage.getItem('active_entity') || 'personal';
+                let ownerName = 'Phạm Hoàng Quang Cảnh';
+                let role = 'Chủ sở hữu cá nhân';
+                if (entity === 'casso') {
+                    ownerName = 'Công ty TNHH Casso';
+                    role = 'Đại diện Doanh nghiệp';
+                } else if (entity === 'a4b') {
+                    ownerName = 'Công ty Cổ phần A4B';
+                    role = 'Đại diện Doanh nghiệp';
+                }
+                return {
+                    name: ownerName,
+                    roleBadge: role,
+                    delegationInfo: 'Ký trực tiếp chính chủ',
+                    delegationRejectInfo: 'Từ chối trực tiếp bởi chính chủ',
+                    isDelegated: false
+                };
+            }
+        }
+
+        function showCompletedBanner() {
+            // Hide progress info
+            const progressEl = document.getElementById('sign-progress');
+            if (progressEl) progressEl.classList.add('hidden');
+
+            const docInfoBlock = document.querySelector('.bg-white.px-4.py-3.border-b.border-gray-200');
+            if (docInfoBlock && !document.getElementById('completed-doc-banner')) {
+                const info = getSignerOrRejectorInfo(false);
+                const now = new Date();
+                const day = String(now.getDate()).padStart(2, '0');
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const year = now.getFullYear();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const timeStr = `${hours}:${minutes} ${day}/${month}/${year}`;
+
+                const banner = document.createElement('div');
+                banner.id = 'completed-doc-banner';
+                banner.className = "bg-emerald-50/90 border border-emerald-200/80 p-2.5 rounded-xl flex items-start gap-2.5 mt-2.5 shadow-xs";
+                banner.innerHTML = `
+                    <div class="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 text-[10px] mt-0.5">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <div class="flex flex-col flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-1">
+                            <span class="text-[11px] font-bold text-emerald-900">Văn bản đã được ký hoàn tất</span>
+                            <span class="text-[9px] text-emerald-700 font-mono shrink-0">${timeStr}</span>
+                        </div>
+                        <div class="flex items-center gap-1 mt-1 text-[10.5px]">
+                            <span class="text-gray-500 font-medium">Người ký:</span>
+                            <strong class="text-gray-900 font-bold">${info.name}</strong>
+                        </div>
+                    </div>
+                `;
+                docInfoBlock.appendChild(banner);
+            }
+        }
+
         function showRejectedBanner() {
             // Hide progress info
             const progressEl = document.getElementById('sign-progress');
@@ -1157,15 +1313,34 @@
 
             // Render red banner in doc info
             const docInfoBlock = document.querySelector('.bg-white.px-4.py-3.border-b.border-gray-200');
-            if (docInfoBlock) {
-                const reason = localStorage.getItem('doc_reject_reason') || "Tài liệu đối soát chưa chính xác số liệu";
+            if (docInfoBlock && !document.getElementById('rejected-doc-banner')) {
+                const reason = localStorage.getItem('doc_reject_reason') || localStorage.getItem('delegated_reject_reason') || "Tài liệu đối soát chưa chính xác số liệu";
+                const info = getSignerOrRejectorInfo(true);
+                const now = new Date();
+                const day = String(now.getDate()).padStart(2, '0');
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const year = now.getFullYear();
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                const timeStr = `${hours}:${minutes} ${day}/${month}/${year}`;
+
                 const banner = document.createElement('div');
-                banner.className = "bg-gray-100/70 p-2.5 rounded-md flex items-start gap-2 mt-2";
+                banner.id = 'rejected-doc-banner';
+                banner.className = "bg-red-50/90 border border-red-200/80 p-2.5 rounded-xl flex items-start gap-2.5 mt-2.5 shadow-xs";
                 banner.innerHTML = `
-                    <i class="fa-solid fa-circle-xmark text-gray-500 text-sm mt-0.5 shrink-0"></i>
-                    <div>
-                        <h4 class="text-[10px] font-bold text-gray-800">Yêu cầu đã bị từ chối</h4>
-                        <p class="text-[9px] text-gray-600 mt-0.5 font-semibold">Lý do: ${reason}</p>
+                    <div class="w-5 h-5 rounded-full bg-red-100 text-red-600 flex items-center justify-center shrink-0 text-[10px] mt-0.5">
+                        <i class="fa-solid fa-xmark"></i>
+                    </div>
+                    <div class="flex flex-col flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-1">
+                            <span class="text-[11px] font-bold text-red-900">Yêu cầu đã bị từ chối</span>
+                            <span class="text-[9px] text-red-700 font-mono shrink-0">${timeStr}</span>
+                        </div>
+                        <div class="flex items-center gap-1 mt-1 text-[10.5px]">
+                            <span class="text-gray-500 font-medium">Người từ chối:</span>
+                            <strong class="text-gray-900 font-bold">${info.name}</strong>
+                        </div>
+                        <p class="text-[9.5px] text-gray-700 mt-1"><strong class="text-gray-900">Lý do:</strong> ${reason}</p>
                     </div>
                 `;
                 docInfoBlock.appendChild(banner);
@@ -1185,6 +1360,12 @@
         }
 
         function updateSignProgress() {
+            const progressEl = document.getElementById('sign-progress');
+            if (window.isCompletedState || window.isRejectedState) {
+                if (progressEl) progressEl.classList.add('hidden');
+                return;
+            }
+
             let signedCount = 0;
             for (let i = 1; i <= totalPages; i++) {
                 const result = document.getElementById(`signed-result-${i}`);
@@ -1192,7 +1373,6 @@
                     signedCount++;
                 }
             }
-            const progressEl = document.getElementById('sign-progress');
             if (progressEl) {
                 progressEl.innerHTML = `<i class="fa-solid fa-file-signature mr-1"></i>Bạn đã ký ${signedCount}/${totalPages} vị trí ký`;
                 if (signedCount === totalPages) {
@@ -1534,6 +1714,7 @@
                         for (let i = 1; i <= totalPages; i++) {
                             forceSignedState(i);
                         }
+                        showCompletedBanner();
                         swapBottomBarButtons();
                     } else if (window.isRejectedState) {
                         for (let i = 1; i <= totalPages; i++) {

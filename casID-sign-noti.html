@@ -101,10 +101,10 @@
                     <i class="fa-solid fa-house text-base"></i>
                     <span>Trang chủ</span>
                 </button>
-                <button onclick="window.location.href='casID-sign-data.html'"
+                <button onclick="window.location.href='casID-business-list.html'"
                     class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
-                    <i class="fa-solid fa-server text-base"></i>
-                    <span>Dữ liệu</span>
+                    <i class="fa-solid fa-building text-base"></i>
+                    <span>Doanh nghiệp</span>
                 </button>
                 <button onclick="window.location.href='casID-sign-delegation.html'"
                     class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
@@ -565,8 +565,8 @@
 
             // Info rows
             document.getElementById('detail-invite-sender').textContent = noti.sender;
-            document.getElementById('detail-invite-type').textContent = assetDef.title;
-            document.getElementById('detail-invite-cccd').textContent = noti.cccd || '022303008786';
+            document.getElementById('detail-invite-type').textContent = assetDef.title || assetDef.label;
+            document.getElementById('detail-invite-cccd').textContent = noti.cccd || (noti.recipient ? noti.recipient.cccd : '022303008786');
 
             // Duration
             const startStr = formatDisplayDate(noti.startDate);
@@ -579,15 +579,17 @@
 
             // Status Row
             const statusDetailEl = document.getElementById('detail-invite-status');
-            if (noti.status === 'accepted') {
-                statusDetailEl.className = "font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[10.5px]";
-                statusDetailEl.textContent = "Đã xác nhận";
-            } else if (noti.status === 'rejected') {
-                statusDetailEl.className = "font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200 text-[10.5px]";
-                statusDetailEl.textContent = "Đã từ chối";
-            } else {
-                statusDetailEl.className = "font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 text-[10.5px]";
-                statusDetailEl.textContent = "Chờ xác nhận";
+            if (statusDetailEl) {
+                if (noti.status === 'accepted') {
+                    statusDetailEl.className = "font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[10.5px]";
+                    statusDetailEl.textContent = "Đã xác nhận";
+                } else if (noti.status === 'rejected') {
+                    statusDetailEl.className = "font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded border border-red-200 text-[10.5px]";
+                    statusDetailEl.textContent = "Đã từ chối";
+                } else {
+                    statusDetailEl.className = "font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 text-[10.5px]";
+                    statusDetailEl.textContent = "Chờ xác nhận";
+                }
             }
 
             // Render Sub Assets list with high-res brand logos
@@ -597,7 +599,7 @@
             // Cross-reference with central delegations data if delegationId exists
             if (noti.delegationId) {
                 try {
-                    const stored = localStorage.getItem('casso_central_delegations_v6');
+                    const stored = localStorage.getItem('casso_central_delegations_v10') || localStorage.getItem('casso_central_delegations_v9');
                     if (stored) {
                         const list = JSON.parse(stored);
                         const deleg = list.find(d => String(d.id) === String(noti.delegationId));
@@ -618,49 +620,58 @@
                 });
             }
 
-            if (matchedOptions.length > 0) {
-                assetsContainer.innerHTML = matchedOptions.map(opt => `
-                    <div class="flex items-center gap-2.5 p-2 bg-gray-50 rounded-xl border border-gray-200/80">
-                        ${renderOptionCircleIcon(opt, 'w-7 h-7')}
-                        <div class="flex flex-col">
-                            <span class="text-[11.5px] font-bold text-gray-900 leading-tight">${opt.name}</span>
-                            <span class="text-[9.5px] text-gray-500 font-mono">${opt.code || ''}</span>
+            if (assetsContainer) {
+                if (matchedOptions.length > 0) {
+                    assetsContainer.innerHTML = matchedOptions.map(opt => `
+                        <div class="flex items-center gap-2.5 p-2 bg-gray-50 rounded-xl border border-gray-200/80">
+                            ${renderOptionCircleIcon(opt, 'w-7 h-7')}
+                            <div class="flex flex-col">
+                                <span class="text-[11.5px] font-bold text-gray-900 leading-tight">${opt.name}</span>
+                                <span class="text-[9.5px] text-gray-500 font-mono">${opt.code || ''}</span>
+                            </div>
                         </div>
-                    </div>
-                `).join('');
-            } else {
-                assetsContainer.innerHTML = `
-                    <div class="p-2 bg-gray-50 rounded-xl border border-gray-200/80 text-gray-600 text-[11px]">
-                        ${assetDef.title || assetDef.label}
-                    </div>
-                `;
+                    `).join('');
+                } else {
+                    assetsContainer.innerHTML = `
+                        <div class="flex items-center gap-2.5 p-2 bg-gray-50 rounded-xl border border-gray-200/80">
+                            ${renderOptionCircleIcon({ brandText: assetDef.brandText, brandBg: 'bg-black text-white' }, 'w-7 h-7')}
+                            <div class="flex flex-col">
+                                <span class="text-[11.5px] font-bold text-gray-900 leading-tight">${assetDef.title || assetDef.label}</span>
+                                <span class="text-[9.5px] text-gray-500 font-mono">Toàn bộ tài sản</span>
+                            </div>
+                        </div>
+                    `;
+                }
             }
 
-            // Action Buttons vs Finished Banner
-            const actionsContainer = document.getElementById('invite-actions-container');
-            const statusBanner = document.getElementById('invite-status-banner');
+            // Scope & Asset type badge
+            const scopeEl = document.getElementById('detail-invite-scope');
+            if (scopeEl) {
+                scopeEl.textContent = `Quyền truy cập & thao tác trực tiếp trên ${assetDef.label || assetDef.title}`;
+            }
 
-            if (noti.status === 'pending') {
-                actionsContainer.classList.remove('hidden');
-                statusBanner.classList.add('hidden');
-            } else if (noti.status === 'accepted') {
-                actionsContainer.classList.add('hidden');
-                statusBanner.classList.remove('hidden');
-                statusBanner.innerHTML = `
-                    <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-center font-bold text-[11.5px] flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-circle-check text-emerald-600"></i>
-                        <span>Bạn đã đồng ý nhận ủy quyền này</span>
-                    </div>
-                `;
-            } else {
-                actionsContainer.classList.add('hidden');
-                statusBanner.classList.remove('hidden');
-                statusBanner.innerHTML = `
-                    <div class="p-3 bg-red-50 border border-red-200 rounded-xl text-red-800 text-center font-bold text-[11.5px] flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-circle-xmark text-red-600"></i>
-                        <span>Bạn đã từ chối nhận ủy quyền này</span>
-                    </div>
-                `;
+            // Footer Action Buttons
+            const actionsEl = document.getElementById('detail-invite-actions');
+            if (actionsEl) {
+                if (noti.status === 'pending') {
+                    actionsEl.innerHTML = `
+                        <button onclick="handleRespondDelegationInvite('${noti.id}', '${noti.delegationId || ''}', false)"
+                            class="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-red-600 font-bold text-[12px] rounded-xl transition-all active:scale-[0.98] border border-gray-200">
+                            Từ chối
+                        </button>
+                        <button onclick="handleRespondDelegationInvite('${noti.id}', '${noti.delegationId || ''}', true)"
+                            class="flex-1 py-3 bg-black hover:bg-gray-900 text-white font-bold text-[12px] rounded-xl transition-all active:scale-[0.98] shadow-sm">
+                            Đồng ý nhận
+                        </button>
+                    `;
+                } else {
+                    actionsEl.innerHTML = `
+                        <button onclick="showListNotiView()"
+                            class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-[12px] rounded-xl transition-all">
+                            Quay lại thông báo
+                        </button>
+                    `;
+                }
             }
         }
 
@@ -673,10 +684,9 @@
         // ========================================================
         // RESPOND TO INVITATION (ACCEPT / REJECT)
         // ========================================================
-        function respondInvite(isAccepted) {
-            if (!selectedNoti) return;
-            const notiId = selectedNoti.id;
-            const delegationId = selectedNoti.delegationId;
+        function handleRespondDelegationInvite(notiId, delegationId, isAccepted) {
+            const noti = notificationsData.find(n => n.id === notiId);
+            if (!noti) return;
 
             // 1. Update Notification in LocalStorage
             notificationsData = notificationsData.map(n => {
@@ -687,13 +697,24 @@
             });
             localStorage.setItem('app_notifications', JSON.stringify(notificationsData));
 
-            // 2. Synchronize Central Delegations (casso_central_delegations_v6)
+            // 2. Synchronize Central Delegations (casso_central_delegations_v10)
             try {
-                let centralDelegations = JSON.parse(localStorage.getItem('casso_central_delegations_v6') || '[]');
+                let centralDelegations = JSON.parse(localStorage.getItem('casso_central_delegations_v10') || '[]');
                 const idx = centralDelegations.findIndex(d => String(d.id) === String(delegationId));
                 if (idx !== -1) {
                     centralDelegations[idx].status = isAccepted ? 'active' : 'rejected';
-                    localStorage.setItem('casso_central_delegations_v6', JSON.stringify(centralDelegations));
+                    if (!centralDelegations[idx].activities) centralDelegations[idx].activities = [];
+                    const now = new Date();
+                    const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} ${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+                    centralDelegations[idx].activities.push({
+                        id: 'act-' + Date.now(),
+                        action: isAccepted ? 'accept' : 'reject',
+                        title: isAccepted ? 'Chấp nhận yêu cầu' : 'Từ chối yêu cầu',
+                        actor: 'Bạn (' + (noti.recipient?.name || 'Người nhận') + ')',
+                        time: timeStr,
+                        details: isAccepted ? 'Đã đồng ý xác nhận nhận quyền sử dụng tài sản qua Thông báo' : 'Đã từ chối lời mời ủy quyền qua Thông báo'
+                    });
+                    localStorage.setItem('casso_central_delegations_v10', JSON.stringify(centralDelegations));
                 }
             } catch (e) {
                 console.error(e);

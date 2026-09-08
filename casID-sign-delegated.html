@@ -140,12 +140,32 @@
 
                 <!-- Option 4: Yêu cầu ký số -->
                 <div id="option-sign-request" onclick="showRequestsView()"
-                    class="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)] border border-gray-100 flex items-center gap-4 hover:bg-gray-50 active:scale-[0.99] transition-all cursor-pointer">
-                    <div
-                        class="w-12 h-12 rounded-full bg-[#181818] flex items-center justify-center text-white text-lg shrink-0">
-                        <i class="fa-solid fa-file-contract"></i>
+                    class="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)] border border-gray-100 flex items-center justify-between hover:bg-gray-50 active:scale-[0.99] transition-all cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-full bg-[#181818] flex items-center justify-center text-white text-lg shrink-0">
+                            <i class="fa-solid fa-file-contract"></i>
+                        </div>
+                        <span class="text-sm font-bold text-gray-800">Yêu cầu ký số</span>
                     </div>
-                    <span class="text-sm font-bold text-gray-800">Yêu cầu ký số</span>
+                    <div class="flex items-center gap-2">
+                        <span id="sign-request-count-badge"
+                            class="w-5 h-5 min-w-[20px] rounded-full bg-red-500 text-white text-[11px] font-black flex items-center justify-center shadow-xs">2</span>
+                        <i class="fa-solid fa-chevron-right text-xs text-gray-300"></i>
+                    </div>
+                </div>
+
+                <!-- Option 5: Ủy quyền -->
+                <div id="option-delegation" onclick="showMyDelegationsView()"
+                    class="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)] border border-gray-100 flex items-center justify-between hover:bg-gray-50 active:scale-[0.99] transition-all cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-full bg-[#181818] flex items-center justify-center text-white text-lg shrink-0">
+                            <i class="fa-solid fa-qrcode"></i>
+                        </div>
+                        <span class="text-sm font-bold text-gray-800">Ủy quyền</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-xs text-gray-300"></i>
                 </div>
 
             </div>
@@ -161,7 +181,7 @@
         <div id="view-requests" class="flex-1 flex flex-col overflow-hidden hidden">
             <!-- Header -->
             <div class="px-4 py-3 flex items-center gap-4 bg-white shrink-0">
-                <button class="text-gray-700 text-lg hover:opacity-70" onclick="window.location.href='index.html'">
+                <button class="text-gray-700 text-lg hover:opacity-70" onclick="showCategoriesView()">
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
                 <h1 class="text-[15px] font-bold text-gray-800">Yêu cầu ký số</h1>
@@ -251,21 +271,21 @@
         <!-- Bottom Navigation Bar (active tab: Dữ liệu) -->
         <div
             class="bg-white border-t border-gray-100 px-2 py-2 flex justify-around items-center text-[10px] text-gray-400 font-medium pb-5 z-10 shrink-0">
-            <button onclick="showComingSoon()" class="flex flex-col items-center gap-1 w-16 text-gray-400">
+            <button onclick="window.location.href='index.html'" class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
                 <i class="fa-solid fa-house text-lg"></i>
                 <span>Trang chủ</span>
             </button>
-            <button class="flex flex-col items-center gap-1 w-16 text-black">
-                <i class="fa-solid fa-server text-lg"></i>
-                <span class="font-bold">Dữ liệu</span>
+            <button onclick="window.location.href='casID-business-list.html'" class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
+                <i class="fa-solid fa-building text-lg"></i>
+                <span>Doanh nghiệp</span>
             </button>
             <button onclick="window.location.href='casID-sign-delegation.html'"
-                class="flex flex-col items-center gap-1 w-16 text-gray-400">
+                class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
                 <i class="fa-solid fa-qrcode text-lg"></i>
-                <span>Cấp quyền</span>
+                <span>Ủy quyền</span>
             </button>
             <button onclick="window.location.href='casID-sign-noti.html'"
-                class="flex flex-col items-center gap-1 w-16 text-gray-400 relative">
+                class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700 relative">
                 <div class="relative">
                     <i class="fa-solid fa-bell text-lg"></i>
                     <span id="footer-noti-badge"
@@ -275,7 +295,7 @@
                 </div>
                 <span>Thông báo</span>
             </button>
-            <button onclick="showComingSoon()" class="flex flex-col items-center gap-1 w-16 text-gray-400">
+            <button onclick="showCustomToast('Tính năng Hồ sơ đang phát triển')" class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
                 <i class="fa-solid fa-circle-user text-lg"></i>
                 <span>Hồ sơ</span>
             </button>
@@ -326,7 +346,8 @@
                     timestamp: new Date().getTime(),
                     status: "pending",
                     fileSize: "450 KB",
-                    delegator: "Nguyễn Văn Hùng"
+                    delegator: "Nguyễn Văn An",
+                    type: "person"
                 },
                 {
                     id: 102,
@@ -336,7 +357,8 @@
                     timestamp: new Date().getTime() - 24 * 60 * 60 * 1000,
                     status: "completed",
                     fileSize: "1.5 MB",
-                    delegator: "Hoàng Thị Mai"
+                    delegator: "Hoàng Thị Mai",
+                    type: "person"
                 },
                 {
                     id: 103,
@@ -346,7 +368,8 @@
                     timestamp: new Date().getTime() - 2 * 24 * 60 * 60 * 1000,
                     status: "rejected",
                     fileSize: "820 KB",
-                    delegator: "Nguyễn Văn Hùng"
+                    delegator: "Nguyễn Văn An",
+                    type: "person"
                 },
                 {
                     id: 104,
@@ -356,7 +379,8 @@
                     timestamp: new Date().getTime() - 3 * 24 * 60 * 60 * 1000,
                     status: "pending",
                     fileSize: "2.1 MB",
-                    delegator: "Công ty TNHH ABC Logistics"
+                    delegator: "Công ty TNHH ABC Logistics",
+                    type: "company"
                 }
             ];
 
@@ -407,8 +431,36 @@
                     delegatedRequests[0].timestamp = new Date().getTime();
                 }
 
+                updateSignRequestBadge();
+                updateDelegationBadge();
                 switchEntity(activeEntity);
             };
+
+            function updateDelegationBadge() {
+                const badge = document.getElementById('delegation-count-badge');
+                if (badge) {
+                    const count = myDelegations ? myDelegations.length : 2;
+                    badge.textContent = count;
+                    if (count > 0) {
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                }
+            }
+
+            function updateSignRequestBadge() {
+                const pendingCount = delegatedRequests.filter(i => i.status === 'pending').length;
+                const badge = document.getElementById('sign-request-count-badge');
+                if (badge) {
+                    badge.textContent = pendingCount;
+                    if (pendingCount > 0) {
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                }
+            }
 
             function switchEntity(entityId) {
                 activeEntity = entityId;
@@ -459,8 +511,12 @@
                     }
                 });
 
-                // Show requests list directly for delegated entity
-                showRequestsView();
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('tab') === 'requests') {
+                    showRequestsView();
+                } else {
+                    showCategoriesView();
+                }
             }
 
             function showRequestsView() {
@@ -474,6 +530,7 @@
                 document.getElementById('view-requests').classList.add('hidden');
                 document.getElementById('view-my-delegations').classList.add('hidden');
                 document.getElementById('view-categories').classList.remove('hidden');
+                updateSignRequestBadge();
             }
 
             function showMyDelegationsView() {
@@ -580,6 +637,7 @@
                 document.getElementById('count-pending').textContent = countPending;
                 document.getElementById('count-completed').textContent = countCompleted;
                 document.getElementById('count-rejected').textContent = countRejected;
+                updateSignRequestBadge();
 
                 // Render list
                 const container = document.getElementById('request-list');
@@ -597,7 +655,8 @@
 
                 filteredData.forEach(item => {
                     let statusBadge = "";
-                    let targetUrl = `casID-sign-view.html?delegated=true&id=${item.id}`;
+                    const delegatorType = item.type === 'company' || item.delegator.toLowerCase().includes('công ty') ? 'corporate' : 'personal';
+                    let targetUrl = `casID-sign-view.html?delegated=true&id=${item.id}&delegator_type=${delegatorType}&delegator=${encodeURIComponent(item.delegator)}`;
 
                     if (item.status === 'pending') {
                         statusBadge = `<span class="bg-amber-50 text-amber-700 text-[9px] font-bold px-2 py-0.5 rounded-full border border-amber-200/50">Chờ ký</span>`;
@@ -625,8 +684,8 @@
                     </div>
 
                     <!-- Note showing who delegated it -->
-                    <div class="text-[9.5px] text-gray-600 bg-gray-100/70 rounded px-2 py-1 mt-1 flex items-center gap-1.5 self-start">
-                        <span><strong class="font-bold">${item.delegator}</strong></span>
+                    <div class="text-[9.5px] text-gray-600 bg-gray-100/70 rounded px-2 py-1 mt-0.5 flex items-center gap-1.5 self-start">
+                        <span>Ủy quyền bởi: <strong class="font-bold text-gray-800">${item.delegator}</strong></span>
                     </div>
                 `;
                     container.appendChild(card);

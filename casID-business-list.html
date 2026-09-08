@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doanh nghiệp - Casso ID</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Outfit:wght@600;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body,
+        input,
+        select,
+        textarea,
+        button,
+        span,
+        p,
+        div,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        strong,
+        label,
+        input::placeholder,
+        textarea::placeholder {
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        /* Phone mockup styling */
+        .phone-container {
+            width: 375px;
+            height: 812px;
+        }
+
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex justify-center items-center min-h-screen">
+
+    <div
+        class="phone-container bg-white shadow-2xl rounded-[40px] overflow-hidden flex flex-col relative border-[8px] border-black">
+
+        <!-- Status Bar -->
+        <div
+            class="flex justify-between items-center px-6 pt-3 pb-2 text-xs font-bold text-black bg-white z-10 shrink-0">
+            <span id="current-time">16:15</span>
+            <div class="flex items-center gap-1.5">
+                <i class="fa-solid fa-signal text-[10px]"></i>
+                <span class="text-[9px] font-bold mr-0.5">5G</span>
+                <i class="fa-solid fa-battery-three-quarters text-sm"></i>
+            </div>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 1: BUSINESS LIST SCREEN (#view-business-list)       -->
+        <!-- ========================================================= -->
+        <div id="view-business-list" class="flex-1 flex flex-col overflow-hidden relative">
+
+            <!-- Header -->
+            <div class="px-5 pt-3 pb-2 flex items-center gap-4 bg-white shrink-0">
+                <button onclick="window.location.href='index.html'" class="text-gray-800 text-lg hover:opacity-70 p-1">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h1 class="text-[19px] font-bold text-gray-900 tracking-tight">Doanh nghiệp</h1>
+            </div>
+
+            <!-- 3 Status Tabs: Đã xác thực, Đang chờ, Từ chối -->
+            <div class="px-5 pt-1 bg-white border-b border-gray-100 flex items-center justify-between shrink-0">
+                <button id="tab-btn-verified" onclick="switchBusinessTab('verified')"
+                    class="pb-2.5 flex-1 text-center font-bold text-[13px] text-emerald-700 border-b-2 border-emerald-600 transition-all">
+                    Đã xác thực (<span id="count-verified">3</span>)
+                </button>
+                <button id="tab-btn-pending" onclick="switchBusinessTab('pending')"
+                    class="pb-2.5 flex-1 text-center font-medium text-[13px] text-gray-500 hover:text-gray-900 border-b-2 border-transparent transition-all">
+                    Đang chờ (<span id="count-pending">0</span>)
+                </button>
+                <button id="tab-btn-rejected" onclick="switchBusinessTab('rejected')"
+                    class="pb-2.5 flex-1 text-center font-medium text-[13px] text-gray-500 hover:text-gray-900 border-b-2 border-transparent transition-all">
+                    Từ chối (<span id="count-rejected">0</span>)
+                </button>
+            </div>
+
+            <!-- Scrollable Business List Container -->
+            <div class="flex-1 overflow-y-auto px-3.5 py-3 flex flex-col gap-2.5 bg-gray-50/60">
+                <!-- Business cards list injected dynamically -->
+                <div id="business-list-container" class="flex flex-col gap-2"></div>
+
+                <!-- Add Business Button directly underneath the cards -->
+                <div class="pt-1 pb-4">
+                    <button onclick="showAddBusinessView()"
+                        class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1">
+                        <span>Thêm doanh nghiệp +</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bottom Navigation Bar (Active tab: Doanh nghiệp) -->
+            <div
+                class="bg-white border-t border-gray-100 px-2 py-2 flex justify-around items-center text-[10px] text-gray-400 font-medium pb-5 z-10 shrink-0">
+                <button onclick="window.location.href='index.html'"
+                    class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
+                    <i class="fa-solid fa-house text-base"></i>
+                    <span>Trang chủ</span>
+                </button>
+                <button class="flex flex-col items-center gap-1 w-16 text-black">
+                    <i class="fa-solid fa-building text-base text-black"></i>
+                    <span class="font-bold">Doanh nghiệp</span>
+                </button>
+                <button onclick="window.location.href='casID-sign-delegation.html'"
+                    class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
+                    <i class="fa-solid fa-qrcode text-base"></i>
+                    <span>Ủy quyền</span>
+                </button>
+                <button onclick="window.location.href='casID-sign-noti.html'"
+                    class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700 relative">
+                    <div class="relative">
+                        <i class="fa-solid fa-bell text-base"></i>
+                        <span id="footer-noti-badge"
+                            class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center border border-white">
+                            2
+                        </span>
+                    </div>
+                    <span>Thông báo</span>
+                </button>
+                <button onclick="showToast('Tính năng Hồ sơ đang phát triển')"
+                    class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
+                    <i class="fa-solid fa-circle-user text-base"></i>
+                    <span>Hồ sơ</span>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 2: ADD / VERIFY BUSINESS SCREEN (#view-business-add)  -->
+        <!-- ========================================================= -->
+        <div id="view-business-add" class="flex-1 flex flex-col overflow-hidden relative hidden bg-white">
+
+            <!-- Header -->
+            <div class="px-5 pt-3 pb-3 flex items-center gap-4 bg-white border-b border-gray-50 shrink-0">
+                <button onclick="showBusinessListView()" class="text-gray-800 text-lg hover:opacity-70 p-1">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h1 class="text-[18px] font-bold text-gray-900 tracking-tight">Xác thực doanh nghiệp</h1>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto px-5 py-4 flex flex-col gap-4">
+
+                <!-- Introductory Guideline Description matching image -->
+                <div class="flex flex-col gap-1.5">
+                    <h3 class="text-[13.5px] font-bold text-gray-900 leading-snug">
+                        Giám đốc công ty có quyền quản lý cao nhất đối với tất cả các tài khoản ngân hàng của công ty đã
+                        được thêm vào hệ thống Casso trước đây.
+                    </h3>
+                    <p class="text-[12px] text-gray-500 leading-normal">
+                        Tính năng này giúp bạn xác nhận bạn chính là giám đốc của công ty.
+                    </p>
+                </div>
+
+                <!-- Step 1: Mã số thuế Input & Search Button -->
+                <div class="flex flex-col gap-2 mt-1">
+                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Mã số thuế</label>
+                    <div class="relative">
+                        <input id="input-mst" type="text" placeholder="Nhập mã số thuế công ty"
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-gray-300 focus:border-black focus:outline-none text-sm text-gray-900 font-medium pr-10 shadow-2xs transition-all"
+                            oninput="handleMstInput(this.value)" onkeydown="if(event.key==='Enter') searchTaxCode()">
+                        <button onclick="searchTaxCode()"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-all p-1">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        </button>
+                    </div>
+
+                    <!-- Search Button (shown initially when no result is displayed) -->
+                    <div id="section-search-btn" class="mt-1">
+                        <button onclick="searchTaxCode()" type="button"
+                            class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                            <span>Tìm kiếm</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===================================================== -->
+                <!-- RESULT CONTAINER: 3 SCENARIOS                         -->
+                <!-- ===================================================== -->
+                <div id="section-result-container" class="flex flex-col gap-3 hidden">
+
+                    <!-- ================================================= -->
+                    <!-- SCENARIO 1: VALID & MATCHING DIRECTOR             -->
+                    <!-- ================================================= -->
+                    <div id="scenario-1-valid" class="flex flex-col gap-3 hidden">
+                        <!-- Business Name -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Tên doanh
+                                nghiệp</label>
+                            <input id="s1-company-name" type="text" readonly
+                                class="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-100 text-[12px] text-gray-900 font-bold shadow-2xs">
+                        </div>
+
+                        <!-- Director Name -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Giám đốc / Người
+                                đại diện</label>
+                            <input id="s1-director-name" type="text" readonly
+                                class="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-100 text-[12px] text-gray-900 font-bold shadow-2xs">
+                        </div>
+
+                        <!-- Contact Phone -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Số điện thoại
+                                liên hệ</label>
+                            <input id="s1-phone" type="tel" placeholder="Số điện thoại"
+                                class="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-[12px] text-gray-900 focus:outline-none focus:border-black transition-all">
+                        </div>
+
+                        <!-- Contact Email -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Email liên
+                                hệ</label>
+                            <input id="s1-email" type="email" placeholder="email"
+                                class="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-[12px] text-gray-900 focus:outline-none focus:border-black transition-all">
+                        </div>
+
+                        <!-- Confirmation Checkbox -->
+                        <label class="flex items-center gap-2.5 cursor-pointer py-1">
+                            <input id="s1-confirm-check" type="checkbox" checked
+                                class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black accent-black">
+                            <span class="text-[11px] font-medium text-gray-700">Tôi xác nhận các thông tin trên là
+                                đúng</span>
+                        </label>
+
+                        <!-- Submit Button -->
+                        <button onclick="submitScenario1()" type="button"
+                            class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-circle-check text-emerald-400 text-xs"></i>
+                            <span>Thêm doanh nghiệp</span>
+                        </button>
+                    </div>
+
+                    <!-- ================================================= -->
+                    <!-- SCENARIO 2: NOT DIRECTOR OF COMPANY               -->
+                    <!-- ================================================= -->
+                    <div id="scenario-2-not-director" class="flex flex-col gap-3 hidden">
+                        <!-- Business Name -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Tên doanh
+                                nghiệp</label>
+                            <input id="s2-company-name" type="text" readonly
+                                class="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-100 text-[12px] text-gray-900 font-bold shadow-2xs">
+                        </div>
+
+                        <!-- Director Name -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Giám đốc / Người
+                                đại diện</label>
+                            <input id="s2-director-name" type="text" readonly
+                                class="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-100 text-[12px] text-gray-900 font-bold shadow-2xs">
+                        </div>
+
+                        <!-- Alert Box: Bạn không phải giám đốc của doanh nghiệp -->
+                        <div
+                            class="p-3.5 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5 text-red-800">
+                            <i class="fa-solid fa-triangle-exclamation text-red-600 text-base mt-0.5 shrink-0"></i>
+                            <div class="flex flex-col gap-0.5 text-[11.5px]">
+                                <span class="font-bold text-red-900">Không thể xác thực</span>
+                                <span class="leading-relaxed">
+                                    Bạn không phải giám đốc của doanh nghiệp, vui lòng kiểm tra lại hoặc liên hệ cơ quan
+                                    thuế.
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col gap-1.5 pt-1">
+                            <button onclick="resetSearchForm()" type="button"
+                                class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1.5 cursor-pointer">
+                                <i class="fa-solid fa-arrow-rotate-left text-xs"></i>
+                                <span>Thử lại với mã số thuế khác</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ================================================= -->
+                    <!-- SCENARIO 3: NO CCCD FOUND -> UPLOAD GPKD          -->
+                    <!-- ================================================= -->
+                    <div id="scenario-3-no-cccd" class="flex flex-col gap-3 hidden">
+                        <!-- Alert Box: Không đủ thông tin xác thực -> upload GPKD -->
+                        <div
+                            class="p-3.5 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2.5 text-amber-900">
+                            <i class="fa-solid fa-circle-info text-amber-600 text-base mt-0.5 shrink-0"></i>
+                            <div class="flex flex-col gap-0.5 text-[11.5px]">
+                                <span class="font-bold text-amber-950">Cần bổ sung hồ sơ</span>
+                                <span class="leading-relaxed">
+                                    Không đủ thông tin để xác thực, vui lòng upload GPKD hoặc giấy tờ liên quan
+                                    để chúng
+                                    tôi kiểm tra.
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Company Name (Editable / Auto) -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Tên
+                                doanh nghiệp
+                                trên GPKD</label>
+                            <input id="s3-company-name" type="text"
+                                placeholder="Nhập tên doanh nghiệp chính xác trên GPKD"
+                                class="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-[12px] text-gray-900 font-semibold focus:outline-none focus:border-black transition-all">
+                        </div>
+
+                        <!-- GPKD Upload Area -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Giấy
+                                phép kinh
+                                doanh (GPKD)</label>
+
+                            <!-- Dropzone / File Picker -->
+                            <div id="gpkd-dropzone" onclick="triggerGpkdUpload()"
+                                class="border-2 border-dashed border-gray-300 hover:border-black bg-gray-50 hover:bg-gray-100/70 rounded-xl p-4 flex flex-col items-center justify-center gap-1.5 text-center cursor-pointer transition-all">
+                                <input id="gpkd-file-input" type="file" accept=".pdf,.png,.jpg,.jpeg" class="hidden"
+                                    onchange="handleGpkdFileSelected(this)">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-gray-200/80 flex items-center justify-center text-gray-700 text-sm shadow-2xs">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-[11.5px] font-bold text-gray-800">Tải lên Giấy phép kinh
+                                        doanh</span>
+                                    <span class="text-[9.5px] text-gray-400 mt-0.5">Hỗ trợ PDF, PNG, JPG (tối đa
+                                        10MB)</span>
+                                </div>
+                            </div>
+
+                            <!-- Uploaded file preview card -->
+                            <div id="gpkd-file-preview"
+                                class="hidden p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div
+                                        class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-[10px]">
+                                        <i class="fa-solid fa-file-pdf"></i>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span id="gpkd-filename"
+                                            class="text-[11.5px] font-bold text-emerald-950 truncate max-w-[180px]">GPKD_Casso_Signed.pdf</span>
+                                        <span class="text-[9px] text-emerald-700 font-medium">1.4 MB · Đã đính
+                                            kèm</span>
+                                    </div>
+                                </div>
+                                <button onclick="removeGpkdFile()" type="button"
+                                    class="text-gray-400 hover:text-red-500 p-1 transition-all">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Contact Phone -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Số điện
+                                thoại
+                                liên hệ</label>
+                            <input id="s3-phone" type="tel" placeholder="Số điện thoại"
+                                class="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-[12px] text-gray-900 focus:outline-none focus:border-black transition-all">
+                        </div>
+
+                        <!-- Contact Email -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Email
+                                liên
+                                hệ</label>
+                            <input id="s3-email" type="email" placeholder="Email"
+                                class="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-[12px] text-gray-900 focus:outline-none focus:border-black transition-all">
+                        </div>
+
+                        <!-- Confirmation Checkbox -->
+                        <label class="flex items-center gap-2.5 cursor-pointer py-1">
+                            <input id="s3-confirm-check" type="checkbox" checked
+                                class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black accent-black">
+                            <span class="text-[11px] font-medium text-gray-700">Tôi xác nhận các thông tin trên
+                                là
+                                đúng</span>
+                        </label>
+
+                        <!-- Submit Button -->
+                        <button onclick="submitScenario3()" type="button"
+                            class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-paper-plane text-xs text-amber-400"></i>
+                            <span>Yêu cầu xác thực</span>
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- VIEW 3: BUSINESS DETAIL SCREEN (#view-business-detail)    -->
+        <!-- ========================================================= -->
+        <div id="view-business-detail" class="flex-1 flex flex-col overflow-hidden relative hidden bg-gray-50/60">
+
+            <!-- Header -->
+            <div class="px-5 pt-3 pb-3 flex items-center justify-between bg-white border-b border-gray-100 shrink-0">
+                <div class="flex items-center gap-4">
+                    <button onclick="showBusinessListView()" class="text-gray-800 text-lg hover:opacity-70 p-1">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <h1 class="text-[18px] font-bold text-gray-900 tracking-tight">Chi tiết doanh nghiệp</h1>
+                </div>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto px-4 py-3.5 flex flex-col gap-3">
+
+                <!-- 1. Hero Card -->
+                <div
+                    class="bg-white rounded-2xl p-4 border border-gray-100 shadow-xs flex flex-col items-center text-center gap-2">
+                    <div
+                        class="w-13 h-13 rounded-2xl bg-gray-900 text-white flex items-center justify-center text-xl shadow-sm">
+                        <i class="fa-solid fa-building"></i>
+                    </div>
+                    <div class="flex flex-col items-center gap-0.5">
+                        <h2 id="detail-company-name"
+                            class="text-[14px] font-bold text-gray-900 leading-snug max-w-[280px]">
+                            CÔNG TY TNHH CASSO
+                        </h2>
+                        <div class="flex items-center gap-1.5 mt-1">
+                            <span class="text-[11px] font-mono font-bold text-gray-400">MST:</span>
+                            <span id="detail-mst-text"
+                                class="text-[11px] font-mono font-bold text-gray-800">0316829871</span>
+                            <button onclick="copyDetailMst()" class="text-gray-400 hover:text-black p-0.5 ml-0.5"
+                                title="Sao chép MST">
+                                <i class="fa-regular fa-copy text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="detail-status-pill" class="mt-0.5"></div>
+                </div>
+
+                <!-- 2. Detailed Info Card -->
+                <div class="bg-white rounded-2xl p-3.5 border border-gray-100 shadow-xs flex flex-col gap-2.5">
+                    <div class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider px-0.5">Thông tin pháp
+                        lý & liên hệ</div>
+
+                    <!-- Director / Rep -->
+                    <div class="flex items-center justify-between text-[11.5px] border-b border-gray-50 pb-2">
+                        <div class="flex items-center gap-2 text-gray-500">
+                            <i class="fa-solid fa-user-tie text-gray-400 w-3.5 text-center"></i>
+                            <span>Người đại diện</span>
+                        </div>
+                        <span id="detail-director" class="font-bold text-gray-900">NGUYỄN VĂN AN</span>
+                    </div>
+
+                    <!-- Role -->
+                    <div class="flex items-center justify-between text-[11.5px] border-b border-gray-50 pb-2">
+                        <div class="flex items-center gap-2 text-gray-500">
+                            <i class="fa-solid fa-id-badge text-gray-400 w-3.5 text-center"></i>
+                            <span>Chức vụ</span>
+                        </div>
+                        <span id="detail-role" class="font-semibold text-gray-800">Giám đốc</span>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="flex items-center justify-between text-[11.5px] border-b border-gray-50 pb-2">
+                        <div class="flex items-center gap-2 text-gray-500">
+                            <i class="fa-solid fa-phone text-gray-400 w-3.5 text-center"></i>
+                            <span>Số điện thoại</span>
+                        </div>
+                        <span id="detail-phone" class="font-semibold text-gray-800 font-mono">0901234567</span>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="flex items-center justify-between text-[11.5px] border-b border-gray-50 pb-2">
+                        <div class="flex items-center gap-2 text-gray-500">
+                            <i class="fa-solid fa-envelope text-gray-400 w-3.5 text-center"></i>
+                            <span>Email liên hệ</span>
+                        </div>
+                        <span id="detail-email"
+                            class="font-semibold text-gray-800 truncate max-w-[170px]">contact@casso.vn</span>
+                    </div>
+
+                    <!-- Created / Verified Date -->
+                    <div class="flex items-center justify-between text-[11.5px]">
+                        <div class="flex items-center gap-2 text-gray-500">
+                            <i class="fa-solid fa-calendar-check text-gray-400 w-3.5 text-center"></i>
+                            <span>Ngày xác thực</span>
+                        </div>
+                        <span id="detail-date" class="font-semibold text-gray-800">10/07/2026</span>
+                    </div>
+                </div>
+
+                <!-- 3. Connected Services Card -->
+                <div class="bg-white rounded-2xl p-3.5 border border-gray-100 shadow-xs flex flex-col gap-2">
+                    <div class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider px-0.5">Dịch vụ đang
+                        kết nối</div>
+
+                    <!-- Casso Open Banking -->
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-gray-50 border border-gray-100">
+                        <div class="flex items-center gap-2.5">
+                            <div
+                                class="w-6 h-6 rounded-lg bg-black text-white flex items-center justify-center text-[10px]">
+                                <i class="fa-solid fa-building-columns"></i>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-[11px] font-bold text-gray-900 leading-tight">Casso Open
+                                    Banking</span>
+                                <span class="text-[9px] text-gray-400">Quản lý biến động số dư</span>
+                            </div>
+                        </div>
+                        <span
+                            class="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            Hoạt động
+                        </span>
+                    </div>
+
+                    <!-- XInvoice -->
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-gray-50 border border-gray-100">
+                        <div class="flex items-center gap-2.5">
+                            <div
+                                class="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-[10px] font-black">
+                                X
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-[11px] font-bold text-gray-900 leading-tight">Hóa đơn điện tử
+                                    XInvoice</span>
+                                <span class="text-[9px] text-gray-400">Xuất & đồng bộ hóa đơn</span>
+                            </div>
+                        </div>
+                        <div id="detail-xinvoice-container">
+                            <span id="detail-xinvoice-status"
+                                class="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                                Hoạt động
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Action Buttons -->
+                <div class="flex flex-col gap-2 pt-1 pb-4">
+                    <button onclick="handleUnlinkCurrentBusiness()" type="button"
+                        class="w-full py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-[11.5px] rounded-lg border border-red-200 transition-all active:scale-[0.98] shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer">
+                        <i class="fa-solid fa-link-slash text-xs"></i>
+                        <span>Hủy liên kết doanh nghiệp</span>
+                    </button>
+                    <button onclick="showBusinessListView()" type="button"
+                        class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1 cursor-pointer">
+                        <span>Quay lại danh sách</span>
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Custom Toast Banner -->
+        <div id="custom-toast"
+            class="absolute top-12 left-4 right-4 z-50 bg-gray-900/95 backdrop-blur-md text-white rounded-2xl p-3.5 shadow-2xl flex items-center gap-2.5 transform -translate-y-6 opacity-0 transition-all duration-300 pointer-events-none hidden border border-gray-800">
+            <i id="custom-toast-icon" class="text-sm shrink-0 text-emerald-400 fa-solid fa-circle-check"></i>
+            <span id="custom-toast-msg" class="text-[11.5px] font-semibold leading-snug"></span>
+        </div>
+
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- JAVASCRIPT LOGIC & STATE PERSISTENCE                          -->
+    <!-- ============================================================= -->
+    <script>
+        // Mock dataset of auto-discovered businesses (matched CCCD)
+        const DEFAULT_DISCOVERED = [
+            {
+                id: 'disc-2',
+                name: 'CÔNG TY CỔ PHẦN FINTECH VIỆT NAM',
+                mst: '0109988776',
+                director: 'NGUYỄN VĂN AN',
+                role: 'Giám đốc',
+                phone: '0912345678',
+                email: 'info@fintechvn.com'
+            }
+        ];
+
+        // Mock dataset of verified businesses stored in localStorage
+        const DEFAULT_BUSINESSES = [
+            {
+                id: 'biz-0',
+                name: 'CÔNG TY TNHH CASSO',
+                mst: '0316829871',
+                director: 'NGUYỄN VĂN AN',
+                role: 'Giám đốc',
+                phone: '0901234567',
+                email: 'contact@casso.vn',
+                status: 'verified', // 'verified', 'pending', 'rejected'
+                createdTime: '10/07/2026',
+                hasXInvoice: false
+            },
+            {
+                id: 'biz-1',
+                name: 'Casso3',
+                mst: '0123345677',
+                director: 'NGUYỄN VĂN AN',
+                role: 'Giám đốc',
+                phone: '0988765432',
+                email: 'admin@casso3.vn',
+                status: 'verified',
+                createdTime: '15/07/2026',
+                hasXInvoice: false
+            },
+            {
+                id: 'biz-2',
+                name: 'Casso2',
+                mst: '8378248385',
+                director: 'NGUYỄN VĂN AN',
+                role: 'Giám đốc',
+                phone: '0977654321',
+                email: 'support@casso2.vn',
+                status: 'verified',
+                createdTime: '16/07/2026',
+                hasXInvoice: false
+            },
+            {
+                id: 'biz-3',
+                name: 'CA',
+                mst: '0133456788',
+                director: 'NGUYỄN VĂN AN',
+                role: 'Giám đốc',
+                phone: '0966543210',
+                email: 'ca@casso.vn',
+                status: 'verified',
+                createdTime: '17/07/2026',
+                hasXInvoice: true
+            }
+        ];
+
+        let currentTab = 'verified'; // 'verified' | 'pending' | 'rejected'
+        let hasSelectedGpkd = false;
+        let currentDetailBizId = null;
+
+        window.onload = function () {
+            updateLiveTime();
+            loadBusinesses();
+        };
+
+        function updateLiveTime() {
+            const timeEl = document.getElementById('current-time');
+            if (!timeEl) return;
+            const now = new Date();
+            const hrs = String(now.getHours()).padStart(2, '0');
+            const mins = String(now.getMinutes()).padStart(2, '0');
+            timeEl.textContent = `${hrs}:${mins}`;
+        }
+
+        function getDiscoveredData() {
+            try {
+                const stored = localStorage.getItem('casso_discovered_businesses_v2');
+                if (stored) return JSON.parse(stored);
+            } catch (e) { }
+            localStorage.setItem('casso_discovered_businesses_v2', JSON.stringify(DEFAULT_DISCOVERED));
+            return DEFAULT_DISCOVERED;
+        }
+
+        function saveDiscoveredData(list) {
+            localStorage.setItem('casso_discovered_businesses_v2', JSON.stringify(list));
+        }
+
+        function getBusinessesData() {
+            try {
+                const stored = localStorage.getItem('casso_user_businesses_v3');
+                if (stored) return JSON.parse(stored);
+            } catch (e) { }
+            localStorage.setItem('casso_user_businesses_v3', JSON.stringify(DEFAULT_BUSINESSES));
+            return DEFAULT_BUSINESSES;
+        }
+
+        function saveBusinessesData(list) {
+            localStorage.setItem('casso_user_businesses_v3', JSON.stringify(list));
+        }
+
+        function confirmDiscoveredBusiness(mst) {
+            const discovered = getDiscoveredData();
+            const item = discovered.find(b => b.mst === mst);
+            if (!item) return;
+
+            // Open Add / Verification Screen
+            showAddBusinessView();
+
+            // Set MST in input
+            const inputMst = document.getElementById('input-mst');
+            if (inputMst) inputMst.value = mst;
+
+            // Trigger search to populate Scenario 1 form
+            searchTaxCode();
+
+            // Populate phone and email if present
+            if (item.phone) {
+                const phoneEl = document.getElementById('s1-phone');
+                if (phoneEl) phoneEl.value = item.phone;
+            }
+            if (item.email) {
+                const emailEl = document.getElementById('s1-email');
+                if (emailEl) emailEl.value = item.email;
+            }
+
+            // Focus on phone input
+            setTimeout(() => {
+                document.getElementById('s1-phone')?.focus();
+            }, 150);
+        }
+
+        function switchBusinessTab(tab) {
+            currentTab = tab;
+
+            // Update tab styles
+            ['verified', 'pending', 'rejected'].forEach(t => {
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (!btn) return;
+                if (t === tab) {
+                    btn.className = "pb-2.5 flex-1 text-center font-bold text-[13px] text-emerald-700 border-b-2 border-emerald-600 transition-all";
+                } else {
+                    btn.className = "pb-2.5 flex-1 text-center font-medium text-[13px] text-gray-500 hover:text-gray-900 border-b-2 border-transparent transition-all";
+                }
+            });
+
+            renderBusinessList();
+        }
+
+        function loadBusinesses() {
+            const list = getBusinessesData();
+
+            // Update counters
+            const countVerified = list.filter(b => b.status === 'verified').length;
+            const countPending = list.filter(b => b.status === 'pending').length;
+            const countRejected = list.filter(b => b.status === 'rejected').length;
+
+            const vEl = document.getElementById('count-verified');
+            const pEl = document.getElementById('count-pending');
+            const rEl = document.getElementById('count-rejected');
+
+            if (vEl) vEl.textContent = countVerified;
+            if (pEl) pEl.textContent = countPending;
+            if (rEl) rEl.textContent = countRejected;
+
+            renderBusinessList();
+        }
+
+        function renderBusinessList() {
+            const container = document.getElementById('business-list-container');
+            if (!container) return;
+
+            const list = getBusinessesData().filter(b => b.status === currentTab);
+            const discovered = getDiscoveredData();
+
+            if (list.length === 0 && (currentTab !== 'verified' || discovered.length === 0)) {
+                let emptyMsg = "Chưa có doanh nghiệp nào đã xác thực";
+                let emptyIcon = "fa-building";
+                if (currentTab === 'pending') {
+                    emptyMsg = "Không có yêu cầu xác thực nào đang chờ";
+                    emptyIcon = "fa-clock";
+                } else if (currentTab === 'rejected') {
+                    emptyMsg = "Không có doanh nghiệp nào bị từ chối";
+                    emptyIcon = "fa-circle-xmark";
+                }
+
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-20 text-gray-400 gap-3">
+                        <div class="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center text-gray-300 text-2xl border border-gray-100 shadow-2xs">
+                            <i class="fa-solid ${emptyIcon}"></i>
+                        </div>
+                        <span class="text-xs font-medium text-gray-400">${emptyMsg}</span>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+
+            // 1. SECTION: GỢI Ý DOANH NGHIỆP TRÙNG CCCD (Chỉ hiện trong tab Đã xác thực khi còn gợi ý)
+            if (currentTab === 'verified' && discovered.length > 0) {
+                html += `
+                    <div class="flex flex-col gap-2 pb-1">
+                        <div class="flex items-start gap-1.5 px-0.5">
+                            <span class="text-[11.5px] font-bold text-gray-800 leading-snug">
+                                Hệ thống tìm thấy ${discovered.length} DN có thông tin người đại diện trùng với CCCD của bạn, nếu thông tin chính xác bạn có thể thêm mới doanh nghiệp này.
+                            </span>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            ${discovered.map(item => `
+                                <div onclick="confirmDiscoveredBusiness('${item.mst}')"
+                                    class="bg-white rounded-xl p-2.5 border border-purple-200/80 hover:border-purple-300 shadow-sm flex items-center justify-between transition-all active:scale-[0.99] cursor-pointer">
+                                    <!-- Left Info -->
+                                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                                        <div class="w-9 h-9 rounded-full bg-purple-50 text-purple-700 flex items-center justify-center text-sm shrink-0 border border-purple-100 shadow-2xs">
+                                            <i class="fa-solid fa-building"></i>
+                                        </div>
+                                        <div class="flex flex-col min-w-0 flex-1">
+                                            <span class="font-bold text-[12.5px] text-gray-900 truncate leading-snug">${item.name}</span>
+                                            <div class="flex items-center gap-1.5 mt-0.5">
+                                                <span class="text-[10px] text-gray-500 font-mono tracking-wide">${item.mst}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Right Arrow Icon -->
+                                    <div class="flex items-center gap-2 shrink-0 ml-2">
+                                        <i class="fa-solid fa-chevron-right text-xs text-purple-400"></i>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+
+                // Divider / Section title for verified list
+                if (list.length > 0) {
+                    html += `
+                        <div class="flex items-center justify-between px-0.5 pt-2 pb-0.5 border-t border-gray-200/60 mt-1">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Doanh nghiệp đã xác thực (${list.length})</span>
+                        </div>
+                    `;
+                }
+            }
+
+            // 2. SECTION: DANH SÁCH DOANH NGHIỆP ĐÃ XÁC THỰC
+            html += list.map(biz => `
+                <div onclick="showBusinessDetailView('${biz.id}')"
+                    class="bg-white rounded-xl p-2.5 border border-gray-150 shadow-sm flex items-center justify-between hover:border-black/30 transition-all active:scale-[0.99] cursor-pointer">
+                    <!-- Left: Avatar + Info -->
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-700 text-sm shrink-0 border border-gray-200/60 shadow-2xs">
+                            <i class="fa-solid fa-building"></i>
+                        </div>
+                        <div class="flex flex-col min-w-0 flex-1">
+                            <span class="font-bold text-[12.5px] text-gray-900 truncate leading-snug">${biz.name}</span>
+                            <div class="flex items-center gap-1.5 mt-0.5">
+                                <span class="text-[10px] text-gray-500 font-mono tracking-wide">${biz.mst}</span>
+                                ${getRoleBadgeHtml(biz)}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Extra Logo or Status Icon -->
+                    <div class="flex items-center gap-2 shrink-0 ml-2">
+                        ${biz.hasXInvoice ? `
+                            <div title="Đã kết nối XInvoice" class="w-6 h-6 flex items-center justify-center">
+                                <span class="text-emerald-600 font-black text-xs">X</span>
+                            </div>
+                        ` : ''}
+                        <i class="fa-solid fa-chevron-right text-xs text-gray-300"></i>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+        }
+
+        function getRoleBadgeHtml(biz) {
+            if (biz.status === 'verified') {
+                return `<span class="bg-black text-white text-[8.5px] font-bold px-1.5 py-0.5 rounded leading-none">${biz.role || 'Giám đốc'}</span>`;
+            } else if (biz.status === 'pending') {
+                return `<span class="bg-amber-100 text-amber-800 text-[8.5px] font-bold px-1.5 py-0.5 rounded leading-none">Chờ duyệt GPKD</span>`;
+            } else if (biz.status === 'rejected') {
+                return `<span class="bg-red-100 text-red-800 text-[8.5px] font-bold px-1.5 py-0.5 rounded leading-none">Từ chối</span>`;
+            }
+            return '';
+        }
+
+        // =========================================================
+        // VIEW NAVIGATION
+        // =========================================================
+        function showBusinessListView() {
+            document.getElementById('view-business-add').classList.add('hidden');
+            document.getElementById('view-business-detail').classList.add('hidden');
+            document.getElementById('view-business-list').classList.remove('hidden');
+            loadBusinesses();
+        }
+
+        function showAddBusinessView() {
+            resetSearchForm();
+            document.getElementById('view-business-list').classList.add('hidden');
+            document.getElementById('view-business-detail').classList.add('hidden');
+            document.getElementById('view-business-add').classList.remove('hidden');
+        }
+
+        function showBusinessDetailView(bizId) {
+            const list = getBusinessesData();
+            const biz = list.find(b => String(b.id) === String(bizId)) || list.find(b => b.mst === String(bizId));
+            if (!biz) {
+                showToast('Không tìm thấy thông tin doanh nghiệp', 'fa-solid fa-circle-exclamation text-amber-400');
+                return;
+            }
+
+            currentDetailBizId = biz.id;
+
+            // Populate hero & header
+            const nameEl = document.getElementById('detail-company-name');
+            if (nameEl) nameEl.textContent = biz.name || '';
+
+            const mstEl = document.getElementById('detail-mst-text');
+            if (mstEl) mstEl.textContent = biz.mst || '';
+
+            const dirEl = document.getElementById('detail-director');
+            if (dirEl) dirEl.textContent = biz.director || 'NGUYỄN VĂN AN';
+
+            const roleEl = document.getElementById('detail-role');
+            if (roleEl) roleEl.textContent = biz.role || 'Giám đốc';
+
+            const phoneEl = document.getElementById('detail-phone');
+            if (phoneEl) phoneEl.textContent = biz.phone || '0901 234 567';
+
+            const emailEl = document.getElementById('detail-email');
+            if (emailEl) emailEl.textContent = biz.email || 'contact@casso.vn';
+
+            const dateEl = document.getElementById('detail-date');
+            if (dateEl) dateEl.textContent = biz.createdTime || '15/07/2026';
+
+            // Status pill
+            const pillEl = document.getElementById('detail-status-pill');
+            if (pillEl) {
+                if (biz.status === 'verified') {
+                    pillEl.innerHTML = `
+                        <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[10.5px] font-bold px-2.5 py-0.5 rounded-full">
+                            <i class="fa-solid fa-circle-check text-xs text-emerald-600"></i>
+                            Đã xác thực
+                        </span>
+                    `;
+                } else if (biz.status === 'pending') {
+                    pillEl.innerHTML = `
+                        <span class="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 border border-amber-200/80 text-[10.5px] font-bold px-2.5 py-0.5 rounded-full">
+                            <i class="fa-solid fa-clock text-xs text-amber-600"></i>
+                            Chờ duyệt GPKD
+                        </span>
+                    `;
+                } else {
+                    pillEl.innerHTML = `
+                        <span class="inline-flex items-center gap-1.5 bg-red-50 text-red-700 border border-red-200/80 text-[10.5px] font-bold px-2.5 py-0.5 rounded-full">
+                            <i class="fa-solid fa-circle-xmark text-xs text-red-600"></i>
+                            Bị từ chối
+                        </span>
+                    `;
+                }
+            }
+
+            // XInvoice status
+            const xContainer = document.getElementById('detail-xinvoice-container');
+            if (xContainer) {
+                if (biz.hasXInvoice) {
+                    xContainer.innerHTML = `
+                        <span class="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                            Hoạt động
+                        </span>
+                    `;
+                } else {
+                    xContainer.innerHTML = `
+                        <span class="text-[9px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                            Chưa kích hoạt
+                        </span>
+                    `;
+                }
+            }
+
+            // Toggle view visibility
+            document.getElementById('view-business-list')?.classList.add('hidden');
+            document.getElementById('view-business-add')?.classList.add('hidden');
+            document.getElementById('view-business-detail')?.classList.remove('hidden');
+        }
+
+        function copyDetailMst() {
+            const mst = document.getElementById('detail-mst-text')?.textContent;
+            if (mst) {
+                navigator.clipboard?.writeText(mst).catch(() => { });
+                showToast('Đã sao chép mã số thuế: ' + mst, 'fa-solid fa-circle-check text-emerald-400');
+            }
+        }
+
+        function handleUnlinkCurrentBusiness() {
+            if (!currentDetailBizId) return;
+            const list = getBusinessesData();
+            const biz = list.find(b => b.id === currentDetailBizId);
+            const bizName = biz ? biz.name : 'doanh nghiệp này';
+
+            const confirmed = confirm(`Bạn có chắc chắn muốn hủy liên kết "${bizName}" không?`);
+            if (!confirmed) return;
+
+            const updatedList = list.filter(b => b.id !== currentDetailBizId);
+            saveBusinessesData(updatedList);
+            showToast('Đã hủy liên kết doanh nghiệp thành công!', 'fa-solid fa-circle-check text-emerald-400');
+
+            setTimeout(() => {
+                showBusinessListView();
+            }, 300);
+        }
+
+        function resetSearchForm() {
+            const input = document.getElementById('input-mst');
+            if (input) input.value = '';
+
+            document.getElementById('section-search-btn')?.classList.remove('hidden');
+            document.getElementById('section-result-container')?.classList.add('hidden');
+            document.getElementById('scenario-1-valid')?.classList.add('hidden');
+            document.getElementById('scenario-2-not-director')?.classList.add('hidden');
+            document.getElementById('scenario-3-no-cccd')?.classList.add('hidden');
+
+            removeGpkdFile();
+        }
+
+        function setTestMst(mst) {
+            const input = document.getElementById('input-mst');
+            if (input) {
+                input.value = mst;
+                searchTaxCode();
+            }
+        }
+
+        function handleMstInput(val) {
+            if (!val || val.trim() === '') {
+                document.getElementById('section-result-container')?.classList.add('hidden');
+                document.getElementById('section-search-btn')?.classList.remove('hidden');
+            }
+        }
+
+        // =========================================================
+        // TAX CODE SEARCH & 3 SCENARIOS LOGIC
+        // =========================================================
+        function searchTaxCode() {
+            const input = document.getElementById('input-mst');
+            const mst = input ? input.value.trim() : '';
+
+            if (!mst) {
+                showToast('Vui lòng nhập mã số thuế', 'fa-solid fa-circle-exclamation text-amber-400');
+                return;
+            }
+
+            // Hide initial search button, show result container
+            document.getElementById('section-search-btn')?.classList.add('hidden');
+            const resultContainer = document.getElementById('section-result-container');
+            if (resultContainer) resultContainer.classList.remove('hidden');
+
+            const s1 = document.getElementById('scenario-1-valid');
+            const s2 = document.getElementById('scenario-2-not-director');
+            const s3 = document.getElementById('scenario-3-no-cccd');
+
+            // Hide all first
+            s1?.classList.add('hidden');
+            s2?.classList.add('hidden');
+            s3?.classList.add('hidden');
+
+            // 3 Scenarios Logic:
+            // TH3: 0317654321 (hoặc bắt đầu bằng 0317 / có '321') -> Chưa có CCCD -> Upload GPKD
+            // TH2: 0318999888 (hoặc bắt đầu bằng 0318 / có '888') -> Không phải Giám đốc
+            // TH1: 0316829871 (hoặc các trường hợp còn lại) -> Hợp lệ, khớp Giám đốc
+
+            if (mst === '0317654321' || mst.includes('321') || mst.startsWith('0317')) {
+                // TÌNH HUỐNG 3: Không tìm thấy CCCD tương ứng với MST -> Upload GPKD
+                s3?.classList.remove('hidden');
+                const nameEl = document.getElementById('s3-company-name');
+                if (nameEl) nameEl.value = 'CÔNG TY TNHH GIẢI PHÁP PHẦN MỀM CMC';
+                const phoneEl = document.getElementById('s3-phone');
+                if (phoneEl) phoneEl.value = '0909888777';
+                const emailEl = document.getElementById('s3-email');
+                if (emailEl) emailEl.value = 'admin@cmcsoft.vn';
+                showToast('Không đủ thông tin để xác thực, vui lòng upload GPKD', 'fa-solid fa-circle-info text-amber-400');
+
+            } else if (mst === '0318999888' || mst.includes('888') || mst.startsWith('0318')) {
+                // TÌNH HUỐNG 2: Giám đốc không phải user hiện tại
+                s2?.classList.remove('hidden');
+                const nameEl = document.getElementById('s2-company-name');
+                if (nameEl) nameEl.value = 'CÔNG TY CỔ PHẦN TẬP ĐOÀN ĐẦU TƯ ABC';
+                const dirEl = document.getElementById('s2-director-name');
+                if (dirEl) dirEl.value = 'TRẦN QUỐC BẢO';
+                showToast('Bạn không phải giám đốc của doanh nghiệp', 'fa-solid fa-triangle-exclamation text-red-400');
+
+            } else {
+                // TÌNH HUỐNG 1: Hợp lệ, khớp Giám đốc
+                s1?.classList.remove('hidden');
+                const nameEl = document.getElementById('s1-company-name');
+                if (nameEl) {
+                    if (mst === '0316829871') {
+                        nameEl.value = 'CÔNG TY TNHH CASSO';
+                    } else if (mst === '0109988776') {
+                        nameEl.value = 'CÔNG TY CỔ PHẦN FINTECH VIỆT NAM';
+                    } else if (mst === '0123345677') {
+                        nameEl.value = 'CÔNG TY TNHH CÔNG NGHỆ CASSO 3';
+                    } else {
+                        nameEl.value = 'CÔNG TY TNHH CÔNG NGHỆ CASSO';
+                    }
+                }
+                const dirEl = document.getElementById('s1-director-name');
+                if (dirEl) dirEl.value = 'NGUYỄN VĂN AN';
+                const phoneEl = document.getElementById('s1-phone');
+                if (phoneEl) phoneEl.value = '';
+                const emailEl = document.getElementById('s1-email');
+                if (emailEl) emailEl.value = '';
+                showToast('Tìm thấy thông tin doanh nghiệp hợp lệ!', 'fa-solid fa-circle-check text-emerald-400');
+            }
+        }
+
+        // =========================================================
+        // SUBMIT SCENARIO 1 (HỢP LỆ -> THÊM VÀO ĐÃ XÁC THỰC)
+        // =========================================================
+        function submitScenario1() {
+            const mst = document.getElementById('input-mst')?.value.trim() || '0316829871';
+            const name = document.getElementById('s1-company-name')?.value.trim() || 'CÔNG TY TNHH CASSO';
+            const director = document.getElementById('s1-director-name')?.value.trim() || 'NGUYỄN VĂN AN';
+            const phone = document.getElementById('s1-phone')?.value.trim() || '0901234567';
+            const email = document.getElementById('s1-email')?.value.trim() || 'contact@casso.vn';
+
+            // Remove from discovered list if applicable
+            const discovered = getDiscoveredData();
+            const discIndex = discovered.findIndex(b => b.mst === mst);
+            if (discIndex !== -1) {
+                discovered.splice(discIndex, 1);
+                saveDiscoveredData(discovered);
+            }
+
+            const list = getBusinessesData();
+            // Check if already exists
+            const existing = list.find(b => b.mst === mst);
+            if (existing) {
+                existing.status = 'verified';
+                existing.name = name;
+                existing.director = director;
+                existing.phone = phone;
+                existing.email = email;
+            } else {
+                list.unshift({
+                    id: 'biz-' + Date.now(),
+                    name: name,
+                    mst: mst,
+                    director: director,
+                    phone: phone,
+                    email: email,
+                    role: 'Giám đốc',
+                    status: 'verified',
+                    createdTime: 'Hôm nay',
+                    hasXInvoice: false
+                });
+            }
+
+            saveBusinessesData(list);
+            showToast('Thêm doanh nghiệp thành công!', 'fa-solid fa-circle-check text-emerald-400');
+
+            setTimeout(() => {
+                currentTab = 'verified';
+                showBusinessListView();
+            }, 500);
+        }
+
+        // =========================================================
+        // SUBMIT SCENARIO 3 (CHƯA CÓ CCCD -> GỬI DUYỆT GPKD)
+        // =========================================================
+        function triggerGpkdUpload() {
+            const fileInput = document.getElementById('gpkd-file-input');
+            if (fileInput) fileInput.click();
+        }
+
+        function handleGpkdFileSelected(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                document.getElementById('gpkd-filename').textContent = file.name;
+                document.getElementById('gpkd-dropzone').classList.add('hidden');
+                document.getElementById('gpkd-file-preview').classList.remove('hidden');
+                hasSelectedGpkd = true;
+                showToast('Đã đính kèm GPKD thành công', 'fa-solid fa-circle-check text-emerald-400');
+            } else {
+                // Mock default file if user cancels file dialog
+                document.getElementById('gpkd-filename').textContent = 'GPKD_Doanh_Nghiep.pdf';
+                document.getElementById('gpkd-dropzone').classList.add('hidden');
+                document.getElementById('gpkd-file-preview').classList.remove('hidden');
+                hasSelectedGpkd = true;
+            }
+        }
+
+        function removeGpkdFile() {
+            const input = document.getElementById('gpkd-file-input');
+            if (input) input.value = '';
+            document.getElementById('gpkd-dropzone')?.classList.remove('hidden');
+            document.getElementById('gpkd-file-preview')?.classList.add('hidden');
+            hasSelectedGpkd = false;
+        }
+
+        function submitScenario3() {
+            const mst = document.getElementById('input-mst')?.value.trim() || '0317654321';
+            const name = document.getElementById('s3-company-name')?.value.trim() || 'CÔNG TY TNHH GIẢI PHÁP PHẦN MỀM CMC';
+
+            if (!hasSelectedGpkd) {
+                // Auto attach demo file if not selected yet
+                handleGpkdFileSelected({ files: [{ name: 'GPKD_' + mst + '.pdf' }] });
+            }
+
+            const list = getBusinessesData();
+            list.unshift({
+                id: 'biz-' + Date.now(),
+                name: name,
+                mst: mst,
+                role: 'Giám đốc',
+                status: 'pending', // Pending verification
+                createdTime: 'Vừa xong',
+                hasXInvoice: false
+            });
+
+            saveBusinessesData(list);
+            showToast('Đã gửi yêu cầu xác thực thành công!', 'fa-solid fa-circle-check text-emerald-400');
+
+            setTimeout(() => {
+                currentTab = 'pending';
+                showBusinessListView();
+            }, 600);
+        }
+
+        // =========================================================
+        // TOAST ALERT HELPER
+        // =========================================================
+        let toastTimeout = null;
+        function showToast(msg, iconClass = "fa-solid fa-circle-info text-amber-400") {
+            const toast = document.getElementById('custom-toast');
+            const toastMsg = document.getElementById('custom-toast-msg');
+            const toastIcon = document.getElementById('custom-toast-icon');
+
+            if (toast && toastMsg) {
+                toastMsg.textContent = msg;
+                if (toastIcon) toastIcon.className = iconClass;
+
+                toast.classList.remove('hidden');
+                toast.offsetHeight; // force reflow
+                toast.classList.remove('-translate-y-6', 'opacity-0');
+                toast.classList.add('translate-y-0', 'opacity-100');
+
+                if (toastTimeout) clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('translate-y-0', 'opacity-100');
+                    toast.classList.add('-translate-y-6', 'opacity-0');
+                    setTimeout(() => toast.classList.add('hidden'), 300);
+                }, 3200);
+            }
+        }
+    </script>
+</body>
+
+</html>
