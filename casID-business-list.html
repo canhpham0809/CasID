@@ -72,7 +72,7 @@
 
             <!-- Header -->
             <div class="px-5 pt-3 pb-2 flex items-center gap-4 bg-white shrink-0">
-                <button onclick="window.location.href='index.html'" class="text-gray-800 text-lg hover:opacity-70 p-1">
+                <button onclick="window.location.href=demoHomeUrl()" class="text-gray-800 text-lg hover:opacity-70 p-1">
                     <i class="fa-solid fa-arrow-left"></i>
                 </button>
                 <h1 class="text-[19px] font-bold text-gray-900 tracking-tight">Doanh nghiệp</h1>
@@ -103,7 +103,7 @@
                 <div class="pt-1 pb-4">
                     <button onclick="showAddBusinessView()"
                         class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1">
-                        <span>Thêm doanh nghiệp +</span>
+                        <span>Xác thực doanh nghiệp</span>
                     </button>
                 </div>
             </div>
@@ -111,13 +111,17 @@
             <!-- Bottom Navigation Bar (Active tab: Doanh nghiệp) -->
             <div
                 class="bg-white border-t border-gray-100 px-2 py-2 flex justify-around items-center text-[10px] text-gray-400 font-medium pb-5 z-10 shrink-0">
-                <button onclick="window.location.href='index.html'"
+                <button onclick="window.location.href=demoHomeUrl()"
                     class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
                     <i class="fa-solid fa-house text-base"></i>
                     <span>Trang chủ</span>
                 </button>
-                <button class="flex flex-col items-center gap-1 w-16 text-black">
-                    <i class="fa-solid fa-building text-base text-black"></i>
+                <button class="flex flex-col items-center gap-1 w-16 text-black relative">
+                    <div class="relative">
+                        <i class="fa-solid fa-building text-base text-black"></i>
+                        <span id="nav-business-badge"
+                            class="absolute -top-1.5 -right-2 min-w-[15px] h-[15px] px-1 bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-xs hidden">0</span>
+                    </div>
                     <span class="font-bold">Doanh nghiệp</span>
                 </button>
                 <button onclick="window.location.href='casID-sign-delegation.html'"
@@ -125,13 +129,13 @@
                     <i class="fa-solid fa-qrcode text-base"></i>
                     <span>Ủy quyền</span>
                 </button>
-                <button onclick="window.location.href='casID-sign-noti.html'"
+                <button onclick="window.location.href=notiUrl()"
                     class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700 relative">
                     <div class="relative">
                         <i class="fa-solid fa-bell text-base"></i>
                         <span id="footer-noti-badge"
-                            class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center border border-white">
-                            2
+                            class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center border border-white hidden">
+                            0
                         </span>
                     </div>
                     <span>Thông báo</span>
@@ -232,7 +236,7 @@
                         <div class="flex flex-col gap-1">
                             <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Email liên
                                 hệ</label>
-                            <input id="s1-email" type="email" placeholder="email"
+                            <input id="s1-email" type="email" placeholder="Email"
                                 class="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-[12px] text-gray-900 focus:outline-none focus:border-black transition-all">
                         </div>
 
@@ -240,15 +244,21 @@
                         <label class="flex items-center gap-2.5 cursor-pointer py-1">
                             <input id="s1-confirm-check" type="checkbox" checked
                                 class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black accent-black">
-                            <span class="text-[11px] font-medium text-gray-700">Tôi xác nhận các thông tin trên là
-                                đúng</span>
+                            <span class="text-[11px] font-medium text-gray-700">Tôi cam đoan tôi là người đại diện hợp
+                                pháp của doanh nghiệp tại thời điểm xác thực và chịu trách nhiệm về tính chính xác của
+                                thông tin trên. </span>
                         </label>
 
                         <!-- Submit Button -->
                         <button onclick="submitScenario1()" type="button"
                             class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1.5 cursor-pointer">
-                            <i class="fa-solid fa-circle-check text-emerald-400 text-xs"></i>
-                            <span>Thêm doanh nghiệp</span>
+                            <span>Xác thực doanh nghiệp</span>
+                        </button>
+
+                        <!-- Shown only when this form was opened from a CCCD-matched suggestion -->
+                        <button id="s1-not-my-business-btn" onclick="dismissCurrentDiscoveredSuggestion()" type="button"
+                            class="hidden w-full py-2.5 bg-white hover:bg-gray-50 text-gray-500 font-semibold text-[11px] rounded-lg border border-gray-200 transition-all active:scale-[0.98] cursor-pointer">
+                            <span>Đây không phải doanh nghiệp của tôi</span>
                         </button>
                     </div>
 
@@ -306,9 +316,9 @@
                             <div class="flex flex-col gap-0.5 text-[11.5px]">
                                 <span class="font-bold text-amber-950">Cần bổ sung hồ sơ</span>
                                 <span class="leading-relaxed">
-                                    Không đủ thông tin để xác thực, vui lòng upload GPKD hoặc giấy tờ liên quan
-                                    để chúng
-                                    tôi kiểm tra.
+                                    Hiện tại chúng tôi chưa thể xác thực tự động doanh nghiệp của bạn do thông tin trên
+                                    cục quản lý doanh nghiệp và cục thuế chưa có đủ thông tin. Bạn vui lòng cung cấp
+                                    GPKD hoặc Giấy đăng ký để chúng tôi tiến hành xác nhận thủ công.
                                 </span>
                             </div>
                         </div>
@@ -398,15 +408,11 @@
                         <!-- Submit Button -->
                         <button onclick="submitScenario3()" type="button"
                             class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1.5 cursor-pointer">
-                            <i class="fa-solid fa-paper-plane text-xs text-amber-400"></i>
                             <span>Yêu cầu xác thực</span>
                         </button>
                     </div>
-
                 </div>
-
             </div>
-
         </div>
 
         <!-- ========================================================= -->
@@ -450,6 +456,16 @@
                         </div>
                     </div>
                     <div id="detail-status-pill" class="mt-0.5"></div>
+                </div>
+
+                <!-- 1b. Rejection Reason Notice (only shown when status is rejected) -->
+                <div id="detail-reject-reason-box"
+                    class="hidden bg-red-50 border border-red-100 rounded-2xl p-3 flex items-start gap-2.5">
+                    <i class="fa-solid fa-circle-exclamation text-red-500 text-sm mt-0.5 shrink-0"></i>
+                    <div class="flex flex-col gap-0.5">
+                        <span class="text-[10.5px] font-bold text-red-700">Lý do từ chối</span>
+                        <span id="detail-reject-reason-text" class="text-[11px] text-red-600 leading-snug"></span>
+                    </div>
                 </div>
 
                 <!-- 2. Detailed Info Card -->
@@ -504,58 +520,10 @@
                     </div>
                 </div>
 
-                <!-- 3. Connected Services Card -->
-                <div class="bg-white rounded-2xl p-3.5 border border-gray-100 shadow-xs flex flex-col gap-2">
-                    <div class="text-[9.5px] font-bold text-gray-400 uppercase tracking-wider px-0.5">Dịch vụ đang
-                        kết nối</div>
-
-                    <!-- Casso Open Banking -->
-                    <div class="flex items-center justify-between p-2 rounded-xl bg-gray-50 border border-gray-100">
-                        <div class="flex items-center gap-2.5">
-                            <div
-                                class="w-6 h-6 rounded-lg bg-black text-white flex items-center justify-center text-[10px]">
-                                <i class="fa-solid fa-building-columns"></i>
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-[11px] font-bold text-gray-900 leading-tight">Casso Open
-                                    Banking</span>
-                                <span class="text-[9px] text-gray-400">Quản lý biến động số dư</span>
-                            </div>
-                        </div>
-                        <span
-                            class="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                            Hoạt động
-                        </span>
-                    </div>
-
-                    <!-- XInvoice -->
-                    <div class="flex items-center justify-between p-2 rounded-xl bg-gray-50 border border-gray-100">
-                        <div class="flex items-center gap-2.5">
-                            <div
-                                class="w-6 h-6 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-[10px] font-black">
-                                X
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-[11px] font-bold text-gray-900 leading-tight">Hóa đơn điện tử
-                                    XInvoice</span>
-                                <span class="text-[9px] text-gray-400">Xuất & đồng bộ hóa đơn</span>
-                            </div>
-                        </div>
-                        <div id="detail-xinvoice-container">
-                            <span id="detail-xinvoice-status"
-                                class="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-                                Hoạt động
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4. Action Buttons -->
+                <!-- 3. Action Buttons -->
                 <div class="flex flex-col gap-2 pt-1 pb-4">
-                    <button onclick="handleUnlinkCurrentBusiness()" type="button"
-                        class="w-full py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-[11.5px] rounded-lg border border-red-200 transition-all active:scale-[0.98] shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer">
-                        <i class="fa-solid fa-link-slash text-xs"></i>
+                    <button id="detail-unlink-btn" onclick="handleUnlinkCurrentBusiness()" type="button"
+                        class="hidden w-full py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-[11.5px] rounded-lg border border-red-200 transition-all active:scale-[0.98] shadow-2xs flex items-center justify-center gap-1.5 cursor-pointer">
                         <span>Hủy liên kết doanh nghiệp</span>
                     </button>
                     <button onclick="showBusinessListView()" type="button"
@@ -577,6 +545,49 @@
 
     </div>
 
+    <!-- Demo Scenario Control (web page tool — lives outside the phone mockup, not part of the product UI) -->
+    <div class="fixed top-4 right-4 z-50 flex items-start gap-2">
+        <div class="relative">
+            <button onclick="toggleDemoPanel()"
+                class="w-10 h-10 rounded-full bg-gray-900 text-white flex items-center justify-center shadow-lg hover:bg-gray-800 active:scale-95 transition-all">
+                <i class="fa-solid fa-sliders text-[13px]"></i>
+            </button>
+            <div id="demo-panel"
+                class="hidden absolute top-12 right-0 w-56 bg-white rounded-xl shadow-xl border border-gray-100 p-2 flex flex-col gap-1">
+                <span class="text-[9px] font-bold text-gray-400 uppercase tracking-wider px-1.5 pt-0.5">Kịch bản
+                    demo</span>
+                <button id="demo-btn-full" onclick="setDemoScenario('full')"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-circle-check text-[10px]"></i>
+                    <span>Hồ sơ đầy đủ</span>
+                </button>
+                <button id="demo-btn-new" onclick="setDemoScenario('new')"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-seedling text-[10px]"></i>
+                    <span>Hồ sơ mới khởi tạo</span>
+                </button>
+                <div class="border-t border-gray-100 my-0.5"></div>
+                <button onclick="resetDemoScenario()"
+                    class="text-left px-2.5 py-2 rounded-lg text-[10.5px] font-semibold text-red-500 hover:bg-red-50 flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-rotate-left text-[10px]"></i>
+                    <span>Reset kịch bản hiện tại</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Demo MST reference note -->
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-44">
+            <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">MST demo</div>
+            <div class="flex flex-col gap-1 text-[11px] font-mono font-bold text-gray-700">
+                <span>0316829871</span>
+                <span>0318999888</span>
+                <span>0317654321</span>
+                <span>0319556677</span>
+                <span>0304567890</span>
+            </div>
+        </div>
+    </div>
+
     <!-- ============================================================= -->
     <!-- JAVASCRIPT LOGIC & STATE PERSISTENCE                          -->
     <!-- ============================================================= -->
@@ -586,11 +597,36 @@
             {
                 id: 'disc-2',
                 name: 'CÔNG TY CỔ PHẦN FINTECH VIỆT NAM',
+                shortName: 'FINTECHVN',
                 mst: '0109988776',
                 director: 'NGUYỄN VĂN AN',
                 role: 'Giám đốc',
-                phone: '0912345678',
-                email: 'info@fintechvn.com'
+                phone: '',
+                email: ''
+            }
+        ];
+
+        // Discovered businesses seed used for the "Hồ sơ mới khởi tạo" demo scenario
+        const DISCOVERED_NEW_SCENARIO = [
+            {
+                id: 'disc-new-1',
+                name: 'CÔNG TY CỔ PHẦN FINTECH VIỆT NAM',
+                shortName: 'FINTECHVN',
+                mst: '0109988776',
+                director: 'NGUYỄN VĂN AN',
+                role: 'Giám đốc',
+                phone: '',
+                email: ''
+            },
+            {
+                id: 'disc-new-2',
+                name: 'CÔNG TY TNHH THƯƠNG MẠI DỊCH VỤ AN PHÁT',
+                shortName: 'CASSO',
+                mst: '0311223344',
+                director: 'NGUYỄN VĂN AN',
+                role: 'Giám đốc',
+                phone: '',
+                email: ''
             }
         ];
 
@@ -599,6 +635,7 @@
             {
                 id: 'biz-0',
                 name: 'CÔNG TY TNHH CASSO',
+                shortName: 'CASSO',
                 mst: '0316829871',
                 director: 'NGUYỄN VĂN AN',
                 role: 'Giám đốc',
@@ -609,51 +646,146 @@
                 hasXInvoice: false
             },
             {
-                id: 'biz-1',
-                name: 'Casso3',
-                mst: '0123345677',
+                id: 'biz-4',
+                name: 'CÔNG TY TNHH GIẢI PHÁP PHẦN MỀM CMC',
+                shortName: 'CMC',
+                mst: '0317654321',
                 director: 'NGUYỄN VĂN AN',
                 role: 'Giám đốc',
-                phone: '0988765432',
-                email: 'admin@casso3.vn',
-                status: 'verified',
-                createdTime: '15/07/2026',
+                phone: '0901234567',
+                email: 'contact@casso.vn',
+                status: 'pending',
+                createdTime: '18/07/2026',
                 hasXInvoice: false
             },
             {
-                id: 'biz-2',
-                name: 'Casso2',
-                mst: '8378248385',
-                director: 'NGUYỄN VĂN AN',
+                id: 'biz-6',
+                name: 'CÔNG TY CỔ PHẦN ĐẦU TƯ XÂY DỰNG PHÚ MỸ',
+                shortName: 'PHÚ MỸ',
+                mst: '0308765432',
+                director: 'LÊ HOÀNG NAM',
                 role: 'Giám đốc',
-                phone: '0977654321',
-                email: 'support@casso2.vn',
-                status: 'verified',
-                createdTime: '16/07/2026',
+                phone: '0933456789',
+                email: 'info@phumyinvest.vn',
+                status: 'pending',
+                createdTime: '20/07/2026',
                 hasXInvoice: false
             },
             {
-                id: 'biz-3',
-                name: 'CA',
-                mst: '0133456788',
-                director: 'NGUYỄN VĂN AN',
+                id: 'biz-5',
+                name: 'CÔNG TY CỔ PHẦN THƯƠNG MẠI ĐIỆN TỬ MEKONG',
+                shortName: 'MEKONG',
+                mst: '0304567890',
+                director: 'TRẦN THỊ BÍCH',
                 role: 'Giám đốc',
-                phone: '0966543210',
-                email: 'ca@casso.vn',
-                status: 'verified',
-                createdTime: '17/07/2026',
-                hasXInvoice: true
+                phone: '0912345678',
+                email: 'lienhe@mekongtrade.vn',
+                status: 'rejected',
+                createdTime: '19/07/2026',
+                hasXInvoice: false,
+                rejectReason: 'Giấy phép kinh doanh không khớp với thông tin mã số thuế đã đăng ký. Vui lòng kiểm tra lại và xác thực lại doanh nghiệp.'
             }
         ];
 
         let currentTab = 'verified'; // 'verified' | 'pending' | 'rejected'
         let hasSelectedGpkd = false;
         let currentDetailBizId = null;
+        let currentDiscoveredMst = null;
 
         window.onload = function () {
             updateLiveTime();
             loadBusinesses();
+            renderDemoPanel();
+            updateFooterNotiBadge();
+
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('view') === 'add') {
+                showAddBusinessView();
+            } else if (params.get('tab') === 'pending' || params.get('tab') === 'rejected') {
+                switchBusinessTab(params.get('tab'));
+            }
         };
+
+        // Unread count is shared across every screen via `app_notifications`; the actual
+        // default mock data is owned by casID-sign-noti.html, so before that screen has ever
+        // been visited we just fall back to the count it would seed (0 for a fresh profile).
+        function getNotiUnreadCount() {
+            try {
+                const stored = localStorage.getItem('app_notifications');
+                if (stored) return JSON.parse(stored).filter(n => !n.read).length;
+            } catch (e) { }
+            return getDemoScenario() === 'new' ? 0 : 3;
+        }
+
+        function updateFooterNotiBadge() {
+            const badge = document.getElementById('footer-noti-badge');
+            if (!badge) return;
+            const count = getNotiUnreadCount();
+            badge.textContent = count;
+            badge.classList.toggle('hidden', count === 0);
+        }
+
+        // Reflects how many CCCD-matched businesses are still waiting to be confirmed,
+        // both on the "Đã xác thực" tab itself and on the bottom-nav "Doanh nghiệp" icon.
+        // "Đã xác thực (N)" already folds this count in (see loadBusinesses) — this
+        // just keeps the bottom-nav "Doanh nghiệp" icon's small dot badge in sync.
+        function renderDiscoveredBadges() {
+            const count = getDiscoveredData().length;
+            const navBadge = document.getElementById('nav-business-badge');
+            if (navBadge) {
+                navBadge.textContent = String(count);
+                navBadge.classList.toggle('hidden', count === 0);
+            }
+        }
+
+        // =========================================================
+        // DEMO SCENARIO CONTROL (presenter tool)
+        // =========================================================
+        const DEMO_SCENARIO_KEY = 'casso_demo_scenario';
+
+        function getDemoScenario() {
+            return localStorage.getItem(DEMO_SCENARIO_KEY) || 'full';
+        }
+
+        function demoHomeUrl() {
+            return getDemoScenario() === 'new' ? 'index-empty.html' : 'index.html';
+        }
+
+        function notiUrl() {
+            return getDemoScenario() === 'new' ? 'casID-sign-noti-empty.html' : 'casID-sign-noti.html';
+        }
+
+        function toggleDemoPanel() {
+            document.getElementById('demo-panel')?.classList.toggle('hidden');
+        }
+
+        function renderDemoPanel() {
+            const scenario = getDemoScenario();
+            const activeCls = "text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all bg-gray-900 text-white";
+            const idleCls = "text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all text-gray-700 hover:bg-gray-50";
+            const fullBtn = document.getElementById('demo-btn-full');
+            const newBtn = document.getElementById('demo-btn-new');
+            if (fullBtn) fullBtn.className = scenario === 'full' ? activeCls : idleCls;
+            if (newBtn) newBtn.className = scenario === 'new' ? activeCls : idleCls;
+        }
+
+        function clearDemoDatasets() {
+            localStorage.removeItem('casso_user_businesses_v7');
+            localStorage.removeItem('casso_discovered_businesses_v2');
+            localStorage.removeItem('casso_active_entity');
+            Object.keys(localStorage).filter(k => k.startsWith('casso_assets_')).forEach(k => localStorage.removeItem(k));
+        }
+
+        function setDemoScenario(scenario) {
+            localStorage.setItem(DEMO_SCENARIO_KEY, scenario);
+            clearDemoDatasets();
+            window.location.href = scenario === 'new' ? 'index-empty.html' : 'index.html';
+        }
+
+        function resetDemoScenario() {
+            clearDemoDatasets();
+            window.location.reload();
+        }
 
         function updateLiveTime() {
             const timeEl = document.getElementById('current-time');
@@ -669,8 +801,9 @@
                 const stored = localStorage.getItem('casso_discovered_businesses_v2');
                 if (stored) return JSON.parse(stored);
             } catch (e) { }
-            localStorage.setItem('casso_discovered_businesses_v2', JSON.stringify(DEFAULT_DISCOVERED));
-            return DEFAULT_DISCOVERED;
+            const seed = getDemoScenario() === 'new' ? DISCOVERED_NEW_SCENARIO : DEFAULT_DISCOVERED;
+            localStorage.setItem('casso_discovered_businesses_v2', JSON.stringify(seed));
+            return seed;
         }
 
         function saveDiscoveredData(list) {
@@ -679,15 +812,16 @@
 
         function getBusinessesData() {
             try {
-                const stored = localStorage.getItem('casso_user_businesses_v3');
+                const stored = localStorage.getItem('casso_user_businesses_v7');
                 if (stored) return JSON.parse(stored);
             } catch (e) { }
-            localStorage.setItem('casso_user_businesses_v3', JSON.stringify(DEFAULT_BUSINESSES));
-            return DEFAULT_BUSINESSES;
+            const seed = getDemoScenario() === 'new' ? [] : DEFAULT_BUSINESSES;
+            localStorage.setItem('casso_user_businesses_v7', JSON.stringify(seed));
+            return seed;
         }
 
         function saveBusinessesData(list) {
-            localStorage.setItem('casso_user_businesses_v3', JSON.stringify(list));
+            localStorage.setItem('casso_user_businesses_v7', JSON.stringify(list));
         }
 
         function confirmDiscoveredBusiness(mst) {
@@ -697,6 +831,10 @@
 
             // Open Add / Verification Screen
             showAddBusinessView();
+
+            // Remember which suggestion this is so it can be dismissed from the detail screen
+            currentDiscoveredMst = mst;
+            document.getElementById('s1-not-my-business-btn')?.classList.remove('hidden');
 
             // Set MST in input
             const inputMst = document.getElementById('input-mst');
@@ -721,28 +859,44 @@
             }, 150);
         }
 
-        function switchBusinessTab(tab) {
-            currentTab = tab;
+        function dismissDiscoveredBusiness(mst) {
+            const discovered = getDiscoveredData();
+            const filtered = discovered.filter(b => b.mst !== mst);
+            saveDiscoveredData(filtered);
+            loadBusinesses();
+        }
 
-            // Update tab styles
+        function dismissCurrentDiscoveredSuggestion() {
+            if (!currentDiscoveredMst) return;
+            dismissDiscoveredBusiness(currentDiscoveredMst);
+            currentDiscoveredMst = null;
+            showBusinessListView();
+        }
+
+        function updateTabStyles() {
             ['verified', 'pending', 'rejected'].forEach(t => {
                 const btn = document.getElementById(`tab-btn-${t}`);
                 if (!btn) return;
-                if (t === tab) {
+                if (t === currentTab) {
                     btn.className = "pb-2.5 flex-1 text-center font-bold text-[13px] text-emerald-700 border-b-2 border-emerald-600 transition-all";
                 } else {
                     btn.className = "pb-2.5 flex-1 text-center font-medium text-[13px] text-gray-500 hover:text-gray-900 border-b-2 border-transparent transition-all";
                 }
             });
+        }
 
+        function switchBusinessTab(tab) {
+            currentTab = tab;
+            updateTabStyles();
             renderBusinessList();
         }
 
         function loadBusinesses() {
             const list = getBusinessesData();
 
-            // Update counters
-            const countVerified = list.filter(b => b.status === 'verified').length;
+            // Update counters — "Đã xác thực" counts both already-verified businesses
+            // AND CCCD-matched suggestions still waiting to be confirmed.
+            const countVerified = list.filter(b => b.status === 'verified').length + getDiscoveredData().length;
             const countPending = list.filter(b => b.status === 'pending').length;
             const countRejected = list.filter(b => b.status === 'rejected').length;
 
@@ -754,6 +908,10 @@
             if (pEl) pEl.textContent = countPending;
             if (rEl) rEl.textContent = countRejected;
 
+            // currentTab may have been changed programmatically (e.g. right after a submit
+            // redirects to "Đang chờ" or "Từ chối") — keep the active tab's style in sync too.
+            updateTabStyles();
+            renderDiscoveredBadges();
             renderBusinessList();
         }
 
@@ -791,10 +949,10 @@
             // 1. SECTION: GỢI Ý DOANH NGHIỆP TRÙNG CCCD (Chỉ hiện trong tab Đã xác thực khi còn gợi ý)
             if (currentTab === 'verified' && discovered.length > 0) {
                 html += `
-                    <div class="flex flex-col gap-2 pb-1">
+                    <div class="flex flex-col gap-3.5 pb-1">
                         <div class="flex items-start gap-1.5 px-0.5">
                             <span class="text-[11.5px] font-bold text-gray-800 leading-snug">
-                                Hệ thống tìm thấy ${discovered.length} DN có thông tin người đại diện trùng với CCCD của bạn, nếu thông tin chính xác bạn có thể thêm mới doanh nghiệp này.
+                                Hệ thống tìm thấy ${discovered.length} DN có thông tin người đại diện trùng với CCCD của bạn, nếu đây là doanh nghiệp của bạn hãy nhấp chọn để thực hiện xác thực doanh nghiệp.
                             </span>
                         </div>
                         <div class="flex flex-col gap-2">
@@ -803,7 +961,7 @@
                                     class="bg-white rounded-xl p-2.5 border border-purple-200/80 hover:border-purple-300 shadow-sm flex items-center justify-between transition-all active:scale-[0.99] cursor-pointer">
                                     <!-- Left Info -->
                                     <div class="flex items-center gap-3 min-w-0 flex-1">
-                                        <div class="w-9 h-9 rounded-full bg-purple-50 text-purple-700 flex items-center justify-center text-sm shrink-0 border border-purple-100 shadow-2xs">
+                                        <div class="w-9 h-9 rounded-full bg-emerald-50 text-emerald-700 flex items-center justify-center text-sm shrink-0 border border-emerald-100 shadow-2xs">
                                             <i class="fa-solid fa-building"></i>
                                         </div>
                                         <div class="flex flex-col min-w-0 flex-1">
@@ -813,21 +971,19 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Right Arrow Icon -->
-                                    <div class="flex items-center gap-2 shrink-0 ml-2">
-                                        <i class="fa-solid fa-chevron-right text-xs text-purple-400"></i>
-                                    </div>
                                 </div>
                             `).join('')}
                         </div>
                     </div>
                 `;
 
-                // Divider / Section title for verified list
+                // Phân cách rõ ràng giữa 2 danh sách
                 if (list.length > 0) {
                     html += `
-                        <div class="flex items-center justify-between px-0.5 pt-2 pb-0.5 border-t border-gray-200/60 mt-1">
-                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Doanh nghiệp đã xác thực (${list.length})</span>
+                        <div class="flex items-center justify-between px-1 pt-3 pb-1 border-t border-gray-200 mt-1">
+                            <span class="text-[11px] font-bold text-gray-700 uppercase tracking-wider">
+                                Doanh nghiệp đã xác thực (${list.length})
+                            </span>
                         </div>
                     `;
                 }
@@ -953,23 +1109,22 @@
                 }
             }
 
-            // XInvoice status
-            const xContainer = document.getElementById('detail-xinvoice-container');
-            if (xContainer) {
-                if (biz.hasXInvoice) {
-                    xContainer.innerHTML = `
-                        <span class="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                            Hoạt động
-                        </span>
-                    `;
+            // Rejection reason notice
+            const reasonBox = document.getElementById('detail-reject-reason-box');
+            const reasonText = document.getElementById('detail-reject-reason-text');
+            if (reasonBox && reasonText) {
+                if (biz.status === 'rejected') {
+                    reasonText.textContent = biz.rejectReason || 'Doanh nghiệp không đáp ứng đủ điều kiện xác thực.';
+                    reasonBox.classList.remove('hidden');
                 } else {
-                    xContainer.innerHTML = `
-                        <span class="text-[9px] font-semibold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
-                            Chưa kích hoạt
-                        </span>
-                    `;
+                    reasonBox.classList.add('hidden');
                 }
+            }
+
+            // Unlink button only available once the business has been approved
+            const unlinkBtn = document.getElementById('detail-unlink-btn');
+            if (unlinkBtn) {
+                unlinkBtn.classList.toggle('hidden', biz.status !== 'verified');
             }
 
             // Toggle view visibility
@@ -1013,6 +1168,9 @@
             document.getElementById('scenario-1-valid')?.classList.add('hidden');
             document.getElementById('scenario-2-not-director')?.classList.add('hidden');
             document.getElementById('scenario-3-no-cccd')?.classList.add('hidden');
+
+            currentDiscoveredMst = null;
+            document.getElementById('s1-not-my-business-btn')?.classList.add('hidden');
 
             removeGpkdFile();
         }
@@ -1059,19 +1217,20 @@
             s3?.classList.add('hidden');
 
             // 3 Scenarios Logic:
-            // TH3: 0317654321 (hoặc bắt đầu bằng 0317 / có '321') -> Chưa có CCCD -> Upload GPKD
+            // TH3: 0317654321 (hoặc bắt đầu bằng 0317 / có '321') -> Chưa có CCCD -> Upload GPKD -> Chờ duyệt
+            // TH3b: 0319556677 -> Cũng chưa có CCCD -> Upload GPKD, nhưng GPKD không hợp lệ -> Bị từ chối
             // TH2: 0318999888 (hoặc bắt đầu bằng 0318 / có '888') -> Không phải Giám đốc
             // TH1: 0316829871 (hoặc các trường hợp còn lại) -> Hợp lệ, khớp Giám đốc
 
-            if (mst === '0317654321' || mst.includes('321') || mst.startsWith('0317')) {
+            if (mst === '0317654321' || mst === '0319556677' || mst.includes('321') || mst.startsWith('0317')) {
                 // TÌNH HUỐNG 3: Không tìm thấy CCCD tương ứng với MST -> Upload GPKD
                 s3?.classList.remove('hidden');
                 const nameEl = document.getElementById('s3-company-name');
-                if (nameEl) nameEl.value = 'CÔNG TY TNHH GIẢI PHÁP PHẦN MỀM CMC';
+                if (nameEl) nameEl.value = mst === '0319556677' ? 'CÔNG TY TNHH ĐẦU TƯ THÀNH ĐẠT' : 'CÔNG TY TNHH GIẢI PHÁP PHẦN MỀM CMC';
                 const phoneEl = document.getElementById('s3-phone');
-                if (phoneEl) phoneEl.value = '0909888777';
+                if (phoneEl) phoneEl.value = '';
                 const emailEl = document.getElementById('s3-email');
-                if (emailEl) emailEl.value = 'admin@cmcsoft.vn';
+                if (emailEl) emailEl.value = '';
                 showToast('Không đủ thông tin để xác thực, vui lòng upload GPKD', 'fa-solid fa-circle-info text-amber-400');
 
             } else if (mst === '0318999888' || mst.includes('888') || mst.startsWith('0318')) {
@@ -1118,10 +1277,12 @@
             const phone = document.getElementById('s1-phone')?.value.trim() || '0901234567';
             const email = document.getElementById('s1-email')?.value.trim() || 'contact@casso.vn';
 
-            // Remove from discovered list if applicable
+            // Remove from discovered list if applicable, but keep its curated shortName (if any)
             const discovered = getDiscoveredData();
             const discIndex = discovered.findIndex(b => b.mst === mst);
+            let discoveredShortName;
             if (discIndex !== -1) {
+                discoveredShortName = discovered[discIndex].shortName;
                 discovered.splice(discIndex, 1);
                 saveDiscoveredData(discovered);
             }
@@ -1129,15 +1290,19 @@
             const list = getBusinessesData();
             // Check if already exists
             const existing = list.find(b => b.mst === mst);
+            let verifiedBizId;
             if (existing) {
                 existing.status = 'verified';
                 existing.name = name;
                 existing.director = director;
                 existing.phone = phone;
                 existing.email = email;
+                if (discoveredShortName) existing.shortName = discoveredShortName;
+                verifiedBizId = existing.id;
             } else {
+                verifiedBizId = 'biz-' + Date.now();
                 list.unshift({
-                    id: 'biz-' + Date.now(),
+                    id: verifiedBizId,
                     name: name,
                     mst: mst,
                     director: director,
@@ -1146,12 +1311,15 @@
                     role: 'Giám đốc',
                     status: 'verified',
                     createdTime: 'Hôm nay',
-                    hasXInvoice: false
+                    hasXInvoice: false,
+                    shortName: discoveredShortName
                 });
             }
 
             saveBusinessesData(list);
-            showToast('Thêm doanh nghiệp thành công!', 'fa-solid fa-circle-check text-emerald-400');
+            // Once a business finishes verification, make it the default selected entity on the home screen
+            localStorage.setItem('casso_active_entity', verifiedBizId);
+            showToast('Xác thực doanh nghiệp thành công!', 'fa-solid fa-circle-check text-emerald-400');
 
             setTimeout(() => {
                 currentTab = 'verified';
@@ -1201,51 +1369,51 @@
                 handleGpkdFileSelected({ files: [{ name: 'GPKD_' + mst + '.pdf' }] });
             }
 
+            // Demo MST 0319556677 simulates an invalid/unreadable GPKD file -> rejected outright.
+            // Every other MST in this flow goes to pending, awaiting manual approval.
+            const isRejectedDemo = mst === '0319556677';
+
+            // Curated shortName for this flow's known demo MSTs (avoids the generic
+            // first-word derivation elsewhere picking an awkward abbreviation).
+            const DEMO_SHORT_NAMES = {
+                '0317654321': 'CMC',
+                '0319556677': 'THÀNH ĐẠT'
+            };
+
             const list = getBusinessesData();
+            const newBizId = 'biz-' + Date.now();
             list.unshift({
-                id: 'biz-' + Date.now(),
+                id: newBizId,
                 name: name,
+                shortName: DEMO_SHORT_NAMES[mst],
                 mst: mst,
                 role: 'Giám đốc',
-                status: 'pending', // Pending verification
+                status: isRejectedDemo ? 'rejected' : 'pending',
                 createdTime: 'Vừa xong',
-                hasXInvoice: false
+                hasXInvoice: false,
+                ...(isRejectedDemo ? { rejectReason: 'Giấy phép kinh doanh (GPKD) tải lên không hợp lệ hoặc không rõ nét. Vui lòng chụp/scan lại và xác thực lại doanh nghiệp.' } : {})
             });
 
             saveBusinessesData(list);
-            showToast('Đã gửi yêu cầu xác thực thành công!', 'fa-solid fa-circle-check text-emerald-400');
+            // A pending submission also shows up as its own profile pill on the home screen —
+            // make it the default selected entity there too (rejected ones don't get a pill).
+            if (!isRejectedDemo) {
+                localStorage.setItem('casso_active_entity', newBizId);
+            }
+            showToast(isRejectedDemo ? 'Yêu cầu xác thực đã bị từ chối' : 'Đã gửi yêu cầu xác thực thành công!', isRejectedDemo ? 'fa-solid fa-circle-xmark text-red-400' : 'fa-solid fa-circle-check text-emerald-400');
 
             setTimeout(() => {
-                currentTab = 'pending';
+                currentTab = isRejectedDemo ? 'rejected' : 'pending';
                 showBusinessListView();
             }, 600);
         }
 
         // =========================================================
-        // TOAST ALERT HELPER
+        // TOAST ALERT HELPER (Disabled)
         // =========================================================
-        let toastTimeout = null;
         function showToast(msg, iconClass = "fa-solid fa-circle-info text-amber-400") {
-            const toast = document.getElementById('custom-toast');
-            const toastMsg = document.getElementById('custom-toast-msg');
-            const toastIcon = document.getElementById('custom-toast-icon');
-
-            if (toast && toastMsg) {
-                toastMsg.textContent = msg;
-                if (toastIcon) toastIcon.className = iconClass;
-
-                toast.classList.remove('hidden');
-                toast.offsetHeight; // force reflow
-                toast.classList.remove('-translate-y-6', 'opacity-0');
-                toast.classList.add('translate-y-0', 'opacity-100');
-
-                if (toastTimeout) clearTimeout(toastTimeout);
-                toastTimeout = setTimeout(() => {
-                    toast.classList.remove('translate-y-0', 'opacity-100');
-                    toast.classList.add('-translate-y-6', 'opacity-0');
-                    setTimeout(() => toast.classList.add('hidden'), 300);
-                }, 3200);
-            }
+            // Disabled toast alert popups on actions
+            return;
         }
     </script>
 </body>

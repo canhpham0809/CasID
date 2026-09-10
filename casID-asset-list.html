@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tài sản - Casso ID</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Outfit:wght@600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body,
+        input,
+        select,
+        textarea,
+        button,
+        span,
+        p,
+        div,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        strong,
+        label,
+        input::placeholder,
+        textarea::placeholder {
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+        }
+
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex justify-center items-center min-h-screen p-2 sm:p-4">
+
+    <div
+        class="phone-container bg-white shadow-2xl rounded-[40px] overflow-hidden flex flex-col relative border-[8px] border-black">
+
+        <!-- Status Bar -->
+        <div
+            class="flex justify-between items-center px-6 pt-3 pb-1 text-xs font-bold text-black bg-white z-10 shrink-0">
+            <span id="current-time">15:49</span>
+            <div class="flex items-center gap-1.5">
+                <i class="fa-solid fa-signal text-[10px]"></i>
+                <span class="text-[9px] font-bold mr-0.5">5G</span>
+                <i class="fa-solid fa-battery-three-quarters text-sm"></i>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="px-5 pt-3 pb-2 flex items-center gap-4 bg-white shrink-0">
+            <button onclick="window.location.href=demoHomeUrl()" class="text-gray-800 text-lg hover:opacity-70 p-1">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <h1 id="asset-title" class="text-[19px] font-bold text-gray-900 tracking-tight">Ngân hàng</h1>
+        </div>
+
+        <!-- Profile Selector Pills: switch between personal and any verified business, same as the home screen -->
+        <div id="entity-pills-container"
+            class="px-4 pb-2 flex items-center gap-2 overflow-x-auto scrollbar-none shrink-0"></div>
+
+        <!-- Scrollable Content (the "Thêm ..." button renders right after the last record, not pinned to the screen bottom) -->
+        <div class="flex-1 overflow-y-auto px-4 pb-6 bg-white">
+            <div id="asset-list-container" class="flex flex-col"></div>
+        </div>
+
+        <!-- Custom Toast Banner -->
+        <div id="custom-toast"
+            class="absolute top-12 left-4 right-4 z-50 bg-gray-900/95 backdrop-blur-md text-white rounded-2xl p-3.5 shadow-2xl flex items-center gap-2.5 transform -translate-y-6 opacity-0 transition-all duration-300 pointer-events-none hidden border border-gray-800">
+            <i id="custom-toast-icon" class="text-sm shrink-0 text-emerald-400 fa-solid fa-circle-check"></i>
+            <span id="custom-toast-msg" class="text-[11.5px] font-semibold leading-snug"></span>
+        </div>
+
+    </div>
+
+    <!-- Demo Scenario Control (web page tool — lives outside the phone mockup, not part of the product UI) -->
+    <div class="fixed top-4 right-4 z-50 flex items-start gap-2">
+        <div class="relative">
+            <button onclick="toggleDemoPanel()"
+                class="w-10 h-10 rounded-full bg-gray-900 text-white flex items-center justify-center shadow-lg hover:bg-gray-800 active:scale-95 transition-all">
+                <i class="fa-solid fa-sliders text-[13px]"></i>
+            </button>
+            <div id="demo-panel"
+                class="hidden absolute top-12 right-0 w-56 bg-white rounded-xl shadow-xl border border-gray-100 p-2 flex flex-col gap-1">
+                <span class="text-[9px] font-bold text-gray-400 uppercase tracking-wider px-1.5 pt-0.5">Kịch bản
+                    demo</span>
+                <button id="demo-btn-full" onclick="setDemoScenario('full')"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-circle-check text-[10px]"></i>
+                    <span>Hồ sơ đầy đủ</span>
+                </button>
+                <button id="demo-btn-new" onclick="setDemoScenario('new')"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-seedling text-[10px]"></i>
+                    <span>Hồ sơ mới khởi tạo</span>
+                </button>
+                <div class="border-t border-gray-100 my-0.5"></div>
+                <button onclick="resetDemoScenario()"
+                    class="text-left px-2.5 py-2 rounded-lg text-[10.5px] font-semibold text-red-500 hover:bg-red-50 flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-rotate-left text-[10px]"></i>
+                    <span>Reset kịch bản hiện tại</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Demo MST reference note -->
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-44">
+            <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">MST demo</div>
+            <div class="flex flex-col gap-1 text-[11px] font-mono font-bold text-gray-700">
+                <span>0316829871</span>
+                <span>0318999888</span>
+                <span>0317654321</span>
+                <span>0319556677</span>
+                <span>0304567890</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const TYPE_CONFIG = {
+            bank: { title: 'Ngân hàng', label: 'ngân hàng', emptyIcon: 'fa-building-columns', emptyMessage: 'Bạn chưa liên kết tài khoản ngân hàng nào', storageKey: 'casso_assets_bank' },
+            invoice: { title: 'Hóa đơn điện tử', label: 'hóa đơn điện tử', emptyIcon: 'fa-file-invoice', emptyMessage: 'Bạn chưa liên kết tài khoản hóa đơn điện tử nào', storageKey: 'casso_assets_invoice' },
+            ca: { title: 'Chứng thư số', label: 'chứng thư số', emptyIcon: 'fa-pen-nib', emptyMessage: 'Bạn chưa liên kết chứng thư số nào', storageKey: 'casso_assets_ca' }
+        };
+
+        // Seed data used only for the "Hồ sơ đầy đủ" demo scenario, the first time each list is opened
+        const DEFAULT_ASSETS_FULL = {
+            bank: [
+                { id: 'b1', name: 'NGUYEN VAN C', provider: 'VCB Digibank', status: 'inactive', statusText: 'Ngừng kết nối', logoInitial: 'VCB', logoColor: 'bg-emerald-700' },
+                { id: 'b2', name: 'NGUYEN VAN B', provider: 'VCB Digibank', status: 'active', statusText: 'Đang kết nối', logoInitial: 'VCB', logoColor: 'bg-emerald-700' },
+                { id: 'b3', name: 'VCB DigiBiz', provider: '', status: 'active', statusText: 'Đang kết nối', logoInitial: 'VCB', logoColor: 'bg-emerald-700' },
+                { id: 'b4', name: 'Tổng Cục Thuế', provider: '', status: 'active', statusText: 'Đang kết nối', logoInitial: 'TCT', logoColor: 'bg-red-600' },
+                { id: 'b5', name: 'NGUYỄN VĂN AN', provider: 'MBBank VietQR Official', status: 'inactive', statusText: 'Ngừng kết nối', logoInitial: 'MB', logoColor: 'bg-blue-800' }
+            ],
+            invoice: [
+                { id: 'i1', name: 'HỘ KINH DOANH CASSO TEST', provider: 'Xinvoice TVAN', status: 'inactive', statusText: 'Không hoạt động', logoInitial: 'X', logoColor: 'bg-emerald-600' },
+                { id: 'i2', name: 'Công ty CP dịch vụ T-VAN HILO (test) - 999', provider: 'Hilo', status: 'inactive', statusText: 'Ngừng ủy quyền', logoInitial: 'H', logoColor: 'bg-orange-500' },
+                { id: 'i3', name: 'Tài khoản demo Cas TVan', provider: 'Xinvoice TVAN', status: 'active', statusText: 'Đang kết nối', logoInitial: 'X', logoColor: 'bg-emerald-600' }
+            ],
+            ca: [
+                { id: 'c1', name: 'Cas Cert - NGUYỄN VĂN AN', provider: 'CMC CA', status: 'active', statusText: 'Đang hoạt động', logoInitial: 'CA', logoColor: 'bg-slate-700' }
+            ]
+        };
+
+        // Random pool used to fabricate a new entry when "Thêm ..." is pressed
+        const RANDOM_POOL = {
+            bank: [
+                { name: 'NGUYỄN VĂN AN', provider: 'VCB Digibank', logoInitial: 'VCB', logoColor: 'bg-emerald-700' },
+                { name: 'NGUYỄN VĂN AN', provider: 'MBBank VietQR Official', logoInitial: 'MB', logoColor: 'bg-blue-800' },
+                { name: 'NGUYỄN VĂN AN', provider: 'Techcombank', logoInitial: 'TCB', logoColor: 'bg-red-600' },
+                { name: 'NGUYỄN VĂN AN', provider: 'ACB Online', logoInitial: 'ACB', logoColor: 'bg-sky-600' }
+            ],
+            invoice: [
+                { name: 'Tài khoản XInvoice mới', provider: 'XInvoice', logoInitial: 'X', logoColor: 'bg-emerald-600' },
+                { name: 'Tài khoản SInvoice mới', provider: 'SInvoice', logoInitial: 'SI', logoColor: 'bg-indigo-600' },
+                { name: 'Tài khoản MInvoice mới', provider: 'MInvoice', logoInitial: 'MI', logoColor: 'bg-pink-600' }
+            ],
+            ca: [
+                { name: 'Cas Cert - NGUYỄN VĂN AN', provider: 'CMC CA', logoInitial: 'CA', logoColor: 'bg-slate-700' },
+                { name: 'VNPT-CA - NGUYỄN VĂN AN', provider: 'VNPT', logoInitial: 'VN', logoColor: 'bg-blue-700' }
+            ]
+        };
+
+        window.onload = function () {
+            updateLiveTime();
+            renderDemoPanel();
+            renderEntityPills();
+            render();
+        };
+
+        // =========================================================
+        // ENTITY CONTEXT: assets are scoped to whichever entity (personal
+        // or a specific verified business) was active on the home screen
+        // =========================================================
+        function getCurrentEntityKey() {
+            return localStorage.getItem('casso_active_entity') || 'personal';
+        }
+
+        // Same legal-prefix stripping used on the home screens, so a business
+        // without a curated shortName still shows a short label here too.
+        const LEGAL_PREFIXES = ['CÔNG TY CỔ PHẦN', 'CÔNG TY TNHH MỘT THÀNH VIÊN', 'CÔNG TY TNHH', 'CÔNG TY HỢP DANH', 'DOANH NGHIỆP TƯ NHÂN'];
+
+        function deriveShortName(name) {
+            if (!name) return 'DN';
+            let clean = name.trim();
+            const upper = clean.toUpperCase();
+            const prefix = LEGAL_PREFIXES.find(p => upper.startsWith(p));
+            if (prefix) clean = clean.slice(prefix.length).trim();
+            const firstWord = clean.split(/\s+/)[0] || clean;
+            return firstWord.toUpperCase().slice(0, 12);
+        }
+
+        function getVerifiedBusinessesForPills() {
+            try {
+                const list = JSON.parse(localStorage.getItem('casso_user_businesses_v7') || '[]');
+                return list.filter(b => b.status === 'verified');
+            } catch (e) {
+                return [];
+            }
+        }
+
+        const PILL_ACTIVE_PERSONAL = "flex items-center gap-2 bg-black text-white px-3.5 py-1.5 rounded-full shrink-0 shadow-sm border border-black cursor-pointer transition-all";
+        const PILL_IDLE = "flex items-center gap-2 bg-white text-gray-500 border border-gray-200 px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-gray-50 transition-all";
+        const PILL_ACTIVE_BUSINESS = "flex items-center gap-2 bg-purple-900 text-white px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer border border-purple-900 transition-all";
+
+        // Renders one pill per verified business plus personal, mirroring the home screen,
+        // so a business's assets can be reached without going back to switch entity there first.
+        function renderEntityPills() {
+            const container = document.getElementById('entity-pills-container');
+            if (!container) return;
+            const activeKey = getCurrentEntityKey();
+            const businesses = getVerifiedBusinessesForPills();
+
+            const businessPills = businesses.map(biz => {
+                const label = biz.shortName || deriveShortName(biz.name) || 'DN';
+                const initial = label.slice(0, 2).toUpperCase();
+                const cls = activeKey === biz.id ? PILL_ACTIVE_BUSINESS : PILL_IDLE;
+                return `
+                    <div onclick="switchAssetEntity('${biz.id}')" class="${cls}">
+                        <div class="w-5 h-5 rounded-full bg-purple-100 text-purple-800 text-[9px] font-black flex items-center justify-center shrink-0">${initial}</div>
+                        <span class="text-[10px] font-bold tracking-wider leading-none max-w-[110px] truncate">${label}</span>
+                    </div>
+                `;
+            }).join('');
+
+            const personalCls = activeKey === 'personal' ? PILL_ACTIVE_PERSONAL : PILL_IDLE;
+            const personalPill = `
+                <div onclick="switchAssetEntity('personal')" class="${personalCls}">
+                    <div class="w-5 h-5 rounded-full bg-white text-black text-[9px] font-black flex items-center justify-center shrink-0">NA</div>
+                    <span class="text-[10px] font-bold tracking-wider leading-none whitespace-nowrap">NGUYỄN VĂN AN</span>
+                </div>
+            `;
+
+            container.innerHTML = businessPills + personalPill;
+
+            // If the entity currently active got removed/unlinked elsewhere, fall back to personal
+            if (activeKey !== 'personal' && !businesses.find(b => b.id === activeKey)) {
+                switchAssetEntity('personal');
+            }
+        }
+
+        function switchAssetEntity(entId) {
+            localStorage.setItem('casso_active_entity', entId);
+            renderEntityPills();
+            render();
+        }
+
+        function updateLiveTime() {
+            const timeEl = document.getElementById('current-time');
+            if (!timeEl) return;
+            const now = new Date();
+            const hrs = String(now.getHours()).padStart(2, '0');
+            const mins = String(now.getMinutes()).padStart(2, '0');
+            timeEl.textContent = `${hrs}:${mins}`;
+        }
+
+        function showToast(msg, iconClass = "fa-solid fa-circle-info text-amber-400") {
+            // Disabled toast alert popups on actions
+            return;
+        }
+
+        function getTypeFromQuery() {
+            const params = new URLSearchParams(window.location.search);
+            const t = params.get('type');
+            return TYPE_CONFIG[t] ? t : 'bank';
+        }
+
+        function assetStorageKey(type, entityKey) {
+            return TYPE_CONFIG[type].storageKey + '__' + entityKey;
+        }
+
+        function getAssetList(type) {
+            const entityKey = getCurrentEntityKey();
+            const key = assetStorageKey(type, entityKey);
+            try {
+                const stored = localStorage.getItem(key);
+                if (stored) return JSON.parse(stored);
+            } catch (e) { }
+            // Only the personal identity carries the pre-populated "Hồ sơ đầy đủ" mock data —
+            // every business starts with zero assets until something is actually added to it.
+            const seed = (entityKey === 'personal' && getDemoScenario() !== 'new') ? (DEFAULT_ASSETS_FULL[type] || []) : [];
+            localStorage.setItem(key, JSON.stringify(seed));
+            return seed;
+        }
+
+        function saveAssetList(type, list) {
+            const key = assetStorageKey(type, getCurrentEntityKey());
+            localStorage.setItem(key, JSON.stringify(list));
+        }
+
+        function addButtonHtml(label) {
+            return `
+                <button onclick="addAsset()"
+                    class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1.5 cursor-pointer">
+                    <i class="fa-solid fa-plus text-[10px]"></i>
+                    <span>Thêm ${label}</span>
+                </button>
+            `;
+        }
+
+        // =========================================================
+        // DEMO-ONLY: banks "found" from a past Cas link (seeded by index-bank.html),
+        // shown as a confirmation prompt above the regular bank list.
+        // =========================================================
+        const DISCOVERED_BANK_KEY = 'casso_discovered_bank_accounts';
+
+        function getDiscoveredBankAccounts() {
+            try {
+                const stored = localStorage.getItem(DISCOVERED_BANK_KEY);
+                if (stored) return JSON.parse(stored);
+            } catch (e) { }
+            return [];
+        }
+
+        function renderDiscoveredBankSection() {
+            const discovered = getDiscoveredBankAccounts();
+            if (discovered.length === 0) return '';
+            return `
+                <div class="flex flex-col gap-2 pb-4 mb-2 border-b border-gray-100">
+                    <div class="flex items-start gap-1.5 px-0.5">
+                        <span class="text-[11.5px] font-bold text-gray-800 leading-snug">
+                            Hệ thống tìm thấy thông tin ${discovered.length} ngân hàng của bạn đã từng liên kết qua Cas, nếu đây là liên kết do bạn thực hiện hãy nhấp để thực hiện xác nhận.
+                        </span>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        ${discovered.map(item => `
+                            <div onclick="confirmDiscoveredBank('${item.id}')"
+                                class="bg-white rounded-xl p-2.5 border border-amber-200/80 hover:border-amber-300 shadow-sm flex items-center gap-3 transition-all active:scale-[0.99] cursor-pointer">
+                                <div class="w-9 h-9 rounded-full ${item.logoColor} text-white flex items-center justify-center text-[10px] font-black shrink-0">
+                                    ${item.logoInitial}
+                                </div>
+                                <div class="flex flex-col min-w-0 flex-1">
+                                    <span class="font-bold text-[12.5px] text-gray-900 truncate leading-snug">${item.name}</span>
+                                    <span class="text-[10px] text-gray-500 truncate">${item.provider}</span>
+                                </div>
+                                <span class="text-[10px] font-bold text-amber-600 shrink-0">Xác nhận</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function confirmDiscoveredBank(id) {
+            const discovered = getDiscoveredBankAccounts();
+            const idx = discovered.findIndex(b => b.id === id);
+            if (idx === -1) return;
+            const item = discovered[idx];
+            discovered.splice(idx, 1);
+            localStorage.setItem(DISCOVERED_BANK_KEY, JSON.stringify(discovered));
+
+            const list = getAssetList('bank');
+            list.push({
+                id: item.id,
+                name: item.name,
+                provider: item.provider,
+                status: 'active',
+                statusText: 'Đang kết nối',
+                logoInitial: item.logoInitial,
+                logoColor: item.logoColor
+            });
+            saveAssetList('bank', list);
+
+            render();
+        }
+
+        function render() {
+            const type = getTypeFromQuery();
+            const cfg = TYPE_CONFIG[type];
+            const list = getAssetList(type);
+
+            document.getElementById('asset-title').textContent = cfg.title;
+
+            const container = document.getElementById('asset-list-container');
+            const discoveredHtml = type === 'bank' ? renderDiscoveredBankSection() : '';
+
+            if (list.length === 0) {
+                container.innerHTML = discoveredHtml + `
+                    <div class="mt-2 border border-dashed border-gray-200 rounded-2xl bg-gray-50/60 flex flex-col items-center justify-center gap-4 py-10 px-6">
+                        <i class="fa-solid ${cfg.emptyIcon} text-4xl text-gray-300"></i>
+                        <span class="text-[13px] font-bold text-gray-400 text-center leading-snug">${cfg.emptyMessage}</span>
+                        <button onclick="addAsset()"
+                            class="w-full py-3 bg-black hover:bg-gray-900 text-white font-bold text-[12.5px] rounded-xl transition-all active:scale-[0.98] shadow-xs cursor-pointer">
+                            Thêm ${cfg.label} +
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = discoveredHtml + list.map(item => `
+                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <div class="w-11 h-11 rounded-full ${item.logoColor} text-white flex items-center justify-center text-[10px] font-black shrink-0">
+                            ${item.logoInitial}
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                            <span class="text-[14px] text-gray-900 leading-snug truncate">${item.name}</span>
+                            ${item.provider ? `<span class="text-[12px] text-emerald-600 leading-snug truncate">${item.provider}</span>` : ''}
+                        </div>
+                    </div>
+                    <span class="text-[11px] font-semibold shrink-0 ml-2 ${item.status === 'active' ? 'text-emerald-600' : 'text-red-500'}">${item.statusText}</span>
+                </div>
+            `).join('') + `<div class="pt-4">${addButtonHtml(cfg.label)}</div>`;
+        }
+
+        function addAsset() {
+            const type = getTypeFromQuery();
+            const pool = RANDOM_POOL[type];
+            const pick = pool[Math.floor(Math.random() * pool.length)];
+            const list = getAssetList(type);
+            list.push({
+                id: type + '-' + Date.now(),
+                name: pick.name,
+                provider: pick.provider || '',
+                status: 'active',
+                statusText: type === 'ca' ? 'Đang hoạt động' : 'Đang kết nối',
+                logoInitial: pick.logoInitial,
+                logoColor: pick.logoColor
+            });
+            saveAssetList(type, list);
+            window.location.href = demoHomeUrl();
+        }
+
+        // =========================================================
+        // DEMO SCENARIO CONTROL (presenter tool)
+        // =========================================================
+        const DEMO_SCENARIO_KEY = 'casso_demo_scenario';
+
+        function getDemoScenario() {
+            return localStorage.getItem(DEMO_SCENARIO_KEY) || 'full';
+        }
+
+        function demoHomeUrl() {
+            return getDemoScenario() === 'new' ? 'index-empty.html' : 'index.html';
+        }
+
+        function toggleDemoPanel() {
+            document.getElementById('demo-panel')?.classList.toggle('hidden');
+        }
+
+        function renderDemoPanel() {
+            const scenario = getDemoScenario();
+            const activeCls = "text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all bg-gray-900 text-white";
+            const idleCls = "text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all text-gray-700 hover:bg-gray-50";
+            const fullBtn = document.getElementById('demo-btn-full');
+            const newBtn = document.getElementById('demo-btn-new');
+            if (fullBtn) fullBtn.className = scenario === 'full' ? activeCls : idleCls;
+            if (newBtn) newBtn.className = scenario === 'new' ? activeCls : idleCls;
+        }
+
+        function clearDemoDatasets() {
+            localStorage.removeItem('casso_user_businesses_v7');
+            localStorage.removeItem('casso_discovered_businesses_v2');
+            localStorage.removeItem('casso_active_entity');
+            localStorage.removeItem(DISCOVERED_BANK_KEY);
+            Object.keys(localStorage).filter(k => k.startsWith('casso_assets_')).forEach(k => localStorage.removeItem(k));
+        }
+
+        function setDemoScenario(scenario) {
+            localStorage.setItem(DEMO_SCENARIO_KEY, scenario);
+            clearDemoDatasets();
+            window.location.href = scenario === 'new' ? 'index-empty.html' : 'index.html';
+        }
+
+        function resetDemoScenario() {
+            clearDemoDatasets();
+            renderEntityPills();
+            render();
+            renderDemoPanel();
+        }
+    </script>
+</body>
+
+</html>

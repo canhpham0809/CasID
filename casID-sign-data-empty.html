@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dữ liệu - Casso ID</title>
+    <title>Dữ liệu (Mới khởi tạo) - Casso ID</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -72,51 +72,21 @@
                     style="font-family: 'Outfit', 'Inter', sans-serif;">CAS</span>
             </div>
 
-            <!-- Entity Cards Container -->
+            <!-- Entity Cards Container: only personal at first — a business pill only appears once verified -->
             <div class="flex gap-2 overflow-x-auto pb-2 mb-8 w-full scrollbar-none"
                 style="scrollbar-width: none; -ms-overflow-style: none;">
+                <!-- Verified business pills render here, ahead of personal, as they get added -->
+                <div id="dynamic-biz-pills-container" class="flex gap-2 shrink-0"></div>
+
                 <!-- Personal Profile -->
                 <div id="entity-personal" onclick="switchEntity('personal')"
                     class="flex items-center gap-2 bg-black text-white px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer border border-black transition-all">
                     <div
                         class="w-5 h-5 rounded-full bg-white text-black text-[9px] font-black flex items-center justify-center shrink-0">
-                        NVA
+                        NA
                     </div>
-                    <span class="text-[9px] font-bold tracking-wider leading-none">NVA</span>
+                    <span class="text-[9px] font-bold tracking-wider leading-none">NGUYỄN VĂN AN</span>
                 </div>
-
-                <!-- Enterprise 1 (Casso) -->
-                <div id="entity-casso" onclick="switchEntity('casso')"
-                    class="flex items-center gap-2 bg-white text-gray-500 border border-gray-200 px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-gray-50 transition-all">
-                    <div
-                        class="w-5 h-5 rounded-full bg-gray-100 text-gray-700 text-[9px] font-black flex items-center justify-center shrink-0">
-                        C
-                    </div>
-                    <span class="text-[9px] font-bold tracking-wider leading-none">CASSO</span>
-                </div>
-
-                <!-- Enterprise 2 (A4B) -->
-                <div id="entity-a4b" onclick="switchEntity('a4b')"
-                    class="flex items-center gap-2 bg-white text-gray-500 border border-gray-200 px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-gray-50 transition-all">
-                    <div
-                        class="w-5 h-5 rounded-full bg-gray-100 text-gray-700 text-[9px] font-black flex items-center justify-center shrink-0">
-                        AB
-                    </div>
-                    <span class="text-[9px] font-bold tracking-wider leading-none">A4B</span>
-                </div>
-
-                <!-- Ủy quyền số -->
-                <div id="entity-delegated" onclick="switchEntity('delegated')"
-                    class="flex items-center gap-2 bg-white text-gray-500 border border-gray-200 px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-gray-50 transition-all">
-                    <div
-                        class="w-5 h-5 rounded-full bg-gray-100 text-gray-700 text-[9px] font-black flex items-center justify-center shrink-0">
-                        UQ
-                    </div>
-                    <span class="text-[9px] font-bold tracking-wider leading-none">Ủy quyền số</span>
-                </div>
-
-                <!-- Any other verified business (e.g. confirmed via CCCD match) also appears here -->
-                <div id="dynamic-biz-pills-container" class="flex gap-2 shrink-0"></div>
             </div>
 
             <!-- List Options Cards -->
@@ -162,7 +132,7 @@
                 </div>
 
                 <!-- Option 4: Yêu cầu ký số -->
-                <div id="card-sign-request" onclick="navigateToSignRequest()"
+                <div id="card-sign-request" onclick="window.location.href='casID-sign-request.html'"
                     class="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)] border border-gray-100 flex items-center justify-between hover:bg-gray-50 active:scale-[0.99] transition-all cursor-pointer">
                     <div class="flex items-center gap-4">
                         <div
@@ -173,11 +143,11 @@
                     </div>
                     <div class="flex items-center gap-2">
                         <span id="sign-request-count-badge"
-                            class="w-5 h-5 min-w-[20px] rounded-full bg-red-500 text-white text-[11px] font-black flex items-center justify-center shadow-xs">2</span>
+                            class="hidden w-5 h-5 min-w-[20px] rounded-full bg-red-500 text-white text-[11px] font-black flex items-center justify-center shadow-xs">0</span>
                     </div>
                 </div>
                 <!-- Option 5: Ủy quyền -->
-                <div id="card-delegation" onclick="navigateToDelegation()"
+                <div id="card-delegation" onclick="window.location.href='casID-sign-delegation.html'"
                     class="bg-white rounded-2xl p-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)] border border-gray-100 flex items-center justify-between hover:bg-gray-50 active:scale-[0.99] transition-all cursor-pointer">
                     <div class="flex items-center gap-4">
                         <div
@@ -207,8 +177,12 @@
                 <span>Trang chủ</span>
             </button>
             <button onclick="window.location.href='casID-business-list.html'"
-                class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
-                <i class="fa-solid fa-building text-lg"></i>
+                class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700 relative">
+                <div class="relative">
+                    <i class="fa-solid fa-building text-lg"></i>
+                    <span id="nav-business-badge"
+                        class="absolute -top-1.5 -right-2 min-w-[15px] h-[15px] px-1 bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-xs hidden">0</span>
+                </div>
                 <span>Doanh nghiệp</span>
             </button>
             <button onclick="window.location.href='casID-sign-delegation.html'"
@@ -216,14 +190,10 @@
                 <i class="fa-solid fa-qrcode text-lg"></i>
                 <span>Ủy quyền</span>
             </button>
-            <button onclick="window.location.href=notiUrl()"
+            <button onclick="window.location.href='casID-sign-noti-empty.html'"
                 class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700 relative">
                 <div class="relative">
                     <i class="fa-solid fa-bell text-lg"></i>
-                    <span id="footer-noti-badge"
-                        class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center border border-white hidden">
-                        2
-                    </span>
                 </div>
                 <span>Thông báo</span>
             </button>
@@ -291,15 +261,11 @@
         // DEMO SCENARIO CONTROL (presenter tool)
         // =========================================================
         function getDemoScenario() {
-            return localStorage.getItem('casso_demo_scenario') || 'full';
+            return localStorage.getItem('casso_demo_scenario') || 'new';
         }
 
         function demoHomeUrl() {
             return getDemoScenario() === 'new' ? 'index-empty.html' : 'index.html';
-        }
-
-        function notiUrl() {
-            return getDemoScenario() === 'new' ? 'casID-sign-noti-empty.html' : 'casID-sign-noti.html';
         }
 
         function toggleDemoPanel() {
@@ -334,9 +300,12 @@
             window.location.reload();
         }
 
-        let activeEntity = localStorage.getItem('casso_active_entity') || localStorage.getItem('active_entity') || 'personal';
+        let activeEntity = localStorage.getItem('casso_active_entity') || 'personal';
 
         window.onload = function () {
+            // Landing on this screen at all IS the "new" scenario — keep the flag in sync so
+            // casID-asset-list.html / casID-business-list.html seed empty data, not the full demo set.
+            localStorage.setItem('casso_demo_scenario', 'new');
             updateFooterNotiBadge();
             updateSignRequestBadge();
             updateEntityUI();
@@ -346,16 +315,13 @@
         };
 
         // =========================================================
-        // ASSET ROWS: Ngân hàng / Hóa đơn điện tử / Chứng thư số route to
-        // the shared asset-list screen, scoped to whichever entity is active
+        // ENTITY PILLS: only personal by default — a pill is added here
+        // the moment a business finishes verification (casso_user_businesses_v7)
         // =========================================================
-        const FIXED_ENTITY_MST = { casso: '0316829871', a4b: '0317899888' };
-
         function getVerifiedBusinessesForPills() {
             try {
                 const list = JSON.parse(localStorage.getItem('casso_user_businesses_v7') || '[]');
-                const fixedMsts = Object.values(FIXED_ENTITY_MST);
-                return list.filter(b => b.status === 'verified' && !fixedMsts.includes(b.mst));
+                return list.filter(b => b.status === 'verified');
             } catch (e) {
                 return [];
             }
@@ -390,14 +356,44 @@
                     </div>
                 `;
             }).join('');
+
+            // If the entity currently active got removed/unlinked elsewhere, fall back to personal
+            if (activeEntity !== 'personal' && !businesses.find(b => b.id === activeEntity)) {
+                switchEntity('personal');
+            }
         }
 
+        function switchEntity(entityId) {
+            activeEntity = entityId;
+            localStorage.setItem('casso_active_entity', entityId);
+            updateEntityUI();
+            renderDynamicBizPills();
+            renderAssetCounts();
+        }
+
+        function updateEntityUI() {
+            const personalActive = activeEntity === 'personal';
+            const el = document.getElementById('entity-personal');
+            if (!el) return;
+            const avatar = el.querySelector('div');
+            const text = el.querySelector('span');
+            if (personalActive) {
+                el.className = "flex items-center gap-2 bg-black text-white px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer border border-black transition-all";
+                if (avatar) avatar.className = "w-5 h-5 rounded-full bg-white text-black text-[9px] font-black flex items-center justify-center shrink-0";
+            } else {
+                el.className = "flex items-center gap-2 bg-white text-gray-500 border border-gray-200 px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-gray-50 transition-all";
+                if (avatar) avatar.className = "w-5 h-5 rounded-full bg-gray-100 text-gray-700 text-[9px] font-black flex items-center justify-center shrink-0";
+            }
+        }
+
+        // =========================================================
+        // ASSET ROWS: Ngân hàng / Hóa đơn điện tử / Chứng thư số route to
+        // the shared asset-list screen, scoped to whichever entity is active
+        // =========================================================
         function navigateToAsset(type) {
             localStorage.setItem('casso_active_entity', activeEntity);
             window.location.href = 'casID-asset-list.html?type=' + type;
         }
-
-        const DEFAULT_FULL_ASSET_COUNTS = { bank: 5, invoice: 3, ca: 1 };
 
         function renderAssetCounts() {
             ['bank', 'invoice', 'ca'].forEach(type => {
@@ -406,13 +402,7 @@
                 let count = 0;
                 try {
                     const stored = localStorage.getItem('casso_assets_' + type + '__' + activeEntity);
-                    if (stored) {
-                        count = JSON.parse(stored).length;
-                    } else if (activeEntity === 'personal' && getDemoScenario() !== 'new') {
-                        // Not seeded yet (user hasn't opened the asset-list screen this session) —
-                        // mirror the same "Hồ sơ đầy đủ" mock counts shown elsewhere.
-                        count = DEFAULT_FULL_ASSET_COUNTS[type];
-                    }
+                    if (stored) count = JSON.parse(stored).length;
                 } catch (e) { }
                 el.textContent = count > 0 ? `${count} đã kết nối` : '';
             });
@@ -420,90 +410,26 @@
 
         function updateSignRequestBadge() {
             const signedStatus = localStorage.getItem('doc_signed_status');
-            let count = 2; // Default mock pending requests
-            if (signedStatus === 'signed') {
-                count = 1;
-            }
+            const count = signedStatus ? 1 : 0; // Fresh account starts with no pending sign requests
             const badge = document.getElementById('sign-request-count-badge');
             if (badge) {
                 badge.textContent = count;
-                if (count > 0) {
-                    badge.classList.remove('hidden');
-                } else {
-                    badge.classList.add('hidden');
-                }
+                badge.classList.toggle('hidden', count === 0);
             }
         }
 
-        function switchEntity(entityId) {
-            activeEntity = entityId;
-            localStorage.setItem('active_entity', entityId);
-            localStorage.setItem('casso_active_entity', entityId);
-            updateEntityUI();
-            renderDynamicBizPills();
-            renderAssetCounts();
-        }
-
-        function updateEntityUI() {
-            const entities = ['personal', 'casso', 'a4b', 'delegated'];
-            entities.forEach(ent => {
-                const el = document.getElementById(`entity-${ent}`);
-                if (!el) return;
-
-                const avatar = el.querySelector('div');
-                const text = el.querySelector('span');
-
-                if (ent === activeEntity) {
-                    el.className = "flex items-center gap-2 bg-black text-white px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer border border-black transition-all";
-                    if (avatar) avatar.className = "w-5 h-5 rounded-full bg-white text-black text-[9px] font-black flex items-center justify-center shrink-0";
-                    if (text) text.className = "text-[9px] font-bold tracking-wider leading-none";
-                } else {
-                    el.className = "flex items-center gap-2 bg-white text-gray-500 border border-gray-200 px-3 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-gray-50 transition-all";
-                    if (avatar) avatar.className = "w-5 h-5 rounded-full bg-gray-100 text-gray-700 text-[9px] font-black flex items-center justify-center shrink-0";
-                    if (text) text.className = "text-[9px] font-bold tracking-wider leading-none";
-                }
-            });
-
-        }
-
-        function navigateToDelegation() {
-            localStorage.setItem('active_entity', activeEntity);
-            window.location.href = 'casID-sign-delegation.html';
-        }
-
-        function navigateToSignRequest() {
-            if (activeEntity === 'delegated') {
-                window.location.href = 'casID-sign-delegated.html';
-            } else {
-                window.location.href = 'casID-sign-request.html';
-            }
-        }
-
-        function navigateToCa() {
-            if (activeEntity === 'delegated') {
-                window.location.href = 'casID-sign-ca-delegated.html';
-            } else {
-                window.location.href = 'casID-sign-ca.html';
-            }
-        }
-
-        // Unread count is shared across every screen via `app_notifications`; the actual
-        // default mock data is owned by casID-sign-noti.html, so before that screen has ever
-        // been visited we just fall back to the count it would seed (0 for a fresh profile).
-        function getNotiUnreadCount() {
-            try {
-                const stored = localStorage.getItem('app_notifications');
-                if (stored) return JSON.parse(stored).filter(n => !n.read).length;
-            } catch (e) { }
-            return getDemoScenario() === 'new' ? 0 : 3;
-        }
-
+        // No generic notifications badge in this scenario — the only thing worth flagging
+        // from here is businesses still waiting to be confirmed from a CCCD match.
         function updateFooterNotiBadge() {
-            const badge = document.getElementById('footer-noti-badge');
+            const badge = document.getElementById('nav-business-badge');
             if (!badge) return;
-            const count = getNotiUnreadCount();
-            badge.textContent = count;
-            badge.classList.toggle('hidden', count === 0);
+            let discoveredCount = 0;
+            try {
+                const stored = localStorage.getItem('casso_discovered_businesses_v2');
+                if (stored) discoveredCount = JSON.parse(stored).length;
+            } catch (e) { }
+            badge.textContent = String(discoveredCount);
+            badge.classList.toggle('hidden', discoveredCount === 0);
         }
 
         function showComingSoon() {

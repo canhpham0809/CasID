@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang chủ (Demo Ngân hàng) - Casso ID</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Outfit:wght@600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body,
+        input,
+        select,
+        textarea,
+        button,
+        span,
+        p,
+        div,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        strong,
+        label,
+        input::placeholder,
+        textarea::placeholder {
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+        }
+
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Banner styling */
+        .promo-banner {
+            background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 50%, #4338ca 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .promo-banner::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex justify-center items-center min-h-screen p-2 sm:p-4">
+
+    <!-- Phone container matching exact device mockup -->
+    <div
+        class="phone-container bg-white shadow-2xl rounded-[40px] overflow-hidden flex flex-col relative border-[8px] border-black">
+
+        <!-- Status Bar -->
+        <div
+            class="flex justify-between items-center px-6 pt-3 pb-1 text-xs font-bold text-black bg-white z-10 shrink-0">
+            <span id="current-time">15:49</span>
+            <div class="flex items-center gap-1.5">
+                <i class="fa-solid fa-signal text-[10px]"></i>
+                <span class="text-[9px] font-bold mr-0.5">5G</span>
+                <i class="fa-solid fa-battery-three-quarters text-sm"></i>
+            </div>
+        </div>
+
+        <!-- Scrollable Main Content -->
+        <div class="flex-1 overflow-y-auto px-4 pt-2 pb-24 bg-white relative">
+
+            <!-- Profile Selector Badges Header (verified businesses auto-appear first, ahead of personal) -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-3 pt-1 scrollbar-none">
+                <!-- Verified business pills render here, ahead of the personal pill -->
+                <div id="business-badges-container" class="flex items-center gap-2 shrink-0"></div>
+                <!-- Personal Active Pill (NVA) -->
+                <div id="badge-personal" onclick="switchHomeEntity('personal')"
+                    class="flex items-center gap-2 bg-black text-white px-3.5 py-1.5 rounded-full shrink-0 shadow-sm border border-black cursor-pointer transition-all">
+                    <div
+                        class="w-5 h-5 rounded-full bg-white text-black text-[9px] font-black flex items-center justify-center shrink-0">
+                        NA
+                    </div>
+                    <span class="text-[10px] font-bold tracking-wider leading-none">NGUYỄN VĂN AN</span>
+                </div>
+            </div>
+
+            <!-- Personal Identity Card (score reacts as assets get connected) -->
+            <div
+                class="mt-1 bg-white rounded-3xl border border-gray-150 shadow-[0_4px_20px_rgba(0,0,0,0.03)] relative overflow-hidden flex flex-col justify-between">
+                <!-- Corner ribbon: instantly shows whether the card below is personal or a business -->
+                <div id="entity-ribbon"
+                    class="absolute -right-9 top-4 w-36 h-6 flex items-center justify-center rotate-45 bg-gray-900 text-white text-[8px] font-black shadow-md tracking-wider">
+                    CÁ NHÂN
+                </div>
+                <div class="p-4 flex items-center justify-between">
+                    <!-- Left: User Identity Info -->
+                    <div class="flex flex-col gap-1">
+                        <h2 id="card-user-name"
+                            class="text-[17px] font-black text-gray-900 tracking-tight leading-snug">
+                            NGUYỄN VĂN AN
+                        </h2>
+                        <span id="card-user-subtitle" class="text-[10.5px] text-gray-400 font-medium">CCCD:
+                            056099004785
+                        </span>
+                    </div>
+
+                    <!-- Right: Gauge Meter (fills in as data gets connected) -->
+                    <div class="flex flex-col items-center relative w-32">
+                        <svg viewBox="0 0 130 75" class="w-32 overflow-visible">
+                            <defs>
+                                <linearGradient id="gaugeColors" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#ef4444" />
+                                    <stop offset="25%" stop-color="#f97316" />
+                                    <stop offset="50%" stop-color="#eab308" />
+                                    <stop offset="75%" stop-color="#84cc16" />
+                                    <stop offset="100%" stop-color="#22c55e" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M 15 70 A 50 50 0 0 1 115 70" fill="none" stroke="#f1f5f9" stroke-width="8.5"
+                                stroke-linecap="round" />
+                            <path id="gauge-arc" d="M 15 70 A 50 50 0 0 1 115 70" fill="none" stroke="url(#gaugeColors)"
+                                stroke-width="8.5" stroke-linecap="round" stroke-dasharray="157"
+                                stroke-dashoffset="157" />
+                        </svg>
+                        <div class="flex items-baseline gap-0.5 mt-[-22px]">
+                            <span id="gauge-score" class="text-xl font-black text-gray-300">--</span>
+                            <span id="gauge-max" class="text-[10.5px] font-bold text-gray-300">/100</span>
+                        </div>
+                        <div class="text-[10px] text-gray-400 flex items-center gap-1 mt-0.5">
+                            <span>Tình trạng:</span>
+                            <span id="gauge-status" class="text-gray-500 font-bold">Chưa có tài sản</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section: Trung tâm dữ liệu -->
+            <div class="mt-5 flex flex-col gap-2.5">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-[15px] font-black text-gray-900 tracking-tight">Trung tâm dữ liệu</h3>
+                </div>
+
+                <!-- 6 Cards Grid: click each to simulate connecting that data source -->
+                <div class="grid grid-cols-3 gap-2.5">
+
+                    <!-- 1. Ngân hàng -->
+                    <div id="dc-card-bank" onclick="window.location.href='casID-asset-list.html?type=bank'"
+                        class="bg-white rounded-2xl p-3 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
+                    </div>
+
+                    <!-- 2. Chứng thư số -->
+                    <div id="dc-card-ca" onclick="window.location.href='casID-asset-list.html?type=ca'"
+                        class="bg-white rounded-2xl p-3 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
+                    </div>
+
+                    <!-- 3. Hóa đơn điện tử -->
+                    <div id="dc-card-invoice" onclick="window.location.href='casID-asset-list.html?type=invoice'"
+                        class="bg-white rounded-2xl p-3 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
+                    </div>
+
+                    <!-- 4. Yêu cầu ký số (goes to the real flow) -->
+                    <div onclick="window.location.href='casID-sign-request.html'"
+                        class="bg-white rounded-2xl p-3 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
+                        <div class="flex items-center shrink-0 py-0.5">
+                            <div
+                                class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200 text-gray-400 shadow-xs shrink-0">
+                                <i class="fa-solid fa-file-signature text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[10.5px] font-bold text-gray-900 leading-tight whitespace-nowrap">Yêu cầu
+                                ký số</span>
+                        </div>
+                    </div>
+
+                    <!-- 5. Ủy quyền (goes to the real flow) -->
+                    <div onclick="window.location.href='casID-sign-delegation.html'"
+                        class="bg-white rounded-2xl p-3 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
+                        <div class="flex items-center shrink-0 py-0.5">
+                            <div
+                                class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200 text-gray-400 shadow-xs shrink-0">
+                                <i class="fa-solid fa-user-group text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[10.5px] font-bold text-gray-900 leading-tight whitespace-nowrap">Ủy
+                                quyền</span>
+                        </div>
+                    </div>
+
+                    <!-- 6. Xem thêm -->
+                    <div onclick="window.location.href='casID-sign-data-empty.html'"
+                        class="bg-white rounded-2xl p-3 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
+                        <div class="flex items-center shrink-0 py-0.5">
+                            <div
+                                class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200 text-gray-800 shadow-xs shrink-0">
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[10.5px] font-bold text-gray-900 leading-tight whitespace-nowrap">Xem
+                                thêm</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Business verification prompt: shows the CCCD-matched businesses waiting to be confirmed -->
+                <div id="dc-business-prompt" onclick="window.location.href='casID-business-list.html'"
+                    class="bg-emerald-50 border border-emerald-100 rounded-2xl p-3 flex items-center justify-between gap-2 cursor-pointer hover:bg-emerald-100/60 transition-all active:scale-[0.99]">
+                    <div class="flex items-center gap-2.5">
+                        <div
+                            class="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs shrink-0">
+                            <i class="fa-solid fa-building"></i>
+                        </div>
+                        <div class="flex flex-col">
+                            <span id="dc-business-prompt-title"
+                                class="text-[11.5px] font-bold text-emerald-900 leading-tight">2
+                                doanh nghiệp khớp CCCD của bạn</span>
+                            <span class="text-[9.5px] text-emerald-600">Nhấn để xác thực ngay</span>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-emerald-500 text-xs"></i>
+                </div>
+            </div>
+
+            <!-- Promo Banner Carousel: QUÀ TẶNG MIỄN PHÍ CAS CERT -->
+            <div class="mt-5 flex gap-2.5 overflow-x-auto scrollbar-none">
+                <!-- Slide 1: QUÀ TẶNG MIỄN PHÍ CAS CERT -->
+                <div onclick="window.location.href='casID-sign-ca.html'"
+                    class="bg-gradient-to-r from-[#1d4ed8] via-[#4338ca] to-[#6366f1] text-white rounded-2xl p-3.5 shadow-md flex flex-col justify-between min-w-[305px] flex-1 cursor-pointer hover:opacity-95 active:scale-[0.99] transition-all relative overflow-hidden">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-black tracking-wider uppercase text-white">QUÀ TẶNG MIỄN
+                            PHÍ</span>
+                        <div class="flex items-center gap-1 bg-white/10 backdrop-blur-xs px-2 py-0.5 rounded-full">
+                            <i class="fa-solid fa-pen-nib text-[10px] text-white"></i>
+                            <span class="text-[11px] font-black text-white tracking-tight">CAS CERT</span>
+                            <span class="text-[7.5px] text-blue-200 font-medium">by CMC CA</span>
+                        </div>
+                    </div>
+                    <div class="mt-2 flex flex-col">
+                        <h4 class="text-[13px] font-black leading-tight text-white tracking-tight">
+                            20.000 CHỨNG THƯ SỐ CAS CERT.
+                        </h4>
+                        <p class="text-[10px] text-blue-100 font-medium mt-1">
+                            Ký hóa đơn điện tử X Invoice & 100+ app khác
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Slide 2: Next Carousel Card Peek -->
+                <div
+                    class="w-5 min-w-[20px] rounded-2xl bg-gradient-to-br from-[#0284c7] to-[#0f766e] shrink-0 opacity-90">
+                </div>
+            </div>
+
+            <!-- Section: Hoạt động gần đây (Chưa có hoạt động) -->
+            <div class="mt-5 flex flex-col gap-2.5">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-[15px] font-black text-gray-900 tracking-tight">Hoạt động gần đây</h3>
+                </div>
+
+                <div id="recent-activity-empty"
+                    class="flex flex-col items-center justify-center py-10 text-gray-400 gap-2.5">
+                    <div
+                        class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-gray-300 text-lg border border-gray-100 shadow-2xs">
+                        <i class="fa-regular fa-clock"></i>
+                    </div>
+                    <span class="text-[11px] font-medium text-gray-400">Chưa có hoạt động nào</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation Bar (active tab: Trang chủ) -->
+        <div
+            class="bg-white border-t border-gray-100 px-2 py-2 flex justify-around items-center text-[10px] text-gray-400 font-medium pb-5 z-10 shrink-0">
+            <button class="flex flex-col items-center gap-1 w-16 text-black">
+                <i class="fa-solid fa-house text-base text-black"></i>
+                <span class="font-bold">Trang chủ</span>
+            </button>
+            <button onclick="window.location.href='casID-business-list.html'"
+                class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700 relative">
+                <div class="relative">
+                    <i class="fa-solid fa-building text-base"></i>
+                    <span id="nav-business-badge"
+                        class="absolute -top-1.5 -right-2 min-w-[15px] h-[15px] px-1 bg-red-500 text-white text-[8.5px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-xs">2</span>
+                </div>
+                <span>Doanh nghiệp</span>
+            </button>
+            <button onclick="window.location.href='casID-sign-delegation.html'"
+                class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
+                <i class="fa-solid fa-qrcode text-base"></i>
+                <span>Ủy quyền</span>
+            </button>
+            <button onclick="window.location.href='casID-sign-noti-empty.html'"
+                class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700 relative">
+                <div class="relative">
+                    <i class="fa-solid fa-bell text-base"></i>
+                </div>
+                <span>Thông báo</span>
+            </button>
+            <button onclick="showToast('Tính năng Hồ sơ đang phát triển')"
+                class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
+                <i class="fa-solid fa-circle-user text-base"></i>
+                <span>Hồ sơ</span>
+            </button>
+        </div>
+
+        <!-- Custom Toast Banner -->
+        <div id="custom-toast"
+            class="absolute top-12 left-4 right-4 z-50 bg-gray-900/95 backdrop-blur-md text-white rounded-2xl p-3.5 shadow-2xl flex items-center gap-2.5 transform -translate-y-6 opacity-0 transition-all duration-300 pointer-events-none hidden border border-gray-800">
+            <i id="custom-toast-icon" class="text-sm shrink-0 text-amber-400 fa-solid fa-circle-info"></i>
+            <span id="custom-toast-msg" class="text-[11.5px] font-semibold leading-snug"></span>
+        </div>
+
+    </div>
+
+    <!-- Demo Scenario Control (web page tool — lives outside the phone mockup, not part of the product UI) -->
+    <div class="fixed top-4 right-4 z-50 flex items-start gap-2">
+        <div class="relative">
+            <button onclick="toggleDemoPanel()"
+                class="w-10 h-10 rounded-full bg-gray-900 text-white flex items-center justify-center shadow-lg hover:bg-gray-800 active:scale-95 transition-all">
+                <i class="fa-solid fa-sliders text-[13px]"></i>
+            </button>
+            <div id="demo-panel"
+                class="hidden absolute top-12 right-0 w-56 bg-white rounded-xl shadow-xl border border-gray-100 p-2 flex flex-col gap-1">
+                <span class="text-[9px] font-bold text-gray-400 uppercase tracking-wider px-1.5 pt-0.5">Kịch bản
+                    demo</span>
+                <button id="demo-btn-full" onclick="setDemoScenario('full')"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-circle-check text-[10px]"></i>
+                    <span>Hồ sơ đầy đủ</span>
+                </button>
+                <button id="demo-btn-new" onclick="setDemoScenario('new')"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-seedling text-[10px]"></i>
+                    <span>Hồ sơ mới khởi tạo</span>
+                </button>
+                <div class="border-t border-gray-100 my-0.5"></div>
+                <button onclick="resetDemoScenario()"
+                    class="text-left px-2.5 py-2 rounded-lg text-[10.5px] font-semibold text-red-500 hover:bg-red-50 flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-rotate-left text-[10px]"></i>
+                    <span>Reset kịch bản hiện tại</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Demo MST reference note -->
+        <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-44">
+            <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">MST demo</div>
+            <div class="flex flex-col gap-1 text-[11px] font-mono font-bold text-gray-700">
+                <span>0316829871</span>
+                <span>0318999888</span>
+                <span>0317654321</span>
+                <span>0319556677</span>
+                <span>0304567890</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+        window.onload = function () {
+            // Landing on this screen at all IS the "new" scenario — keep the flag in sync so
+            // casID-asset-list.html / casID-business-list.html seed empty data, not the full demo set.
+            localStorage.setItem('casso_demo_scenario', 'new');
+            seedDiscoveredBankAccounts();
+            updateLiveTime();
+            renderDemoPanel();
+            renderBusinessPrompt();
+            renderProfileBadges();
+            selectDefaultHomeEntity(); // also renders the Trung tâm dữ liệu cards + score for that entity
+        };
+
+        function updateLiveTime() {
+            const timeEl = document.getElementById('current-time');
+            if (!timeEl) return;
+            const now = new Date();
+            const hrs = String(now.getHours()).padStart(2, '0');
+            const mins = String(now.getMinutes()).padStart(2, '0');
+            timeEl.textContent = `${hrs}:${mins}`;
+        }
+
+        function showToast(msg, iconClass = "fa-solid fa-circle-info text-amber-400") {
+            // Disabled toast alert popups on actions
+            return;
+        }
+
+        // =========================================================
+        // DATA CENTER: cards read their connected entries from the shared
+        // asset lists (casID-asset-list.html owns adding/removing entries).
+        // This screen only ever represents the "Hồ sơ mới khởi tạo" scenario,
+        // so an unseeded list simply means zero — no full-demo fallback here.
+        // =========================================================
+        function getAssetList(type) {
+            const entityKey = currentHomeEntity || 'personal';
+            try {
+                const stored = localStorage.getItem('casso_assets_' + type + '__' + entityKey);
+                if (stored) return JSON.parse(stored);
+            } catch (e) { }
+            return [];
+        }
+
+        function getAssetCount(type) {
+            return getAssetList(type).length;
+        }
+
+        const ASSET_CARD_CONFIG = {
+            bank: { label: 'Ngân hàng', icon: 'fa-building-columns' },
+            ca: { label: 'Chứng thư số', icon: 'fa-pen-nib' },
+            invoice: { label: 'Hóa đơn điện tử', icon: 'fa-file-invoice' }
+        };
+
+        function renderDataCenterCards() {
+            Object.keys(ASSET_CARD_CONFIG).forEach(type => {
+                const card = document.getElementById('dc-card-' + type);
+                if (!card) return;
+                const cfg = ASSET_CARD_CONFIG[type];
+                const list = getAssetList(type);
+                if (list.length > 0) {
+                    const shown = list.slice(0, 2);
+                    const remaining = list.length - shown.length;
+                    card.innerHTML = `
+                        <div class="flex items-center -space-x-2.5 shrink-0 py-0.5">
+                            ${shown.map(item => `
+                                <div class="w-8 h-8 rounded-full ${item.logoColor} text-white flex items-center justify-center text-[8px] font-black border-2 border-white shadow-xs shrink-0">
+                                    ${item.logoInitial}
+                                </div>
+                            `).join('')}
+                            ${remaining > 0 ? `
+                                <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-700 font-bold text-[10px] flex items-center justify-center border-2 border-white shadow-xs shrink-0">
+                                    +${remaining}
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[10.5px] font-bold text-gray-900 leading-tight whitespace-nowrap">${cfg.label}</span>
+                        </div>
+                    `;
+                } else if (type === 'bank' && (currentHomeEntity || 'personal') === 'personal' && getDiscoveredBankAccounts().length > 0) {
+                    // Demo-only: banks the system "found" from a past Cas link, waiting on confirmation
+                    const discoveredCount = getDiscoveredBankAccounts().length;
+                    card.innerHTML = `
+                        <div class="flex items-center shrink-0 py-0.5">
+                            <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center border border-amber-200 text-amber-600 shadow-xs shrink-0">
+                                <i class="fa-solid ${cfg.icon} text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[10.5px] font-bold text-gray-900 leading-tight whitespace-nowrap">${cfg.label}</span>
+                            <span class="text-[8.5px] font-bold text-amber-600 flex items-center gap-1 mt-0.5">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                ${discoveredCount} chờ xác nhận
+                            </span>
+                        </div>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <div class="flex items-center shrink-0 py-0.5">
+                            <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200 text-gray-400 shadow-xs shrink-0">
+                                <i class="fa-solid ${cfg.icon} text-sm"></i>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[10.5px] font-bold text-gray-900 leading-tight whitespace-nowrap">${cfg.label}</span>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        // =========================================================
+        // DEMO-ONLY: banks the system found from a past Cas link, shown as
+        // "2" on the Ngân hàng tile until the user confirms them on the asset list.
+        // =========================================================
+        const DISCOVERED_BANK_KEY = 'casso_discovered_bank_accounts';
+
+        function getDiscoveredBankAccounts() {
+            try {
+                const stored = localStorage.getItem(DISCOVERED_BANK_KEY);
+                if (stored) return JSON.parse(stored);
+            } catch (e) { }
+            return [];
+        }
+
+        function seedDiscoveredBankAccounts() {
+            if (localStorage.getItem(DISCOVERED_BANK_KEY)) return;
+            const seed = [
+                { id: 'dbank-vcb', name: 'NGUYỄN VĂN AN', provider: 'Vietcombank (VCB)', logoInitial: 'VCB', logoColor: 'bg-emerald-700' },
+                { id: 'dbank-mbb', name: 'NGUYỄN VĂN AN', provider: 'MB Bank (MBB)', logoInitial: 'MBB', logoColor: 'bg-blue-800' }
+            ];
+            localStorage.setItem(DISCOVERED_BANK_KEY, JSON.stringify(seed));
+        }
+
+        // =========================================================
+        // IDENTITY SCORE: fills in only once actual data assets are connected
+        // (verifying a business alone does not count — see renderIdentityScore)
+        // =========================================================
+
+        function renderIdentityScore() {
+            // Verifying a business is an identity step, not a connected asset — it must not move the score on its own.
+            const hasAnyAsset = getAssetCount('bank') > 0 || getAssetCount('invoice') > 0 || getAssetCount('ca') > 0;
+            const score = hasAnyAsset ? 100 : 0;
+
+            const scoreEl = document.getElementById('gauge-score');
+            const maxEl = document.getElementById('gauge-max');
+            const statusEl = document.getElementById('gauge-status');
+            const arcEl = document.getElementById('gauge-arc');
+
+            if (arcEl) arcEl.setAttribute('stroke-dashoffset', String(157 - (157 * score / 100)));
+
+            if (score === 0) {
+                if (scoreEl) { scoreEl.textContent = '0'; scoreEl.className = 'text-xl font-black text-gray-300'; }
+                if (maxEl) maxEl.className = 'text-[10.5px] font-bold text-gray-300';
+                if (statusEl) { statusEl.textContent = 'Chưa có tài sản'; statusEl.className = 'text-gray-500 font-bold'; }
+                return;
+            }
+
+            if (scoreEl) { scoreEl.textContent = '100'; scoreEl.className = 'text-xl font-black text-gray-900'; }
+            if (maxEl) maxEl.className = 'text-[10.5px] font-bold text-gray-400';
+            if (statusEl) { statusEl.textContent = 'Hoàn thiện'; statusEl.className = 'text-[#10b981] font-bold'; }
+        }
+
+        // =========================================================
+        // PROFILE BADGES: a pill for each verified business auto-appears
+        // right after the personal pill; clicking one switches the
+        // identity card over to that business
+        // =========================================================
+        const PERSONAL_CCCD = '012345678910';
+
+        function maskId(id, keep = 4) {
+            return (id || '').toString().slice(0, keep) + 'xxx';
+        }
+
+        const PILL_ACTIVE_PERSONAL = "flex items-center gap-2 bg-black text-white px-3.5 py-1.5 rounded-full shrink-0 shadow-sm border border-black cursor-pointer transition-all";
+        const PILL_IDLE = "flex items-center gap-2 bg-white text-gray-500 border border-gray-200 px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-gray-50 transition-all";
+        const PILL_ACTIVE_BUSINESS = "flex items-center gap-2 bg-purple-900 text-white px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer border border-purple-900 transition-all";
+
+        let currentHomeEntity = 'personal';
+
+        function getVerifiedBusinesses() {
+            try {
+                const stored = localStorage.getItem('casso_user_businesses_v7');
+                if (!stored) return [];
+                return JSON.parse(stored).filter(b => b.status === 'verified');
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function businessInitials(name) {
+            const words = (name || '?').trim().split(/\s+/);
+            return words.slice(-2).map(w => w[0]).join('').toUpperCase().slice(0, 2);
+        }
+
+        // Legal-entity prefixes to strip off when a business has no curated shortName
+        const LEGAL_PREFIXES = ['CÔNG TY CỔ PHẦN', 'CÔNG TY TNHH MỘT THÀNH VIÊN', 'CÔNG TY TNHH', 'CÔNG TY HỢP DANH', 'DOANH NGHIỆP TƯ NHÂN'];
+
+        function deriveShortName(name) {
+            if (!name) return 'DN';
+            let clean = name.trim();
+            const upper = clean.toUpperCase();
+            const prefix = LEGAL_PREFIXES.find(p => upper.startsWith(p));
+            if (prefix) clean = clean.slice(prefix.length).trim();
+            const firstWord = clean.split(/\s+/)[0] || clean;
+            return firstWord.toUpperCase().slice(0, 12);
+        }
+
+        function businessShortName(biz) {
+            return (biz.shortName || deriveShortName(biz.name) || 'DN').slice(0, 14);
+        }
+
+        function renderProfileBadges() {
+            const container = document.getElementById('business-badges-container');
+            if (!container) return;
+            const businesses = getVerifiedBusinesses();
+
+            container.innerHTML = businesses.map(biz => `
+                <div id="badge-biz-${biz.id}" onclick="switchHomeEntity('${biz.id}')" class="${PILL_IDLE}">
+                    <div class="w-5 h-5 rounded-full bg-purple-100 text-purple-800 text-[9px] font-black flex items-center justify-center shrink-0">
+                        ${businessInitials(biz.name)}
+                    </div>
+                    <span class="text-[10px] font-bold tracking-wider leading-none max-w-[90px] truncate">${businessShortName(biz)}</span>
+                </div>
+            `).join('');
+
+            // If the entity currently selected got removed/unlinked elsewhere, fall back to personal
+            if (currentHomeEntity !== 'personal' && !businesses.find(b => b.id === currentHomeEntity)) {
+                switchHomeEntity('personal');
+            }
+        }
+
+        // Selects whichever business most recently finished verification (set by
+        // casID-business-list.html), or falls back to personal if none/expired.
+        function selectDefaultHomeEntity() {
+            const activeId = localStorage.getItem('casso_active_entity');
+            const businesses = getVerifiedBusinesses();
+            if (activeId && businesses.find(b => b.id === activeId)) {
+                switchHomeEntity(activeId);
+            } else {
+                switchHomeEntity('personal');
+            }
+        }
+
+        // Corner ribbon on the identity card — makes personal vs. business unmistakable at a glance
+        function updateEntityRibbon(kind) {
+            const ribbon = document.getElementById('entity-ribbon');
+            if (!ribbon) return;
+            const base = 'absolute -right-10 top-4 w-36 h-6 flex items-center justify-center rotate-45 text-white text-[8px] font-black shadow-md tracking-wider';
+            if (kind === 'business') {
+                ribbon.textContent = 'DOANH NGHIỆP';
+                ribbon.className = base + ' bg-purple-700';
+            } else {
+                ribbon.textContent = 'CÁ NHÂN/HKD';
+                ribbon.className = base + ' bg-gray-900';
+            }
+        }
+
+        function switchHomeEntity(entId) {
+            currentHomeEntity = entId;
+            // Persist so casID-asset-list.html (and this screen, on reload) know whose assets to show
+            localStorage.setItem('casso_active_entity', entId);
+
+            const personalBadge = document.getElementById('badge-personal');
+            if (personalBadge) personalBadge.className = entId === 'personal' ? PILL_ACTIVE_PERSONAL : PILL_IDLE;
+
+            document.querySelectorAll('[id^="badge-biz-"]').forEach(el => { el.className = PILL_IDLE; });
+
+            const nameEl = document.getElementById('card-user-name');
+            const subtitleEl = document.getElementById('card-user-subtitle');
+
+            if (entId === 'personal') {
+                if (nameEl) nameEl.textContent = 'NGUYỄN VĂN AN';
+                if (subtitleEl) subtitleEl.textContent = 'CCCD: ' + (PERSONAL_CCCD);
+                updateEntityRibbon('personal');
+                renderDataCenterCards();
+                renderIdentityScore();
+                return;
+            }
+
+            const activeBadge = document.getElementById('badge-biz-' + entId);
+            if (activeBadge) activeBadge.className = PILL_ACTIVE_BUSINESS;
+
+            const biz = getVerifiedBusinesses().find(b => b.id === entId);
+            if (biz) {
+                if (nameEl) nameEl.textContent = biz.name;
+                if (subtitleEl) subtitleEl.textContent = 'MST: ' + (biz.mst);
+            }
+            updateEntityRibbon('business');
+            renderDataCenterCards();
+            renderIdentityScore();
+        }
+
+        // =========================================================
+        // BUSINESS PROMPT: reflects how many CCCD-matched businesses are
+        // still waiting to be confirmed (reads the shared discovered list)
+        // =========================================================
+        function renderBusinessPrompt() {
+            const promptEl = document.getElementById('dc-business-prompt');
+            const titleEl = document.getElementById('dc-business-prompt-title');
+            const badgeEl = document.getElementById('nav-business-badge');
+
+            let discoveredCount = 2;
+            try {
+                const stored = localStorage.getItem('casso_discovered_businesses_v2');
+                if (stored) discoveredCount = JSON.parse(stored).length;
+            } catch (e) { }
+
+            if (badgeEl) {
+                badgeEl.textContent = String(discoveredCount);
+                badgeEl.classList.toggle('hidden', discoveredCount === 0);
+            }
+            if (promptEl && titleEl) {
+                if (discoveredCount === 0) {
+                    promptEl.classList.add('hidden');
+                } else {
+                    promptEl.classList.remove('hidden');
+                    titleEl.textContent = `${discoveredCount} doanh nghiệp khớp CCCD của bạn`;
+                }
+            }
+        }
+
+        // =========================================================
+        // DEMO SCENARIO CONTROL (presenter tool)
+        // =========================================================
+        const DEMO_SCENARIO_KEY = 'casso_demo_scenario';
+
+        function getDemoScenario() {
+            return localStorage.getItem(DEMO_SCENARIO_KEY) || 'full';
+        }
+
+        function demoHomeUrl() {
+            return getDemoScenario() === 'new' ? 'index-empty.html' : 'index.html';
+        }
+
+        function toggleDemoPanel() {
+            document.getElementById('demo-panel')?.classList.toggle('hidden');
+        }
+
+        function renderDemoPanel() {
+            const scenario = getDemoScenario();
+            const activeCls = "text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all bg-gray-900 text-white";
+            const idleCls = "text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all text-gray-700 hover:bg-gray-50";
+            const fullBtn = document.getElementById('demo-btn-full');
+            const newBtn = document.getElementById('demo-btn-new');
+            if (fullBtn) fullBtn.className = scenario === 'full' ? activeCls : idleCls;
+            if (newBtn) newBtn.className = scenario === 'new' ? activeCls : idleCls;
+        }
+
+        function clearDemoDatasets() {
+            localStorage.removeItem('casso_user_businesses_v7');
+            localStorage.removeItem('casso_discovered_businesses_v2');
+            localStorage.removeItem('casso_active_entity');
+            localStorage.removeItem(DISCOVERED_BANK_KEY);
+            Object.keys(localStorage).filter(k => k.startsWith('casso_assets_')).forEach(k => localStorage.removeItem(k));
+        }
+
+        function setDemoScenario(scenario) {
+            localStorage.setItem(DEMO_SCENARIO_KEY, scenario);
+            clearDemoDatasets();
+            window.location.href = scenario === 'new' ? 'index-empty.html' : 'index.html';
+        }
+
+        function resetDemoScenario() {
+            clearDemoDatasets();
+            window.location.reload();
+        }
+    </script>
+</body>
+
+</html>
