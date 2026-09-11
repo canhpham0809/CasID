@@ -17,6 +17,7 @@
         .phone-container {
             width: 375px;
             height: 812px;
+            zoom: var(--phone-scale, 1);
         }
 
         /* Ẩn thanh cuộn cho thẻ đối tượng */
@@ -61,7 +62,7 @@
 
         <!-- Header -->
         <div class="px-4 py-3 flex items-center gap-4 bg-white border-b border-gray-50">
-            <button class="text-gray-700 text-lg hover:opacity-70" onclick="window.location.href='index.html'">
+            <button class="text-gray-700 text-lg hover:opacity-70" onclick="window.location.href=demoHomeUrl()">
                 <i class="fa-solid fa-arrow-left"></i>
             </button>
             <h1 class="text-[17px] font-bold text-gray-800">Yêu cầu ký số</h1>
@@ -131,7 +132,7 @@
         <!-- Bottom Navigation Bar -->
         <div
             class="bg-white border-t border-gray-100 px-2 py-2 flex justify-around items-center text-[10px] text-gray-400 font-medium pb-5">
-            <button onclick="window.location.href='index.html'" class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
+            <button onclick="window.location.href=demoHomeUrl()" class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
                 <i class="fa-solid fa-house text-lg"></i>
                 <span>Trang chủ</span>
             </button>
@@ -199,20 +200,48 @@
             </div>
         </div>
 
-        <!-- Demo MST reference note -->
-        <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-44">
-            <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">MST demo</div>
-            <div class="flex flex-col gap-1 text-[11px] font-mono font-bold text-gray-700">
-                <span>0316829871</span>
-                <span>0318999888</span>
-                <span>0317654321</span>
-                <span>0319556677</span>
-                <span>0304567890</span>
+        <div class="flex items-start gap-2">
+            <!-- Demo account switcher: jump between the 4 test CCCD logins -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-56">
+                <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Tài khoản đăng nhập</div>
+                <div class="flex flex-col gap-1">
+                    <a href="../empty/index-empty.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Nguyễn Văn An</span><span class="font-mono text-[9px] opacity-60">012345678910</span></a>
+                    <a href="../empty/index-empty-hung.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Nguyễn Văn Hùng</span><span class="font-mono text-[9px] opacity-60">022303008786</span></a>
+                    <a href="../empty/index-empty-mai.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Hoàng Thị Mai</span><span class="font-mono text-[9px] opacity-60">030987654321</span></a>
+                    <a href="../empty/index-empty-trung.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Lê Quốc Trung</span><span class="font-mono text-[9px] opacity-60">079201004567</span></a>
+                </div>
+            </div>
+
+            <!-- Demo MST reference note -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-44">
+                <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">MST demo</div>
+                <div class="flex flex-col gap-1 text-[11px] font-mono font-bold text-gray-700">
+                    <span>0316829871</span>
+                    <span>0318999888</span>
+                    <span>0317654321</span>
+                    <span>0319556677</span>
+                    <span>0304567890</span>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Scales the whole phone mockup down to fit the viewport (no more manual
+        // browser zoom needed on smaller laptop screens) — purely a visual
+        // transform, so it never affects the mockup's own internal layout.
+        (function () {
+            function fitPhoneToViewport() {
+                var margin = 24;
+                var scaleH = (window.innerHeight - margin) / 812;
+                var scaleW = (window.innerWidth - margin) / 375;
+                var scale = Math.min(1, scaleH, scaleW);
+                document.documentElement.style.setProperty('--phone-scale', scale);
+            }
+            window.addEventListener('resize', fitPhoneToViewport);
+            fitPhoneToViewport();
+        })();
+
         // =========================================================
         // DEMO SCENARIO CONTROL (presenter tool)
         // =========================================================
@@ -221,11 +250,11 @@
         }
 
         function demoHomeUrl() {
-            return getDemoScenario() === 'new' ? 'index-empty.html' : 'index.html';
+            return getDemoScenario() === 'new' ? '../empty/index-empty.html' : '../full/index.html';
         }
 
         function notiUrl() {
-            return getDemoScenario() === 'new' ? 'casID-sign-noti-empty.html' : 'casID-sign-noti.html';
+            return getDemoScenario() === 'new' ? '../empty/casID-sign-noti-empty.html' : '../full/casID-sign-noti.html';
         }
 
         function toggleDemoPanel() {
@@ -244,15 +273,25 @@
 
         function clearDemoDatasets() {
             localStorage.removeItem('casso_user_businesses_v7');
-            localStorage.removeItem('casso_discovered_businesses_v2');
+            Object.keys(localStorage).filter(k => k.startsWith('casso_discovered_businesses_v2')).forEach(k => localStorage.removeItem(k));
             localStorage.removeItem('casso_active_entity');
             Object.keys(localStorage).filter(k => k.startsWith('casso_assets_')).forEach(k => localStorage.removeItem(k));
+            localStorage.removeItem('casso_central_delegations_v10');
+            localStorage.removeItem('casso_business_members_v1');
+            localStorage.removeItem('active_entity');
+            localStorage.removeItem('ca_delegations');
+            localStorage.removeItem('doc_signed_status');
+            localStorage.removeItem('delegated_signed_status');
+            localStorage.removeItem('doc_reject_reason');
+            localStorage.removeItem('delegated_reject_reason');
+            localStorage.removeItem('saved_signature_data_url');
+            Object.keys(localStorage).filter(k => k.startsWith('app_notifications')).forEach(k => localStorage.removeItem(k));
         }
 
         function setDemoScenario(scenario) {
             localStorage.setItem('casso_demo_scenario', scenario);
             clearDemoDatasets();
-            window.location.href = scenario === 'new' ? 'index-empty.html' : 'index.html';
+            window.location.href = scenario === 'new' ? '../empty/index-empty.html' : '../full/index.html';
         }
 
         function resetDemoScenario() {
@@ -263,7 +302,8 @@
         // Mock data representing the signature requests
         // Status keys: 'pending' (Chờ ký), 'completed' (Đã ký), 'rejected' (Từ chối)
         // Order: Pending first (by time desc), then completed/rejected (by time desc)
-        let requestsData = [
+        // A freshly-initialized profile has no sign requests at all.
+        let requestsData = getDemoScenario() === 'new' ? [] : [
             {
                 id: 1,
                 title: "Biên bản đối soát CMC CS - CASSO EKYC",
@@ -333,12 +373,12 @@
             updateFooterNotiBadge();
             // Check dynamic signature state
             const signedStatus = localStorage.getItem('doc_signed_status');
-            if (signedStatus === 'signed') {
+            if (requestsData[0] && signedStatus === 'signed') {
                 // Document 1 has been signed
                 requestsData[0].status = 'completed';
                 requestsData[0].time = "08/07/2025 15:54";
                 requestsData[0].timestamp = new Date().getTime(); // Bring to top of completed section
-            } else if (signedStatus === 'rejected') {
+            } else if (requestsData[0] && signedStatus === 'rejected') {
                 // Document 1 has been rejected
                 requestsData[0].status = 'rejected';
                 requestsData[0].time = "08/07/2025 15:54";
@@ -487,7 +527,7 @@
         }
 
         // Unread count is shared across every screen via `app_notifications`; the actual
-        // default mock data is owned by casID-sign-noti.html, so before that screen has ever
+        // default mock data is owned by ../full/casID-sign-noti.html, so before that screen has ever
         // been visited we just fall back to the count it would seed (0 for a fresh profile).
         function getNotiUnreadCount() {
             try {
@@ -507,8 +547,10 @@
 
         function resetDemoStatus() {
             localStorage.removeItem('doc_signed_status');
-            requestsData[0].status = 'pending';
-            requestsData[0].time = "10/07/2026 09:42";
+            if (requestsData[0]) {
+                requestsData[0].status = 'pending';
+                requestsData[0].time = "10/07/2026 09:42";
+            }
 
             showResetToast();
             renderRequests();

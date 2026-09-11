@@ -35,6 +35,7 @@
         .phone-container {
             width: 375px;
             height: 812px;
+            zoom: var(--phone-scale, 1);
         }
 
         .scrollbar-none::-webkit-scrollbar {
@@ -129,10 +130,9 @@
             <!-- ========================================== -->
             <div id="view-list" class="p-3 flex flex-col gap-2.5">
 
-                <!-- Prominent Entity Selector Pills (with Active Delegation Count Badges) -->
-                <div id="entity-tabs-container" class="flex gap-2 overflow-x-auto scrollbar-none py-1">
-                    <!-- Populated dynamically via JS -->
-                </div>
+                <!-- Entity selector removed: businesses now manage access via "Thành viên"
+                     (casID-business-list.html) instead — this screen is personal-only,
+                     always showing delegations from yourself to other individuals. -->
 
                 <!-- Delegation Cards List Container -->
                 <div id="delegation-list-container" class="flex flex-col gap-2.5 mt-1">
@@ -461,7 +461,7 @@
         <!-- ========================================== -->
         <div
             class="bg-white border-t border-gray-100 px-2 py-2 flex justify-around items-center text-[10px] text-gray-400 font-medium pb-5 z-10 shrink-0">
-            <button onclick="window.location.href='index.html'"
+            <button onclick="window.location.href=demoHomeUrl()"
                 class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
                 <i class="fa-solid fa-house text-base"></i>
                 <span>Trang chủ</span>
@@ -532,15 +532,28 @@
             </div>
         </div>
 
-        <!-- Demo MST reference note -->
-        <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-44">
-            <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">MST demo</div>
-            <div class="flex flex-col gap-1 text-[11px] font-mono font-bold text-gray-700">
-                <span>0316829871</span>
-                <span>0318999888</span>
-                <span>0317654321</span>
-                <span>0319556677</span>
-                <span>0304567890</span>
+        <div class="flex items-start gap-2">
+            <!-- Demo account switcher: jump between the 4 test CCCD logins -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-56">
+                <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Tài khoản đăng nhập</div>
+                <div class="flex flex-col gap-1">
+                    <a href="../empty/index-empty.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Nguyễn Văn An</span><span class="font-mono text-[9px] opacity-60">012345678910</span></a>
+                    <a href="../empty/index-empty-hung.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Nguyễn Văn Hùng</span><span class="font-mono text-[9px] opacity-60">022303008786</span></a>
+                    <a href="../empty/index-empty-mai.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Hoàng Thị Mai</span><span class="font-mono text-[9px] opacity-60">030987654321</span></a>
+                    <a href="../empty/index-empty-trung.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Lê Quốc Trung</span><span class="font-mono text-[9px] opacity-60">079201004567</span></a>
+                </div>
+            </div>
+
+            <!-- Demo MST reference note -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-44">
+                <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">MST demo</div>
+                <div class="flex flex-col gap-1 text-[11px] font-mono font-bold text-gray-700">
+                    <span>0316829871</span>
+                    <span>0318999888</span>
+                    <span>0317654321</span>
+                    <span>0319556677</span>
+                    <span>0304567890</span>
+                </div>
             </div>
         </div>
     </div>
@@ -549,6 +562,21 @@
     <!-- JAVASCRIPT LOGIC -->
     <!-- ========================================== -->
     <script>
+        // Scales the whole phone mockup down to fit the viewport (no more manual
+        // browser zoom needed on smaller laptop screens) — purely a visual
+        // transform, so it never affects the mockup's own internal layout.
+        (function () {
+            function fitPhoneToViewport() {
+                var margin = 24;
+                var scaleH = (window.innerHeight - margin) / 812;
+                var scaleW = (window.innerWidth - margin) / 375;
+                var scale = Math.min(1, scaleH, scaleW);
+                document.documentElement.style.setProperty('--phone-scale', scale);
+            }
+            window.addEventListener('resize', fitPhoneToViewport);
+            fitPhoneToViewport();
+        })();
+
         // =========================================================
         // DEMO SCENARIO CONTROL (presenter tool)
         // =========================================================
@@ -557,11 +585,11 @@
         }
 
         function demoHomeUrl() {
-            return getDemoScenario() === 'new' ? 'index-empty.html' : 'index.html';
+            return getDemoScenario() === 'new' ? '../empty/index-empty.html' : '../full/index.html';
         }
 
         function notiUrl() {
-            return getDemoScenario() === 'new' ? 'casID-sign-noti-empty.html' : 'casID-sign-noti.html';
+            return getDemoScenario() === 'new' ? '../empty/casID-sign-noti-empty.html' : '../full/casID-sign-noti.html';
         }
 
         function toggleDemoPanel() {
@@ -580,15 +608,25 @@
 
         function clearDemoDatasets() {
             localStorage.removeItem('casso_user_businesses_v7');
-            localStorage.removeItem('casso_discovered_businesses_v2');
+            Object.keys(localStorage).filter(k => k.startsWith('casso_discovered_businesses_v2')).forEach(k => localStorage.removeItem(k));
             localStorage.removeItem('casso_active_entity');
             Object.keys(localStorage).filter(k => k.startsWith('casso_assets_')).forEach(k => localStorage.removeItem(k));
+            localStorage.removeItem('casso_central_delegations_v10');
+            localStorage.removeItem('casso_business_members_v1');
+            localStorage.removeItem('active_entity');
+            localStorage.removeItem('ca_delegations');
+            localStorage.removeItem('doc_signed_status');
+            localStorage.removeItem('delegated_signed_status');
+            localStorage.removeItem('doc_reject_reason');
+            localStorage.removeItem('delegated_reject_reason');
+            localStorage.removeItem('saved_signature_data_url');
+            Object.keys(localStorage).filter(k => k.startsWith('app_notifications')).forEach(k => localStorage.removeItem(k));
         }
 
         function setDemoScenario(scenario) {
             localStorage.setItem('casso_demo_scenario', scenario);
             clearDemoDatasets();
-            window.location.href = scenario === 'new' ? 'index-empty.html' : 'index.html';
+            window.location.href = scenario === 'new' ? '../empty/index-empty.html' : '../full/index.html';
         }
 
         function resetDemoScenario() {
@@ -653,7 +691,7 @@
             if (opt.id === 'vcb') {
                 return `
                     <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
-                        <img src="assets/vcb.png" alt="Vietcombank" class="w-full h-full object-contain rounded-full">
+                        <img src="../assets/vcb.png" alt="Vietcombank" class="w-full h-full object-contain rounded-full">
                     </div>
                 `;
             }
@@ -662,7 +700,7 @@
             if (opt.id === 'tcb') {
                 return `
                     <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
-                        <img src="assets/tcb.png" alt="Techcombank" class="w-full h-full object-contain rounded-full">
+                        <img src="../assets/tcb.png" alt="Techcombank" class="w-full h-full object-contain rounded-full">
                     </div>
                 `;
             }
@@ -671,7 +709,7 @@
             if (opt.id === 'mb') {
                 return `
                     <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
-                        <img src="assets/mb.png" alt="MB" class="w-full h-full object-contain rounded-full">
+                        <img src="../assets/mb.png" alt="MB" class="w-full h-full object-contain rounded-full">
                     </div>
                 `;
             }
@@ -680,7 +718,7 @@
             if (opt.id === 'acb') {
                 return `
                     <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
-                        <img src="assets/acb.png" alt="ACB" class="w-full h-full object-contain rounded-full">
+                        <img src="../assets/acb.png" alt="ACB" class="w-full h-full object-contain rounded-full">
                     </div>
                 `;
             }
@@ -689,7 +727,7 @@
             if (opt.id === 'hilo_ca' || opt.id === 'hilo_inv' || opt.logoType === 'hilo' || (opt.id && opt.id.includes('hilo'))) {
                 return `
                     <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
-                        <img src="assets/hilo.png" alt="HILO" class="w-full h-full object-contain rounded-full">
+                        <img src="../assets/hilo.png" alt="HILO" class="w-full h-full object-contain rounded-full">
                     </div>
                 `;
             }
@@ -698,7 +736,7 @@
             if (opt.id === 'xinvoice' || opt.logoType === 'xinvoice') {
                 return `
                     <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
-                        <img src="assets/xinvoice.png" alt="xInvoice" class="w-full h-full object-contain rounded-full">
+                        <img src="../assets/xinvoice.png" alt="xInvoice" class="w-full h-full object-contain rounded-full">
                     </div>
                 `;
             }
@@ -707,7 +745,7 @@
             if (opt.id === 'cas_cert' || opt.logoType === 'cas_cert') {
                 return `
                     <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
-                        <img src="assets/cas_cert.png" alt="CAS CERT" class="w-full h-full object-contain rounded-full">
+                        <img src="../assets/cas_cert.png" alt="CAS CERT" class="w-full h-full object-contain rounded-full">
                     </div>
                 `;
             }
@@ -716,7 +754,7 @@
             if (opt.id === 'id_login' || opt.logoType === 'casid' || opt.id === 'casid' || opt.id === 'casso') {
                 return `
                     <div class="${sizeClass} rounded-full bg-white flex items-center justify-center p-0.5 border border-gray-200 shadow-xs overflow-hidden shrink-0">
-                        <img src="assets/casso.png" alt="Casso Account" class="w-full h-full object-contain rounded-full">
+                        <img src="../assets/casso.png" alt="Casso Account" class="w-full h-full object-contain rounded-full">
                     </div>
                 `;
             }
@@ -742,6 +780,13 @@
             const stored = localStorage.getItem('casso_central_delegations_v10');
             if (stored) {
                 try { return JSON.parse(stored); } catch (e) { }
+            }
+
+            // A freshly-initialized profile has no delegations yet — only the "Hồ sơ đầy
+            // đủ" demo scenario gets the rich mock dataset below.
+            if (getDemoScenario() === 'new') {
+                localStorage.setItem('casso_central_delegations_v10', JSON.stringify([]));
+                return [];
             }
 
             const initialList = [
@@ -1120,6 +1165,7 @@
         // STATE VARIABLES
         let delegationsList = [];
         let currentFilterEntity = 'personal'; // Default selected entity: Nguyễn Văn An
+        let currentView = 'list'; // 'list' | 'form' | 'received-detail'
         let selectedReceivedId = null;
         let isFormViewActive = false;
         let editingDelegationId = null;
@@ -1130,7 +1176,6 @@
         window.onload = function () {
             delegationsList = initializeDelegationsData();
             updateLiveTime();
-            renderEntityTabs();
             renderDelegationList();
 
             setupDefaultDates();
@@ -1140,7 +1185,7 @@
         };
 
         // Unread count is shared across every screen via `app_notifications`; the actual
-        // default mock data is owned by casID-sign-noti.html, so before that screen has ever
+        // default mock data is owned by ../full/casID-sign-noti.html, so before that screen has ever
         // been visited we just fall back to the count it would seed (0 for a fresh profile).
         function getNotiUnreadCount() {
             try {
@@ -1855,7 +1900,7 @@
             if (currentView === 'received-detail' || currentView === 'form' || isFormViewActive) {
                 showListView();
             } else {
-                window.location.href = 'index.html';
+                window.location.href = demoHomeUrl();
             }
         }
 

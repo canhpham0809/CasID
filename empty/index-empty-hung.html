@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang chủ (Mới khởi tạo) - Casso ID</title>
+    <title>Trang chủ (Nguyễn Văn Hùng) - Casso ID</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link
         href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Outfit:wght@600;700;800;900&display=swap"
@@ -35,6 +35,7 @@
         .phone-container {
             width: 375px;
             height: 812px;
+            zoom: var(--phone-scale, 1);
         }
 
         .scrollbar-none::-webkit-scrollbar {
@@ -95,9 +96,9 @@
                     class="flex items-center gap-2 bg-black text-white px-3.5 py-1.5 rounded-full shrink-0 shadow-sm border border-black cursor-pointer transition-all">
                     <div
                         class="w-5 h-5 rounded-full bg-white text-black text-[9px] font-black flex items-center justify-center shrink-0">
-                        NA
+                        VH
                     </div>
-                    <span class="text-[10px] font-bold tracking-wider leading-none">NGUYỄN VĂN AN</span>
+                    <span class="text-[10px] font-bold tracking-wider leading-none">NGUYỄN VĂN HÙNG</span>
                 </div>
             </div>
 
@@ -114,10 +115,10 @@
                     <div class="flex flex-col gap-1">
                         <h2 id="card-user-name"
                             class="text-[17px] font-black text-gray-900 tracking-tight leading-snug">
-                            NGUYỄN VĂN AN
+                            NGUYỄN VĂN HÙNG
                         </h2>
                         <span id="card-user-subtitle" class="text-[10.5px] text-gray-400 font-medium">CCCD:
-                            056099004785
+                            022303008786
                         </span>
                     </div>
 
@@ -223,7 +224,7 @@
                 </div>
 
                 <!-- Business verification prompt: shows the CCCD-matched businesses waiting to be confirmed -->
-                <div id="dc-business-prompt" onclick="window.location.href='casID-business-list.html'"
+                <div id="dc-business-prompt" onclick="window.location.href='casID-sign-noti-empty.html?cccd=022303008786'"
                     class="bg-emerald-50 border border-emerald-100 rounded-2xl p-3 flex items-center justify-between gap-2 cursor-pointer hover:bg-emerald-100/60 transition-all active:scale-[0.99]">
                     <div class="flex items-center gap-2.5">
                         <div
@@ -232,9 +233,8 @@
                         </div>
                         <div class="flex flex-col">
                             <span id="dc-business-prompt-title"
-                                class="text-[11.5px] font-bold text-emerald-900 leading-tight"> Có 2
-                                doanh nghiệp khớp CCCD của bạn</span>
-                            <span class="text-[9.5px] text-emerald-600">Nhấn để xác thực ngay</span>
+                                class="text-[11.5px] font-bold text-emerald-900 leading-tight">Bạn được mời tham gia 1 doanh nghiệp</span>
+                            <span id="dc-business-prompt-subtitle" class="text-[9.5px] text-emerald-600">Nhấn để xác nhận ngay</span>
                         </div>
                     </div>
                     <i class="fa-solid fa-chevron-right text-emerald-500 text-xs"></i>
@@ -244,7 +244,7 @@
             <!-- Promo Banner Carousel: QUÀ TẶNG MIỄN PHÍ CAS CERT -->
             <div class="mt-5 flex gap-2.5 overflow-x-auto scrollbar-none">
                 <!-- Slide 1: QUÀ TẶNG MIỄN PHÍ CAS CERT -->
-                <div onclick="window.location.href='casID-sign-ca.html'"
+                <div onclick="window.location.href='../shared/casID-sign-ca.html'"
                     class="bg-gradient-to-r from-[#1d4ed8] via-[#4338ca] to-[#6366f1] text-white rounded-2xl p-3.5 shadow-md flex flex-col justify-between min-w-[305px] flex-1 cursor-pointer hover:opacity-95 active:scale-[0.99] transition-all relative overflow-hidden">
                     <div class="flex items-center justify-between">
                         <span class="text-[10px] font-black tracking-wider uppercase text-white">QUÀ TẶNG MIỄN
@@ -296,7 +296,7 @@
                 <i class="fa-solid fa-house text-base text-black"></i>
                 <span class="font-bold">Trang chủ</span>
             </button>
-            <button onclick="window.location.href='casID-business-list.html'"
+            <button onclick="window.location.href='../shared/casID-business-list.html?cccd=022303008786'"
                 class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700 relative">
                 <div class="relative">
                     <i class="fa-solid fa-building text-base"></i>
@@ -305,15 +305,17 @@
                 </div>
                 <span>Doanh nghiệp</span>
             </button>
-            <button onclick="window.location.href='casID-sign-delegation.html'"
+            <button onclick="window.location.href='../shared/casID-sign-delegation.html'"
                 class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
                 <i class="fa-solid fa-qrcode text-base"></i>
                 <span>Ủy quyền</span>
             </button>
-            <button onclick="window.location.href='casID-sign-noti-empty.html'"
+            <button onclick="window.location.href='casID-sign-noti-empty.html?cccd=022303008786'"
                 class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700 relative">
                 <div class="relative">
                     <i class="fa-solid fa-bell text-base"></i>
+                    <span id="footer-noti-badge"
+                        class="absolute -top-1.5 -right-2 min-w-[15px] h-[15px] px-1 bg-red-500 text-white text-[8.5px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-xs hidden">0</span>
                 </div>
                 <span>Thông báo</span>
             </button>
@@ -363,31 +365,78 @@
             </div>
         </div>
 
-        <!-- Demo MST reference note -->
-        <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-44">
-            <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">MST demo</div>
-            <div class="flex flex-col gap-1 text-[11px] font-mono font-bold text-gray-700">
-                <span>0316829871</span>
-                <span>0318999888</span>
-                <span>0317654321</span>
-                <span>0319556677</span>
-                <span>0304567890</span>
+        <div class="flex items-start gap-2">
+            <!-- Demo account switcher: jump between the 4 test CCCD logins -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-56">
+                <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Tài khoản đăng nhập</div>
+                <div class="flex flex-col gap-1">
+                    <a href="index-empty.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Nguyễn Văn An</span><span class="font-mono text-[9px] opacity-60">012345678910</span></a>
+                    <a href="index-empty-hung.html" class="flex items-center justify-between gap-2 font-bold bg-gray-900 text-white px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Nguyễn Văn Hùng</span><span class="font-mono text-[9px] opacity-60">022303008786</span></a>
+                    <a href="index-empty-mai.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Hoàng Thị Mai</span><span class="font-mono text-[9px] opacity-60">030987654321</span></a>
+                    <a href="index-empty-trung.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Lê Quốc Trung</span><span class="font-mono text-[9px] opacity-60">079201004567</span></a>
+                </div>
+            </div>
+
+            <!-- Demo MST reference note -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-44">
+                <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">MST demo</div>
+                <div class="flex flex-col gap-1 text-[11px] font-mono font-bold text-gray-700">
+                    <span>0316829871</span>
+                    <span>0318999888</span>
+                    <span>0317654321</span>
+                    <span>0319556677</span>
+                    <span>0304567890</span>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- SCRIPT -->
     <script>
+        // Scales the whole phone mockup down to fit the viewport (no more manual
+        // browser zoom needed on smaller laptop screens) — purely a visual
+        // transform, so it never affects the mockup's own internal layout.
+        (function () {
+            function fitPhoneToViewport() {
+                var margin = 24;
+                var scaleH = (window.innerHeight - margin) / 812;
+                var scaleW = (window.innerWidth - margin) / 375;
+                var scale = Math.min(1, scaleH, scaleW);
+                document.documentElement.style.setProperty('--phone-scale', scale);
+            }
+            window.addEventListener('resize', fitPhoneToViewport);
+            fitPhoneToViewport();
+        })();
+
         window.onload = function () {
             // Landing on this screen at all IS the "new" scenario — keep the flag in sync so
-            // casID-asset-list.html / casID-business-list.html seed empty data, not the full demo set.
+            // ../shared/casID-asset-list.html / ../shared/casID-business-list.html seed empty data, not the full demo set.
             localStorage.setItem('casso_demo_scenario', 'new');
             updateLiveTime();
             renderDemoPanel();
             renderBusinessPrompt();
             renderProfileBadges();
+            updateFooterNotiBadge();
             selectDefaultHomeEntity(); // also renders the Trung tâm dữ liệu cards + score for that entity
         };
+
+        // Unread count for THIS CCCD's own notification inbox (member-invite notices,
+        // scoped per-account — see casID-business-list.html's pushMemberInviteNotification).
+        function getNotiUnreadCount() {
+            try {
+                const stored = localStorage.getItem('app_notifications__' + PERSONAL_CCCD);
+                if (stored) return JSON.parse(stored).filter(n => !n.read).length;
+            } catch (e) { }
+            return 0;
+        }
+
+        function updateFooterNotiBadge() {
+            const badge = document.getElementById('footer-noti-badge');
+            if (!badge) return;
+            const count = getNotiUnreadCount();
+            badge.textContent = String(count);
+            badge.classList.toggle('hidden', count === 0);
+        }
 
         function updateLiveTime() {
             const timeEl = document.getElementById('current-time');
@@ -405,7 +454,7 @@
 
         // =========================================================
         // DATA CENTER: cards read their connected entries from the shared
-        // asset lists (casID-asset-list.html owns adding/removing entries).
+        // asset lists (../shared/casID-asset-list.html owns adding/removing entries).
         // This screen only ever represents the "Hồ sơ mới khởi tạo" scenario,
         // so an unseeded list simply means zero — no full-demo fallback here.
         // =========================================================
@@ -428,10 +477,13 @@
             invoice: { label: 'Hóa đơn điện tử', icon: 'fa-file-invoice' }
         };
 
-        // A business still awaiting GPKD approval can't add any assets yet
+        // A business still awaiting GPKD approval can't add any assets yet; a member
+        // who hasn't confirmed the invite yet, or lacks the specific permission, is
+        // also blocked.
         function navigateToAssetType(type) {
             if (currentEntityStatus === 'pending') return;
-            window.location.href = 'casID-asset-list.html?type=' + type;
+            if (!hasAssetPermission(type)) return;
+            window.location.href = '../shared/casID-asset-list.html?type=' + type;
         }
 
         const DC_CARD_BASE_CLS = "bg-white rounded-2xl p-3 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]";
@@ -439,22 +491,88 @@
 
         // Yêu cầu ký số / Ủy quyền are also locked while a business is pending approval
         const FEATURE_CARD_CONFIG = {
-            signreq: { label: 'Yêu cầu ký số', icon: 'fa-file-signature', url: 'casID-sign-request.html' },
-            delegation: { label: 'Ủy quyền', icon: 'fa-user-group', url: 'casID-sign-delegation.html' }
+            signreq: { label: 'Yêu cầu ký số', icon: 'fa-file-signature', url: '../shared/casID-sign-request.html' },
+            delegation: { label: 'Ủy quyền', icon: 'fa-user-group', url: '../shared/casID-sign-delegation.html' }
         };
+
+        // A business profile manages access via members (Giám đốc + phân quyền) instead
+        // of the personal "Ủy quyền" flow — same grid slot, different destination.
+        function getDelegationCardConfig() {
+            if (currentHomeEntity && currentHomeEntity !== 'personal') {
+                return {
+                    label: 'Thành viên',
+                    icon: 'fa-users',
+                    url: '../shared/casID-business-list.html?view=members&bizId=' + encodeURIComponent(currentHomeEntity) + '&cccd=022303008786'
+                };
+            }
+            return FEATURE_CARD_CONFIG.delegation;
+        }
 
         function navigateToFeature(key) {
             if (currentEntityStatus === 'pending') return;
-            window.location.href = FEATURE_CARD_CONFIG[key].url;
+            if (!hasFeaturePermission(key)) return;
+            const cfg = key === 'delegation' ? getDelegationCardConfig() : FEATURE_CARD_CONFIG[key];
+            window.location.href = cfg.url;
+        }
+
+        // Reads the same member list ../shared/casID-business-list.html manages, so the "Thành viên"
+        // tile can preview who has access — same visual pattern as the asset cards' avatars.
+        function getMemberAvatarsForBiz(bizId) {
+            try {
+                const stored = localStorage.getItem('casso_business_members_v1');
+                if (stored) {
+                    const map = JSON.parse(stored);
+                    if (map[bizId] !== undefined) {
+                        // Only members who actually confirmed the invite show up here —
+                        // "Chờ xác nhận" and "Từ chối" stay invisible on this preview.
+                        return map[bizId].filter(m => m.status === 'joined');
+                    }
+                }
+            } catch (e) { }
+            // Not seeded yet — a verified business always starts with its director as the
+            // first member (lazily seeded the first time the member screen itself is opened).
+            return [{ avatar: 'NA', name: 'NGUYỄN VĂN AN' }];
+        }
+
+        function memberCardAvatarInitial(m) {
+            if (m.avatar) return m.avatar;
+            const trimmed = (m.name || '').trim();
+            return trimmed ? trimmed.split(/\s+/).pop().charAt(0).toUpperCase() : '?';
         }
 
         function renderFeatureCards() {
             Object.keys(FEATURE_CARD_CONFIG).forEach(key => {
                 const card = document.getElementById('dc-card-' + key);
                 if (!card) return;
-                const cfg = FEATURE_CARD_CONFIG[key];
-                const locked = currentEntityStatus === 'pending';
+                const cfg = key === 'delegation' ? getDelegationCardConfig() : FEATURE_CARD_CONFIG[key];
+                const locked = currentEntityStatus === 'pending' || !hasFeaturePermission(key);
                 card.className = locked ? DC_CARD_LOCKED_CLS : DC_CARD_BASE_CLS;
+
+                // Business context: preview member avatars instead of a generic icon
+                if (key === 'delegation' && currentHomeEntity !== 'personal' && !locked) {
+                    const members = getMemberAvatarsForBiz(currentHomeEntity);
+                    const shown = members.slice(0, 2);
+                    const remaining = members.length - shown.length;
+                    card.innerHTML = `
+                        <div class="flex items-center -space-x-2.5 shrink-0 py-0.5">
+                            ${shown.map(m => `
+                                <div class="w-8 h-8 rounded-full bg-gray-900 text-white flex items-center justify-center text-[9.5px] font-black border-2 border-white shadow-xs shrink-0">
+                                    ${memberCardAvatarInitial(m)}
+                                </div>
+                            `).join('')}
+                            ${remaining > 0 ? `
+                                <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-700 font-bold text-[10px] flex items-center justify-center border-2 border-white shadow-xs shrink-0">
+                                    +${remaining}
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[10.5px] font-bold text-gray-900 leading-tight whitespace-nowrap">${cfg.label}</span>
+                        </div>
+                    `;
+                    return;
+                }
+
                 card.innerHTML = `
                     <div class="flex items-center shrink-0 py-0.5">
                         <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200 text-gray-400 shadow-xs shrink-0">
@@ -477,8 +595,9 @@
                 if (!card) return;
                 const cfg = ASSET_CARD_CONFIG[type];
 
-                // A business still pending GPKD approval can't hold any assets yet
-                if (currentEntityStatus === 'pending') {
+                // A business still pending GPKD approval can't hold any assets yet;
+                // for a member, "pending" also covers not-yet-joined and missing permission.
+                if (currentEntityStatus === 'pending' || !hasAssetPermission(type)) {
                     card.className = cardLockedCls;
                     card.innerHTML = `
                         <div class="flex items-center shrink-0 py-0.5">
@@ -576,7 +695,7 @@
         // right after the personal pill; clicking one switches the
         // identity card over to that business
         // =========================================================
-        const PERSONAL_CCCD = '012345678910';
+        const PERSONAL_CCCD = '022303008786';
 
         function maskId(id, keep = 4) {
             return (id || '').toString().slice(0, keep) + 'xxx';
@@ -590,16 +709,44 @@
         let currentHomeEntity = 'personal';
         let currentEntityStatus = 'active'; // 'active' | 'pending' — pending businesses can't hold assets yet
 
-        // Verified businesses appear as a normal profile; pending ones (still awaiting GPKD
-        // approval) also get a pill, but land in a locked, read-only state when selected.
+        // This identity is a MEMBER of businesses (added by their director) rather
+        // than an owner — only businesses this CCCD actually belongs to show up here,
+        // whether or not they've confirmed the invite yet (a not-yet-joined membership
+        // still shows a locked pill, per the "Chờ tham gia" state).
         function getSelectableBusinesses() {
+            const result = [];
             try {
-                const stored = localStorage.getItem('casso_user_businesses_v7');
-                if (!stored) return [];
-                return JSON.parse(stored).filter(b => b.status === 'verified' || b.status === 'pending');
-            } catch (e) {
-                return [];
-            }
+                const membersMap = JSON.parse(localStorage.getItem('casso_business_members_v1') || '{}');
+                const businesses = JSON.parse(localStorage.getItem('casso_user_businesses_v7') || '[]');
+                Object.keys(membersMap).forEach(bizId => {
+                    const member = (membersMap[bizId] || []).find(m => m.cccd === PERSONAL_CCCD);
+                    // A not-yet-confirmed (or rejected) membership never shows a profile pill —
+                    // only "Đã tham gia" businesses get one, per the invite-confirmation flow.
+                    if (!member || member.status !== 'joined') return;
+                    const biz = businesses.find(b => b.id === bizId);
+                    if (!biz) return;
+                    result.push({ ...biz, memberStatus: member.status, memberPermissions: member.permissions });
+                });
+            } catch (e) { }
+            return result;
+        }
+
+        // Businesses this CCCD has been invited to but hasn't confirmed yet — surfaced
+        // only through the "Bạn được mời tham gia..." banner + the notification bell.
+        function getPendingInvitesForCccd(cccd) {
+            const result = [];
+            try {
+                const membersMap = JSON.parse(localStorage.getItem('casso_business_members_v1') || '{}');
+                const businesses = JSON.parse(localStorage.getItem('casso_user_businesses_v7') || '[]');
+                Object.keys(membersMap).forEach(bizId => {
+                    const member = (membersMap[bizId] || []).find(m => m.cccd === cccd);
+                    if (!member || member.status !== 'pending') return;
+                    const biz = businesses.find(b => b.id === bizId);
+                    if (!biz) return;
+                    result.push(biz);
+                });
+            } catch (e) { }
+            return result;
         }
 
         // Legal-entity prefixes to strip off when a business has no curated shortName
@@ -630,7 +777,7 @@
             const businesses = getSelectableBusinesses();
 
             container.innerHTML = businesses.map(biz => {
-                const isPending = biz.status === 'pending';
+                const isPending = biz.memberStatus !== 'joined';
                 const idleCls = isPending
                     ? "flex items-center gap-2 bg-amber-50 text-amber-700 border border-amber-200 px-3.5 py-1.5 rounded-full shrink-0 shadow-sm cursor-pointer hover:bg-amber-100 transition-all"
                     : PILL_IDLE;
@@ -654,7 +801,7 @@
         }
 
         // Selects whichever business most recently finished verification (set by
-        // casID-business-list.html), or falls back to personal if none/expired.
+        // ../shared/casID-business-list.html), or falls back to personal if none/expired.
         function selectDefaultHomeEntity() {
             const activeId = localStorage.getItem('casso_active_entity');
             const businesses = getSelectableBusinesses();
@@ -666,11 +813,40 @@
         }
 
         // Corner ribbon on the identity card — makes personal vs. business (vs. pending) unmistakable at a glance
+        let currentMemberPermissions = null;
+
+        // Per-asset-type permission check for a member (not the business owner) —
+        // the personal profile is always fully accessible; a business profile is
+        // gated by whatever the director granted this CCCD.
+        function hasAssetPermission(type) {
+            if (currentHomeEntity === 'personal') return true;
+            const p = currentMemberPermissions;
+            if (!p) return false;
+            if (p.full) return true;
+            if (type === 'bank') return !!(p.bank && (p.bank.register || p.bank.suspend || p.bank.grant));
+            if (type === 'ca') return !!(p.ca && (p.ca.register || p.ca.sign));
+            if (type === 'invoice') return !!(p.invoice && (p.invoice.register || p.invoice.grant));
+            return false;
+        }
+
+        // "Thành viên" (roster) is always viewable — only "Yêu cầu ký số" is gated
+        // by a specific permission (needs signing rights).
+        function hasFeaturePermission(key) {
+            if (currentHomeEntity === 'personal') return true;
+            if (key !== 'signreq') return true;
+            const p = currentMemberPermissions;
+            if (!p) return false;
+            return !!(p.full || (p.ca && p.ca.sign));
+        }
+
         function updateEntityRibbon(kind) {
             const ribbon = document.getElementById('entity-ribbon');
             if (!ribbon) return;
             const base = 'absolute -right-10 top-4 w-36 h-6 flex items-center justify-center rotate-45 text-white text-[8px] font-black shadow-md tracking-wider';
-            if (kind === 'pending') {
+            if (kind === 'member-pending') {
+                ribbon.textContent = 'CHỜ THAM GIA';
+                ribbon.className = base + ' bg-amber-600';
+            } else if (kind === 'pending') {
                 ribbon.textContent = 'CHỜ DUYỆT';
                 ribbon.className = base + ' bg-amber-600';
             } else if (kind === 'business') {
@@ -684,7 +860,7 @@
 
         function switchHomeEntity(entId) {
             currentHomeEntity = entId;
-            // Persist so casID-asset-list.html (and this screen, on reload) know whose assets to show
+            // Persist so ../shared/casID-asset-list.html (and this screen, on reload) know whose assets to show
             localStorage.setItem('casso_active_entity', entId);
 
             const personalBadge = document.getElementById('badge-personal');
@@ -697,7 +873,7 @@
 
             if (entId === 'personal') {
                 currentEntityStatus = 'active';
-                if (nameEl) nameEl.textContent = 'NGUYỄN VĂN AN';
+                if (nameEl) nameEl.textContent = 'NGUYỄN VĂN HÙNG';
                 if (subtitleEl) subtitleEl.textContent = 'CCCD: ' + (PERSONAL_CCCD);
                 updateEntityRibbon('personal');
                 renderDataCenterCards();
@@ -706,17 +882,18 @@
             }
 
             const biz = getSelectableBusinesses().find(b => b.id === entId);
-            const isPending = biz && biz.status === 'pending';
-            currentEntityStatus = isPending ? 'pending' : 'active';
+            const isJoined = biz && biz.memberStatus === 'joined';
+            currentEntityStatus = isJoined ? 'active' : 'pending';
+            currentMemberPermissions = (biz && isJoined) ? biz.memberPermissions : null;
 
             const activeBadge = document.getElementById('badge-biz-' + entId);
-            if (activeBadge) activeBadge.className = isPending ? PILL_ACTIVE_PENDING : PILL_ACTIVE_BUSINESS;
+            if (activeBadge) activeBadge.className = isJoined ? PILL_ACTIVE_BUSINESS : PILL_ACTIVE_PENDING;
 
             if (biz) {
                 if (nameEl) nameEl.textContent = biz.name;
                 if (subtitleEl) subtitleEl.textContent = 'MST: ' + (biz.mst);
             }
-            updateEntityRibbon(isPending ? 'pending' : 'business');
+            updateEntityRibbon(isJoined ? 'business' : 'member-pending');
             renderDataCenterCards();
             renderIdentityScore();
         }
@@ -728,41 +905,56 @@
         function renderBusinessPrompt() {
             const promptEl = document.getElementById('dc-business-prompt');
             const titleEl = document.getElementById('dc-business-prompt-title');
+            const subtitleEl = document.getElementById('dc-business-prompt-subtitle');
             const badgeEl = document.getElementById('nav-business-badge');
 
-            let discoveredCount = 2;
-            try {
-                const stored = localStorage.getItem('casso_discovered_businesses_v2');
-                if (stored) discoveredCount = JSON.parse(stored).length;
-            } catch (e) { }
-
+            // A member account has no CCCD-match business discovery of its own (that's an
+            // owner-only concept) — the "Doanh nghiệp" bottom-nav menu stays empty; a
+            // pending invite is surfaced only via this banner + the notification bell.
             if (badgeEl) {
-                badgeEl.textContent = String(discoveredCount);
-                badgeEl.classList.toggle('hidden', discoveredCount === 0);
+                badgeEl.textContent = '0';
+                badgeEl.classList.add('hidden');
             }
 
             if (!promptEl || !titleEl) return;
 
-            if (discoveredCount > 0) {
+            const pendingInvites = getPendingInvitesForCccd(PERSONAL_CCCD);
+            if (pendingInvites.length > 0) {
                 promptEl.classList.remove('hidden');
-                titleEl.textContent = `${discoveredCount} doanh nghiệp khớp CCCD của bạn`;
+                promptEl.setAttribute('onclick', "window.location.href='casID-sign-noti-empty.html?cccd=022303008786&open=invite'");
+                titleEl.textContent = `Bạn được mời tham gia ${pendingInvites.length} doanh nghiệp`;
+                if (subtitleEl) subtitleEl.textContent = 'Nhấn để xác nhận ngay';
                 return;
             }
 
-            // No CCCD-matched suggestions — if the business list is also completely empty,
-            // nudge the user toward verifying a business instead of hiding the card entirely.
-            let totalBusinessCount = 0;
+            // Already a confirmed member of at least one business — no need to prompt
+            // for self-verification, this account already has a company to work with.
+            if (getSelectableBusinesses().length > 0) {
+                promptEl.classList.add('hidden');
+                return;
+            }
+
+            // No pending invite waiting — this account can also independently verify
+            // its own business, exactly like Nguyễn Văn An does.
+            if (getOwnedBusinessCount(PERSONAL_CCCD) === 0) {
+                promptEl.classList.remove('hidden');
+                promptEl.setAttribute('onclick', "window.location.href='../shared/casID-business-list.html?cccd=022303008786'");
+                titleEl.textContent = 'Bạn cần xác thực doanh nghiệp';
+                if (subtitleEl) subtitleEl.textContent = 'Nhấn để xác thực ngay';
+                return;
+            }
+
+            promptEl.classList.add('hidden');
+        }
+
+        // "casso_user_businesses_v7" is the global business directory shared by every
+        // account — this counts only the businesses THIS CCCD itself owns/verified.
+        function getOwnedBusinessCount(cccd) {
             try {
                 const stored = localStorage.getItem('casso_user_businesses_v7');
-                if (stored) totalBusinessCount = JSON.parse(stored).length;
+                if (stored) return JSON.parse(stored).filter(b => b.ownerCccd === cccd).length;
             } catch (e) { }
-
-            if (totalBusinessCount === 0) {
-                promptEl.classList.remove('hidden');
-                titleEl.textContent = 'Bạn muốn quản lý tài sản số cho doanh nghiệp';
-            } else {
-                promptEl.classList.add('hidden');
-            }
+            return 0;
         }
         // =========================================================
         // DEMO SCENARIO CONTROL (presenter tool)
@@ -774,7 +966,7 @@
         }
 
         function demoHomeUrl() {
-            return getDemoScenario() === 'new' ? 'index-empty.html' : 'index.html';
+            return getDemoScenario() === 'new' ? 'index-empty.html' : '../full/index.html';
         }
 
         function toggleDemoPanel() {
@@ -793,15 +985,25 @@
 
         function clearDemoDatasets() {
             localStorage.removeItem('casso_user_businesses_v7');
-            localStorage.removeItem('casso_discovered_businesses_v2');
+            Object.keys(localStorage).filter(k => k.startsWith('casso_discovered_businesses_v2')).forEach(k => localStorage.removeItem(k));
             localStorage.removeItem('casso_active_entity');
             Object.keys(localStorage).filter(k => k.startsWith('casso_assets_')).forEach(k => localStorage.removeItem(k));
+            localStorage.removeItem('casso_central_delegations_v10');
+            localStorage.removeItem('casso_business_members_v1');
+            localStorage.removeItem('active_entity');
+            localStorage.removeItem('ca_delegations');
+            localStorage.removeItem('doc_signed_status');
+            localStorage.removeItem('delegated_signed_status');
+            localStorage.removeItem('doc_reject_reason');
+            localStorage.removeItem('delegated_reject_reason');
+            localStorage.removeItem('saved_signature_data_url');
+            Object.keys(localStorage).filter(k => k.startsWith('app_notifications')).forEach(k => localStorage.removeItem(k));
         }
 
         function setDemoScenario(scenario) {
             localStorage.setItem(DEMO_SCENARIO_KEY, scenario);
             clearDemoDatasets();
-            window.location.href = scenario === 'new' ? 'index-empty.html' : 'index.html';
+            window.location.href = scenario === 'new' ? 'index-empty.html' : '../full/index.html';
         }
 
         function resetDemoScenario() {

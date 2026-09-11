@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thông báo (Mới khởi tạo) - Casso ID</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body, input, select, textarea, button, span, p, div, h1, h2, h3, h4, h5, h6, strong, label, input::placeholder, textarea::placeholder {
+            font-family: 'Roboto', sans-serif !important;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            zoom: var(--phone-scale, 1);
+        }
+
+        .scrollbar-none::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-none {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex justify-center items-center min-h-screen p-2 sm:p-4">
+
+    <div class="phone-container bg-white shadow-2xl rounded-[40px] overflow-hidden flex flex-col relative border-[8px] border-black">
+
+        <!-- Status Bar -->
+        <div class="flex justify-between items-center px-6 pt-3 pb-1 text-xs font-bold text-black bg-white z-10 shrink-0">
+            <span id="current-time">15:34</span>
+            <div class="flex items-center gap-1.5">
+                <i class="fa-solid fa-signal text-[10px]"></i>
+                <span class="text-[9px] font-bold mr-0.5">5G</span>
+                <i class="fa-solid fa-battery-three-quarters text-sm"></i>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="px-4 py-3 flex items-center justify-between bg-white border-b border-gray-100 shrink-0">
+            <div class="flex items-center gap-3">
+                <button onclick="handleNotiBack()"
+                    class="w-7 h-7 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-700 text-base transition-colors">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </button>
+                <h1 id="noti-page-title" class="text-[17px] font-black text-gray-900 tracking-tight">Thông báo</h1>
+            </div>
+        </div>
+
+        <!-- VIEW 1: Notification list (empty-state rendered inside when there's nothing) -->
+        <div id="view-noti-list" class="flex-1 overflow-y-auto">
+            <div id="noti-list-container" class="flex flex-col"></div>
+        </div>
+
+        <!-- VIEW 2: Member-invite detail (opened from a "member_invite" notification) -->
+        <div id="view-invite-detail" class="hidden flex-1 overflow-y-auto p-4 flex-col gap-3.5">
+            <div class="bg-white rounded-2xl p-4 border border-gray-150 shadow-xs flex flex-col gap-3.5">
+                <h2 class="text-[12px] font-black text-gray-900 uppercase tracking-wider">Chi tiết yêu cầu</h2>
+                <div class="divide-y divide-gray-100 text-[11.5px]">
+                    <div class="flex justify-between py-2.5">
+                        <span class="text-gray-500 font-medium">Doanh nghiệp</span>
+                        <span id="invite-biz-name" class="font-bold text-gray-900 text-right">--</span>
+                    </div>
+                    <div class="flex justify-between py-2.5">
+                        <span class="text-gray-500 font-medium">Người mời</span>
+                        <span id="invite-invited-by" class="font-bold text-gray-900 text-right">--</span>
+                    </div>
+                    <div class="flex justify-between py-2.5">
+                        <span class="text-gray-500 font-medium">Vai trò được mời</span>
+                        <span id="invite-role" class="font-bold text-gray-900">--</span>
+                    </div>
+                    <div class="flex justify-between py-2.5">
+                        <span class="text-gray-500 font-medium">Quyền được cấp</span>
+                        <span id="invite-permissions" class="font-bold text-gray-900 text-right max-w-[200px]">--</span>
+                    </div>
+                    <div class="flex justify-between py-2.5 items-center">
+                        <span class="text-gray-500 font-medium">Trạng thái</span>
+                        <span id="invite-status-badge" class="font-bold text-[10.5px]">--</span>
+                    </div>
+                </div>
+            </div>
+            <div id="invite-actions-container" class="mt-auto pt-2 pb-4 shrink-0 flex gap-2.5"></div>
+        </div>
+
+        <!-- Bottom Navigation Bar -->
+        <div class="bg-white border-t border-gray-100 px-2 py-2 flex justify-around items-center text-[10px] text-gray-400 font-medium pb-5 shrink-0">
+            <button onclick="window.location.href=resolveHomeUrl()"
+                class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
+                <i class="fa-solid fa-house text-base"></i>
+                <span>Trang chủ</span>
+            </button>
+            <button onclick="window.location.href='../shared/casID-business-list.html?cccd=' + getCurrentCccd()"
+                class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700 relative">
+                <div class="relative">
+                    <i class="fa-solid fa-building text-base"></i>
+                    <span id="nav-business-badge"
+                        class="absolute -top-1.5 -right-2 min-w-[15px] h-[15px] px-1 bg-red-500 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-xs hidden">0</span>
+                </div>
+                <span>Doanh nghiệp</span>
+            </button>
+            <button onclick="window.location.href='../shared/casID-sign-delegation.html'"
+                class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
+                <i class="fa-solid fa-qrcode text-base"></i>
+                <span>Ủy quyền</span>
+            </button>
+            <button class="flex flex-col items-center gap-1 w-16 text-black font-bold">
+                <i class="fa-solid fa-bell text-base text-black"></i>
+                <span>Thông báo</span>
+            </button>
+            <button onclick="showToast('Tính năng Hồ sơ đang phát triển')" class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
+                <i class="fa-solid fa-circle-user text-base"></i>
+                <span>Hồ sơ</span>
+            </button>
+        </div>
+
+        <!-- Custom Toast Banner -->
+        <div id="custom-toast"
+            class="absolute top-12 left-4 right-4 z-50 bg-gray-900/95 backdrop-blur-md text-white rounded-2xl p-3.5 shadow-2xl flex items-center gap-2.5 transform -translate-y-6 opacity-0 transition-all duration-300 pointer-events-none hidden border border-gray-800">
+            <i id="custom-toast-icon" class="text-sm shrink-0 text-amber-400 fa-solid fa-circle-info"></i>
+            <span id="custom-toast-msg" class="text-[11.5px] font-semibold leading-snug"></span>
+        </div>
+
+    </div>
+
+    <!-- Demo Scenario Control (web page tool — lives outside the phone mockup, not part of the product UI) -->
+    <div class="fixed top-4 right-4 z-50 flex items-start gap-2">
+        <div class="relative">
+            <button onclick="toggleDemoPanel()"
+                class="w-10 h-10 rounded-full bg-gray-900 text-white flex items-center justify-center shadow-lg hover:bg-gray-800 active:scale-95 transition-all">
+                <i class="fa-solid fa-sliders text-[13px]"></i>
+            </button>
+            <div id="demo-panel"
+                class="hidden absolute top-12 right-0 w-56 bg-white rounded-xl shadow-xl border border-gray-100 p-2 flex flex-col gap-1">
+                <span class="text-[9px] font-bold text-gray-400 uppercase tracking-wider px-1.5 pt-0.5">Kịch bản
+                    demo</span>
+                <button id="demo-btn-full" onclick="setDemoScenario('full')"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-circle-check text-[10px]"></i>
+                    <span>Hồ sơ đầy đủ</span>
+                </button>
+                <button id="demo-btn-new" onclick="setDemoScenario('new')"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-seedling text-[10px]"></i>
+                    <span>Hồ sơ mới khởi tạo</span>
+                </button>
+                <div class="border-t border-gray-100 my-0.5"></div>
+                <button onclick="resetDemoScenario()"
+                    class="text-left px-2.5 py-2 rounded-lg text-[10.5px] font-semibold text-red-500 hover:bg-red-50 flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-rotate-left text-[10px]"></i>
+                    <span>Reset kịch bản hiện tại</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="flex items-start gap-2">
+            <!-- Demo account switcher: jump between the 4 test CCCD logins -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-56">
+                <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Tài khoản đăng nhập</div>
+                <div class="flex flex-col gap-1">
+                    <a href="../empty/index-empty.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Nguyễn Văn An</span><span class="font-mono text-[9px] opacity-60">012345678910</span></a>
+                    <a href="../empty/index-empty-hung.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Nguyễn Văn Hùng</span><span class="font-mono text-[9px] opacity-60">022303008786</span></a>
+                    <a href="../empty/index-empty-mai.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Hoàng Thị Mai</span><span class="font-mono text-[9px] opacity-60">030987654321</span></a>
+                    <a href="../empty/index-empty-trung.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Lê Quốc Trung</span><span class="font-mono text-[9px] opacity-60">079201004567</span></a>
+                </div>
+            </div>
+
+            <!-- Demo MST reference note -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-44">
+                <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">MST demo</div>
+                <div class="flex flex-col gap-1 text-[11px] font-mono font-bold text-gray-700">
+                    <span>0316829871</span>
+                    <span>0318999888</span>
+                    <span>0317654321</span>
+                    <span>0319556677</span>
+                    <span>0304567890</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Scales the whole phone mockup down to fit the viewport (no more manual
+        // browser zoom needed on smaller laptop screens) — purely a visual
+        // transform, so it never affects the mockup's own internal layout.
+        (function () {
+            function fitPhoneToViewport() {
+                var margin = 24;
+                var scaleH = (window.innerHeight - margin) / 812;
+                var scaleW = (window.innerWidth - margin) / 375;
+                var scale = Math.min(1, scaleH, scaleW);
+                document.documentElement.style.setProperty('--phone-scale', scale);
+            }
+            window.addEventListener('resize', fitPhoneToViewport);
+            fitPhoneToViewport();
+        })();
+
+        // =========================================================
+        // DEMO SCENARIO CONTROL (presenter tool)
+        // =========================================================
+        function getDemoScenario() {
+            return localStorage.getItem('casso_demo_scenario') || 'new';
+        }
+
+        function demoHomeUrl() {
+            return getDemoScenario() === 'new' ? 'index-empty.html' : '../full/index.html';
+        }
+
+        // =========================================================
+        // PER-ACCOUNT (CCCD) NOTIFICATION INBOX
+        // =========================================================
+        // Each of the 4 demo CCCD accounts has its own login home file — this screen
+        // is shared by all of them via ?cccd=, so it must show only that CCCD's own
+        // notifications (never the director's, never another member's).
+        const CCCD_HOME_MAP = {
+            '012345678910': 'index-empty.html',
+            '022303008786': 'index-empty-hung.html',
+            '030987654321': 'index-empty-mai.html',
+            '079201004567': 'index-empty-trung.html'
+        };
+
+        function getCurrentCccd() {
+            return new URLSearchParams(window.location.search).get('cccd') || '012345678910';
+        }
+
+        function resolveHomeUrl() {
+            return CCCD_HOME_MAP[getCurrentCccd()] || demoHomeUrl();
+        }
+
+        function getNotificationsForCccd(cccd) {
+            try {
+                const stored = localStorage.getItem('app_notifications__' + cccd);
+                if (stored) return JSON.parse(stored);
+            } catch (e) { }
+            return [];
+        }
+
+        function saveNotificationsForCccd(cccd, list) {
+            localStorage.setItem('app_notifications__' + cccd, JSON.stringify(list));
+        }
+
+        function toggleDemoPanel() {
+            document.getElementById('demo-panel')?.classList.toggle('hidden');
+        }
+
+        function renderDemoPanel() {
+            const scenario = getDemoScenario();
+            const activeCls = "text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all bg-gray-900 text-white";
+            const idleCls = "text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all text-gray-700 hover:bg-gray-50";
+            const fullBtn = document.getElementById('demo-btn-full');
+            const newBtn = document.getElementById('demo-btn-new');
+            if (fullBtn) fullBtn.className = scenario === 'full' ? activeCls : idleCls;
+            if (newBtn) newBtn.className = scenario === 'new' ? activeCls : idleCls;
+        }
+
+        function clearDemoDatasets() {
+            localStorage.removeItem('casso_user_businesses_v7');
+            Object.keys(localStorage).filter(k => k.startsWith('casso_discovered_businesses_v2')).forEach(k => localStorage.removeItem(k));
+            localStorage.removeItem('casso_active_entity');
+            Object.keys(localStorage).filter(k => k.startsWith('casso_assets_')).forEach(k => localStorage.removeItem(k));
+            localStorage.removeItem('casso_central_delegations_v10');
+            localStorage.removeItem('casso_business_members_v1');
+            localStorage.removeItem('active_entity');
+            localStorage.removeItem('ca_delegations');
+            localStorage.removeItem('doc_signed_status');
+            localStorage.removeItem('delegated_signed_status');
+            localStorage.removeItem('doc_reject_reason');
+            localStorage.removeItem('delegated_reject_reason');
+            localStorage.removeItem('saved_signature_data_url');
+            Object.keys(localStorage).filter(k => k.startsWith('app_notifications')).forEach(k => localStorage.removeItem(k));
+        }
+
+        function setDemoScenario(scenario) {
+            localStorage.setItem('casso_demo_scenario', scenario);
+            clearDemoDatasets();
+            window.location.href = scenario === 'new' ? 'index-empty.html' : '../full/index.html';
+        }
+
+        function resetDemoScenario() {
+            clearDemoDatasets();
+            window.location.reload();
+        }
+
+        let notificationsData = [];
+        let currentInviteNoti = null;
+
+        window.onload = function () {
+            // Landing on this screen at all IS the "new" scenario — keep the flag in sync.
+            localStorage.setItem('casso_demo_scenario', 'new');
+            updateLiveTime();
+            renderBusinessBadge();
+            renderDemoPanel();
+            notificationsData = getNotificationsForCccd(getCurrentCccd());
+            renderNotifications();
+
+            // Deep link from the home screen's "Bạn được mời tham gia..." banner ->
+            // skip the list and go straight into the (first) pending invite's
+            // confirmation screen, exactly as if the user had tapped the notification.
+            if (new URLSearchParams(window.location.search).get('open') === 'invite') {
+                const firstPendingInvite = notificationsData.find(n => n.type === 'member_invite' && n.status === 'pending');
+                if (firstPendingInvite) {
+                    markNotiAsRead(firstPendingInvite.id);
+                    openInviteDetailView(firstPendingInvite);
+                }
+            }
+        };
+
+        function handleNotiBack() {
+            const detailView = document.getElementById('view-invite-detail');
+            if (detailView && !detailView.classList.contains('hidden')) {
+                showNotiListView();
+                return;
+            }
+            window.location.href = resolveHomeUrl();
+        }
+
+        function showNotiListView() {
+            document.getElementById('view-invite-detail')?.classList.add('hidden');
+            document.getElementById('view-noti-list')?.classList.remove('hidden');
+            document.getElementById('noti-page-title').textContent = 'Thông báo';
+            currentInviteNoti = null;
+            renderNotifications();
+        }
+
+        function markNotiAsRead(notiId) {
+            const noti = notificationsData.find(n => n.id === notiId);
+            if (!noti || noti.read) return;
+            noti.read = true;
+            saveNotificationsForCccd(getCurrentCccd(), notificationsData);
+        }
+
+        function renderNotifications() {
+            const container = document.getElementById('noti-list-container');
+            if (!container) return;
+
+            if (notificationsData.length === 0) {
+                container.innerHTML = `
+                    <div class="flex-1 flex flex-col items-center justify-center gap-3 text-gray-400 px-8 py-20">
+                        <div class="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center text-gray-300 text-2xl border border-gray-100 shadow-2xs">
+                            <i class="fa-solid fa-bell-slash"></i>
+                        </div>
+                        <span class="text-[12.5px] font-bold text-gray-500">Bạn chưa có thông báo nào</span>
+                        <span class="text-[10.5px] text-gray-400 text-center leading-snug">Thông báo về ủy quyền, yêu cầu ký số và các hoạt động khác sẽ xuất hiện ở đây</span>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = notificationsData.map(noti => {
+                return `
+                    <div data-noti-id="${noti.id}" onclick="handleNotiItemClick('${noti.id}')"
+                        class="flex items-start gap-3 py-3.5 px-4 cursor-pointer transition-colors border-b border-gray-100 ${noti.read ? 'hover:bg-gray-50' : 'bg-gray-100/70 hover:bg-gray-100'}">
+                        <span class="w-2 h-2 rounded-full shrink-0 mt-1.5 ${noti.read ? 'bg-gray-300' : 'bg-black'}"></span>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="text-[12px] font-bold text-gray-900 leading-snug">${noti.message}</h4>
+                            <p class="text-[9.5px] text-gray-400 font-medium mt-1">${formatNotiTime(noti.createdAt) || noti.time || ''}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function handleNotiItemClick(notiId) {
+            markNotiAsRead(notiId);
+            const noti = notificationsData.find(n => n.id === notiId);
+            if (!noti) return;
+            if (noti.type === 'member_invite') {
+                openInviteDetailView(noti);
+            } else {
+                renderNotifications();
+            }
+        }
+
+        // Same permission-summary logic as casID-business-list.html's permissionSummary(),
+        // applied to the permissions snapshot carried on the notification itself.
+        function inviteePermissionSummary(perm) {
+            if (!perm) return 'Chưa cấp quyền';
+            if (perm.full) return 'Toàn quyền';
+            let count = 0;
+            if (perm.bank?.register) count++;
+            if (perm.bank?.suspend) count++;
+            if (perm.bank?.grant) count++;
+            if (perm.ca?.register) count++;
+            if (perm.ca?.sign) count++;
+            if (perm.invoice?.register) count++;
+            if (perm.invoice?.grant) count++;
+            if (perm.identity?.qr) count++;
+            if (perm.member?.add) count++;
+            if (perm.member?.remove) count++;
+            return count > 0 ? count + ' quyền' : 'Chưa cấp quyền';
+        }
+
+        function openInviteDetailView(noti) {
+            currentInviteNoti = noti;
+            document.getElementById('view-noti-list')?.classList.add('hidden');
+            document.getElementById('view-invite-detail')?.classList.remove('hidden');
+            document.getElementById('noti-page-title').textContent = 'Lời mời tham gia';
+
+            document.getElementById('invite-biz-name').textContent = noti.bizName || '--';
+            document.getElementById('invite-invited-by').textContent = noti.invitedBy || '--';
+            document.getElementById('invite-role').textContent = noti.role || '--';
+            document.getElementById('invite-permissions').textContent = inviteePermissionSummary(noti.permissions);
+
+            const statusEl = document.getElementById('invite-status-badge');
+            if (noti.status === 'joined') {
+                statusEl.className = "font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 text-[10.5px]";
+                statusEl.textContent = "Đã tham gia";
+            } else if (noti.status === 'rejected') {
+                statusEl.className = "font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-200 text-[10.5px]";
+                statusEl.textContent = "Đã từ chối";
+            } else {
+                statusEl.className = "font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 text-[10.5px]";
+                statusEl.textContent = "Chờ xác nhận";
+            }
+
+            const actionsEl = document.getElementById('invite-actions-container');
+            if (noti.status === 'pending') {
+                actionsEl.innerHTML = `
+                    <button onclick="handleRejectMemberInvite()"
+                        class="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-red-600 font-bold text-[12px] rounded-xl transition-all active:scale-[0.98] border border-gray-200">
+                        Từ chối
+                    </button>
+                    <button onclick="handleAcceptMemberInvite()"
+                        class="flex-1 py-3 bg-black hover:bg-gray-900 text-white font-bold text-[12px] rounded-xl transition-all active:scale-[0.98] shadow-sm">
+                        Chấp nhận
+                    </button>
+                `;
+            } else {
+                actionsEl.innerHTML = `
+                    <button onclick="showNotiListView()"
+                        class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-[12px] rounded-xl transition-all">
+                        Quay lại danh sách
+                    </button>
+                `;
+            }
+        }
+
+        // Marks the member "joined" in casso_business_members_v1 and reflects that
+        // back onto the notification itself so re-opening it shows the right state.
+        function handleAcceptMemberInvite() {
+            if (!currentInviteNoti) return;
+            const cccd = getCurrentCccd();
+            try {
+                const map = JSON.parse(localStorage.getItem('casso_business_members_v1') || '{}');
+                const members = map[currentInviteNoti.bizId] || [];
+                const member = members.find(m => m.cccd === cccd);
+                if (member) {
+                    member.status = 'joined';
+                    member.joinedTime = formatCurrentDateTime();
+                    map[currentInviteNoti.bizId] = members;
+                    localStorage.setItem('casso_business_members_v1', JSON.stringify(map));
+                }
+            } catch (e) { }
+
+            currentInviteNoti.status = 'joined';
+            saveNotificationsForCccd(cccd, notificationsData);
+            showToast('Đã xác nhận tham gia doanh nghiệp!', 'fa-solid fa-circle-check text-emerald-400');
+            setTimeout(() => showNotiListView(), 500);
+        }
+
+        // Marks the member "rejected" in casso_business_members_v1 — the director then
+        // sees "Từ chối" on the member-management screen instead of "Chờ xác nhận".
+        function handleRejectMemberInvite() {
+            if (!currentInviteNoti) return;
+            const cccd = getCurrentCccd();
+            try {
+                const map = JSON.parse(localStorage.getItem('casso_business_members_v1') || '{}');
+                const members = map[currentInviteNoti.bizId] || [];
+                const member = members.find(m => m.cccd === cccd);
+                if (member) {
+                    member.status = 'rejected';
+                    map[currentInviteNoti.bizId] = members;
+                    localStorage.setItem('casso_business_members_v1', JSON.stringify(map));
+                }
+            } catch (e) { }
+
+            currentInviteNoti.status = 'rejected';
+            saveNotificationsForCccd(cccd, notificationsData);
+            showToast('Đã từ chối lời mời tham gia', 'fa-solid fa-circle-info text-amber-400');
+            setTimeout(() => showNotiListView(), 400);
+        }
+
+        function updateLiveTime() {
+            const timeEl = document.getElementById('current-time');
+            if (!timeEl) return;
+            const now = new Date();
+            const hrs = String(now.getHours()).padStart(2, '0');
+            const mins = String(now.getMinutes()).padStart(2, '0');
+            timeEl.textContent = `${hrs}:${mins}`;
+        }
+
+        // Full "HH:MM:SS DD/MM/YYYY" stamp, matching the format casID-business-list.html
+        // uses for joinedTime/addedTime/createdTime.
+        function formatCurrentDateTime() {
+            const now = new Date();
+            const hrs = String(now.getHours()).padStart(2, '0');
+            const mins = String(now.getMinutes()).padStart(2, '0');
+            const secs = String(now.getSeconds()).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const year = now.getFullYear();
+            return `${hrs}:${mins}:${secs} ${day}/${month}/${year}`;
+        }
+
+        function formatDateTime(date) {
+            const hrs = String(date.getHours()).padStart(2, '0');
+            const mins = String(date.getMinutes()).padStart(2, '0');
+            const secs = String(date.getSeconds()).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${hrs}:${mins}:${secs} ${day}/${month}/${year}`;
+        }
+
+        // "Vừa xong" / "N phút trước" / "N giờ trước" while recent, then the full
+        // absolute timestamp once a notification is more than 24h old.
+        function formatNotiTime(createdAt) {
+            if (!createdAt) return '';
+            const diffMs = Date.now() - createdAt;
+            const diffMin = Math.floor(diffMs / 60000);
+            if (diffMin < 1) return 'Vừa xong';
+            if (diffMin < 60) return diffMin + ' phút trước';
+            const diffHour = Math.floor(diffMin / 60);
+            if (diffHour < 24) return diffHour + ' giờ trước';
+            return formatDateTime(new Date(createdAt));
+        }
+
+        // The only thing worth flagging from here is businesses still waiting on a CCCD match
+        function renderBusinessBadge() {
+            const badge = document.getElementById('nav-business-badge');
+            if (!badge) return;
+            let count = 0;
+            try {
+                const stored = localStorage.getItem('casso_discovered_businesses_v2__012345678910');
+                if (stored) count = JSON.parse(stored).length;
+            } catch (e) { }
+            badge.textContent = String(count);
+            badge.classList.toggle('hidden', count === 0);
+        }
+
+        function showToast(msg, iconClass = "fa-solid fa-circle-info text-amber-400") {
+            const toast = document.getElementById('custom-toast');
+            const toastMsg = document.getElementById('custom-toast-msg');
+            const toastIcon = document.getElementById('custom-toast-icon');
+            if (!toast || !toastMsg) return;
+            toastMsg.textContent = msg;
+            if (toastIcon) toastIcon.className = iconClass;
+            toast.classList.remove('hidden');
+            toast.offsetHeight;
+            toast.classList.remove('-translate-y-6', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('-translate-y-6', 'opacity-0');
+                setTimeout(() => toast.classList.add('hidden'), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

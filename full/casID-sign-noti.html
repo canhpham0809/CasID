@@ -17,6 +17,7 @@
         .phone-container {
             width: 375px;
             height: 812px;
+            zoom: var(--phone-scale, 1);
         }
 
         .ca-card-dark {
@@ -58,7 +59,7 @@
         <div id="view-noti-list" class="flex-1 flex flex-col overflow-hidden">
             <div class="px-4 py-3 flex items-center justify-between bg-white border-b border-gray-100 shrink-0">
                 <div class="flex items-center gap-3">
-                    <button onclick="window.location.href='index.html'"
+                    <button onclick="window.location.href=demoHomeUrl()"
                         class="w-7 h-7 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-700 text-base transition-colors">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
@@ -71,17 +72,17 @@
 
             <!-- Bottom Navigation Bar -->
             <div class="bg-white border-t border-gray-100 px-2 py-2 flex justify-around items-center text-[10px] text-gray-400 font-medium pb-5 shrink-0">
-                <button onclick="window.location.href='index.html'"
+                <button onclick="window.location.href=demoHomeUrl()"
                     class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
                     <i class="fa-solid fa-house text-base"></i>
                     <span>Trang chủ</span>
                 </button>
-                <button onclick="window.location.href='casID-business-list.html'"
+                <button onclick="window.location.href='../shared/casID-business-list.html'"
                     class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
                     <i class="fa-solid fa-building text-base"></i>
                     <span>Doanh nghiệp</span>
                 </button>
-                <button onclick="window.location.href='casID-sign-delegation.html'"
+                <button onclick="window.location.href='../shared/casID-sign-delegation.html'"
                     class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
                     <i class="fa-solid fa-qrcode text-base"></i>
                     <span>Ủy quyền</span>
@@ -213,21 +214,49 @@
             </div>
         </div>
 
-        <!-- Demo MST reference note -->
-        <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-44">
-            <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">MST demo</div>
-            <div class="flex flex-col gap-1 text-[11px] font-mono font-bold text-gray-700">
-                <span>0316829871</span>
-                <span>0318999888</span>
-                <span>0317654321</span>
-                <span>0319556677</span>
-                <span>0304567890</span>
+        <div class="flex items-start gap-2">
+            <!-- Demo account switcher: jump between the 4 test CCCD logins -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-56">
+                <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Tài khoản đăng nhập</div>
+                <div class="flex flex-col gap-1">
+                    <a href="../empty/index-empty.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Nguyễn Văn An</span><span class="font-mono text-[9px] opacity-60">012345678910</span></a>
+                    <a href="../empty/index-empty-hung.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Nguyễn Văn Hùng</span><span class="font-mono text-[9px] opacity-60">022303008786</span></a>
+                    <a href="../empty/index-empty-mai.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Hoàng Thị Mai</span><span class="font-mono text-[9px] opacity-60">030987654321</span></a>
+                    <a href="../empty/index-empty-trung.html" class="flex items-center justify-between gap-2 font-semibold text-gray-600 hover:bg-gray-50 px-2 py-1.5 rounded-lg text-[10.5px] transition-all"><span>Lê Quốc Trung</span><span class="font-mono text-[9px] opacity-60">079201004567</span></a>
+                </div>
+            </div>
+
+            <!-- Demo MST reference note -->
+            <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-3 w-44">
+                <div class="text-[9px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">MST demo</div>
+                <div class="flex flex-col gap-1 text-[11px] font-mono font-bold text-gray-700">
+                    <span>0316829871</span>
+                    <span>0318999888</span>
+                    <span>0317654321</span>
+                    <span>0319556677</span>
+                    <span>0304567890</span>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- SCRIPT -->
     <script>
+        // Scales the whole phone mockup down to fit the viewport (no more manual
+        // browser zoom needed on smaller laptop screens) — purely a visual
+        // transform, so it never affects the mockup's own internal layout.
+        (function () {
+            function fitPhoneToViewport() {
+                var margin = 24;
+                var scaleH = (window.innerHeight - margin) / 812;
+                var scaleW = (window.innerWidth - margin) / 375;
+                var scale = Math.min(1, scaleH, scaleW);
+                document.documentElement.style.setProperty('--phone-scale', scale);
+            }
+            window.addEventListener('resize', fitPhoneToViewport);
+            fitPhoneToViewport();
+        })();
+
         // =========================================================
         // DEMO SCENARIO CONTROL (presenter tool)
         // =========================================================
@@ -236,7 +265,7 @@
         }
 
         function demoHomeUrl() {
-            return getDemoScenario() === 'new' ? 'index-empty.html' : 'index.html';
+            return getDemoScenario() === 'new' ? '../empty/index-empty.html' : 'index.html';
         }
 
         function toggleDemoPanel() {
@@ -255,15 +284,25 @@
 
         function clearDemoDatasets() {
             localStorage.removeItem('casso_user_businesses_v7');
-            localStorage.removeItem('casso_discovered_businesses_v2');
+            Object.keys(localStorage).filter(k => k.startsWith('casso_discovered_businesses_v2')).forEach(k => localStorage.removeItem(k));
             localStorage.removeItem('casso_active_entity');
             Object.keys(localStorage).filter(k => k.startsWith('casso_assets_')).forEach(k => localStorage.removeItem(k));
+            localStorage.removeItem('casso_central_delegations_v10');
+            localStorage.removeItem('casso_business_members_v1');
+            localStorage.removeItem('active_entity');
+            localStorage.removeItem('ca_delegations');
+            localStorage.removeItem('doc_signed_status');
+            localStorage.removeItem('delegated_signed_status');
+            localStorage.removeItem('doc_reject_reason');
+            localStorage.removeItem('delegated_reject_reason');
+            localStorage.removeItem('saved_signature_data_url');
+            Object.keys(localStorage).filter(k => k.startsWith('app_notifications')).forEach(k => localStorage.removeItem(k));
         }
 
         function setDemoScenario(scenario) {
             localStorage.setItem('casso_demo_scenario', scenario);
             clearDemoDatasets();
-            window.location.href = scenario === 'new' ? 'index-empty.html' : 'index.html';
+            window.location.href = scenario === 'new' ? '../empty/index-empty.html' : 'index.html';
         }
 
         function resetDemoScenario() {
@@ -387,6 +426,35 @@
             timeEl.textContent = `${hrs}:${mins}`;
         }
 
+        // Full "HH:MM:SS DD/MM/YYYY" stamp, used once a notification is more than a day old.
+        function formatDateTime(date) {
+            const hrs = String(date.getHours()).padStart(2, '0');
+            const mins = String(date.getMinutes()).padStart(2, '0');
+            const secs = String(date.getSeconds()).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${hrs}:${mins}:${secs} ${day}/${month}/${year}`;
+        }
+
+        // Seed helper: an epoch timestamp `mins` minutes in the past.
+        function minutesAgoTimestamp(mins) {
+            return Date.now() - mins * 60000;
+        }
+
+        // "Vừa xong" / "N phút trước" / "N giờ trước" while recent, then the full
+        // absolute timestamp once a notification is more than 24h old.
+        function formatNotiTime(createdAt) {
+            if (!createdAt) return '';
+            const diffMs = Date.now() - createdAt;
+            const diffMin = Math.floor(diffMs / 60000);
+            if (diffMin < 1) return 'Vừa xong';
+            if (diffMin < 60) return diffMin + ' phút trước';
+            const diffHour = Math.floor(diffMin / 60);
+            if (diffHour < 24) return diffHour + ' giờ trước';
+            return formatDateTime(new Date(createdAt));
+        }
+
         function updateFooterNotiBadge() {
             const badge = document.getElementById('footer-noti-badge');
             if (badge) {
@@ -410,6 +478,9 @@
             if (stored) {
                 try {
                     let parsed = JSON.parse(stored);
+                    if (parsed.length && parsed.every(n => !n.createdAt)) {
+                        localStorage.removeItem('app_notifications');
+                    } else {
                     let needsUpgrade = false;
 
                     parsed = parsed.map(n => {
@@ -432,6 +503,7 @@
                     }
                     notificationsData = parsed;
                     return;
+                    }
                 } catch (e) {
                     console.error(e);
                 }
@@ -458,8 +530,7 @@
                     isIndefinite: false,
                     status: 'pending',
                     read: false,
-                    time: '10 phút trước',
-                    createdAt: new Date().toLocaleString('vi-VN')
+                    createdAt: minutesAgoTimestamp(10)
                 },
                 {
                     id: 'noti_invite_demo_102',
@@ -480,8 +551,7 @@
                     isIndefinite: true,
                     status: 'pending',
                     read: false,
-                    time: '1 giờ trước',
-                    createdAt: new Date().toLocaleString('vi-VN')
+                    createdAt: minutesAgoTimestamp(60)
                 },
                 {
                     id: 'noti_item_casso_1',
@@ -491,8 +561,7 @@
                     sender: 'canhphq@cas.so',
                     status: isDocSigned ? 'completed' : 'pending',
                     read: false,
-                    time: '2 giờ trước',
-                    createdAt: new Date().toLocaleString('vi-VN')
+                    createdAt: minutesAgoTimestamp(120)
                 },
                 {
                     id: 'noti_invite_demo_101',
@@ -511,8 +580,7 @@
                     isIndefinite: false,
                     status: 'accepted',
                     read: true,
-                    time: '1 ngày trước',
-                    createdAt: new Date().toLocaleString('vi-VN')
+                    createdAt: minutesAgoTimestamp(1500)
                 }
             ];
 
@@ -537,67 +605,24 @@
             notificationsData.forEach(noti => {
                 const isInvite = noti.type.startsWith('delegation_invite');
 
-                let iconHtml = '';
-                let badgeStatus = '';
-
-                if (isInvite) {
-                    let assetDef = ASSET_DEFINITIONS[noti.assetType || 'bank'];
-                    let logoUrl = 'assets/cas_cert.png';
-                    if (noti.assetType === 'bank') logoUrl = 'assets/vcb.png';
-                    else if (noti.assetType === 'cert') logoUrl = 'assets/cas_cert.png';
-                    else if (noti.assetType === 'invoice') logoUrl = 'assets/xinvoice.png';
-                    else if (noti.assetType === 'identity') logoUrl = 'assets/casso.png';
-
-                    iconHtml = `
-                        <div class="w-11 h-11 rounded-full bg-white p-0.5 flex items-center justify-center border border-gray-200 shadow-xs overflow-hidden shrink-0">
-                            <img src="${logoUrl}" alt="Logo" class="w-full h-full object-contain rounded-full">
-                        </div>
-                    `;
-
-                    if (noti.status === 'accepted') {
-                        badgeStatus = `<span class="bg-emerald-50 text-emerald-700 text-[8.5px] font-bold px-2 py-0.5 rounded border border-emerald-100 mt-1 inline-block">Đã xác nhận</span>`;
-                    } else if (noti.status === 'rejected') {
-                        badgeStatus = `<span class="bg-red-50 text-red-700 text-[8.5px] font-bold px-2 py-0.5 rounded border border-red-100 mt-1 inline-block">Đã từ chối</span>`;
-                    } else {
-                        badgeStatus = `<span class="bg-amber-50 text-amber-700 text-[8.5px] font-bold px-2 py-0.5 rounded border border-amber-200 mt-1 inline-block">Chờ xác nhận</span>`;
-                    }
-                } else {
-                    iconHtml = `
-                        <div class="w-11 h-11 rounded-full bg-gray-900 text-white flex items-center justify-center shrink-0">
-                            <i class="fa-solid fa-pen-nib text-base"></i>
-                        </div>
-                    `;
-
-                    if (noti.status === 'completed') {
-                        badgeStatus = `<span class="bg-emerald-50 text-emerald-700 text-[8.5px] font-bold px-2 py-0.5 rounded border border-emerald-100 mt-1 inline-block">Đã ký</span>`;
-                    } else {
-                        badgeStatus = `<span class="bg-amber-50 text-amber-700 text-[8.5px] font-bold px-2 py-0.5 rounded border border-amber-200 mt-1 inline-block">Chờ ký</span>`;
-                    }
-                }
-
                 const item = document.createElement('div');
-                item.className = 'flex gap-3.5 py-3.5 items-start cursor-pointer hover:bg-gray-50 transition-colors -mx-4 px-4 border-b border-gray-100';
+                item.className = 'flex items-start gap-3 py-3.5 cursor-pointer transition-colors -mx-4 px-4 border-b border-gray-100 ' +
+                    (noti.read ? 'hover:bg-gray-50' : 'bg-gray-100/70 hover:bg-gray-100');
 
                 item.onclick = () => {
                     markNotiAsRead(noti.id);
                     if (isInvite) {
                         openInviteDetailView(noti);
                     } else if (noti.type === 'sign_request' && noti.status === 'pending') {
-                        window.location.href = 'casID-sign-view.html';
+                        window.location.href = '../shared/casID-sign-view.html';
                     }
                 };
 
                 item.innerHTML = `
-                    ${iconHtml}
+                    <span class="w-2 h-2 rounded-full shrink-0 mt-1.5 ${noti.read ? 'bg-gray-300' : 'bg-black'}"></span>
                     <div class="flex-1 min-w-0">
-                        <h4 class="text-[12px] font-bold text-gray-900 leading-snug flex items-start gap-1.5">
-                            <span class="flex-1">${noti.message}</span>
-                            ${!noti.read ? '<span class="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-1"></span>' : ''}
-                        </h4>
-                        <div>${badgeStatus}</div>
-                        <p class="text-[9.5px] text-gray-400 font-medium mt-1">
-                            Casso ID &bull; <span class="text-gray-500">${noti.time}</span>
-                        </p>
+                        <h4 class="text-[12px] font-bold text-gray-900 leading-snug">${noti.message}</h4>
+                        <p class="text-[9.5px] text-gray-400 font-medium mt-1">${formatNotiTime(noti.createdAt) || noti.time || ''}</p>
                     </div>
                 `;
                 container.appendChild(item);
