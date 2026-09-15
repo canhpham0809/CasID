@@ -909,16 +909,16 @@
             const badgeEl = document.getElementById('nav-business-badge');
 
             // A member account has no CCCD-match business discovery of its own (that's an
-            // owner-only concept) — the "Doanh nghiệp" bottom-nav menu stays empty; a
-            // pending invite is surfaced only via this banner + the notification bell.
+            // owner-only concept) — the "Doanh nghiệp" bottom-nav badge instead counts
+            // pending member invites still waiting to be confirmed.
+            const pendingInvites = getPendingInvitesForCccd(PERSONAL_CCCD);
             if (badgeEl) {
-                badgeEl.textContent = '0';
-                badgeEl.classList.add('hidden');
+                badgeEl.textContent = String(pendingInvites.length);
+                badgeEl.classList.toggle('hidden', pendingInvites.length === 0);
             }
 
             if (!promptEl || !titleEl) return;
 
-            const pendingInvites = getPendingInvitesForCccd(PERSONAL_CCCD);
             if (pendingInvites.length > 0) {
                 promptEl.classList.remove('hidden');
                 promptEl.setAttribute('onclick', "window.location.href='casID-sign-noti-empty.html?cccd=030987654321&open=invite'");

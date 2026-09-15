@@ -315,6 +315,47 @@
                     </div>
 
                     <!-- ================================================= -->
+                    <!-- SCENARIO 4: BUSINESS SUSPENDED (Ngừng hoạt động)  -->
+                    <!-- ================================================= -->
+                    <div id="scenario-4-suspended" class="flex flex-col gap-3 hidden">
+                        <!-- Business Name -->
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Tên doanh
+                                nghiệp</label>
+                            <input id="s4-company-name" type="text" readonly
+                                class="w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-100 text-[12px] text-gray-900 font-bold shadow-2xs">
+                        </div>
+
+                        <!-- Alert Box: Doanh nghiệp đã ngưng hoạt động -->
+                        <div
+                            class="p-3.5 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5 text-red-800">
+                            <i class="fa-solid fa-triangle-exclamation text-red-600 text-base mt-0.5 shrink-0"></i>
+                            <div class="flex flex-col gap-0.5 text-[11.5px]">
+                                <span class="font-bold text-red-900">Không thể xác thực</span>
+                                <span class="leading-relaxed">
+                                    Doanh nghiệp của bạn đã Ngưng hoạt động.
+                                </span>
+                                <span class="leading-relaxed">
+                                    Nếu thông tin doanh nghiệp của bạn đã được cập nhật, vui lòng gửi phản hồi và đính
+                                    kèm GPKD để chúng tôi xác thực.
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-col gap-1.5 pt-1">
+                            <button onclick="resetSearchForm()" type="button"
+                                class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1.5 cursor-pointer">
+                                <span>Thử lại với mã số thuế khác</span>
+                            </button>
+                            <button onclick="switchToManualReview()" type="button"
+                                class="w-full py-2.5 bg-white hover:bg-gray-50 text-gray-700 font-bold text-[11.5px] rounded-lg border border-gray-300 transition-all active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5">
+                                <span>Gửi phản hồi</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ================================================= -->
                     <!-- SCENARIO 3: NO CCCD FOUND -> UPLOAD GPKD          -->
                     <!-- ================================================= -->
                     <div id="scenario-3-no-cccd" class="flex flex-col gap-3 hidden">
@@ -634,7 +675,7 @@
                                 <span id="member-verified-cccd" class="text-[9.5px] text-gray-400 font-mono"></span>
                             </div>
                         </div>
-                        <button type="button" onclick="changeMemberCccd()"
+                        <button id="member-cccd-change-btn" type="button" onclick="changeMemberCccd()"
                             class="px-2.5 py-1 bg-white hover:bg-gray-100 border border-gray-200 rounded-lg text-[9.5px] font-bold text-gray-600 shrink-0 shadow-xs">
                             Đổi
                         </button>
@@ -665,111 +706,186 @@
                     <input id="perm-full" type="checkbox" onchange="togglePermFull(this.checked)"
                         class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black accent-black">
                     <div class="flex flex-col">
-                        <span class="text-[12px] font-bold text-gray-900">Tất cả (Toàn quyền)</span>
-                        <span class="text-[10px] text-gray-400">Cho phép thao tác mọi tài sản và tính năng</span>
+                        <span class="text-[12px] font-bold text-gray-900">Tất cả (Full quyền)</span>
                     </div>
                 </label>
 
-                <!-- Group: Ngân hàng -->
-                <div class="flex flex-col gap-2 p-3 rounded-xl border border-gray-100">
-                    <div class="flex items-center gap-2 text-gray-800 font-bold text-[12px]">
-                        <i class="fa-solid fa-building-columns text-gray-400 w-4 text-center"></i>
-                        <span>Ngân hàng</span>
+                <!-- Permission groups: one flat, collapsible list — a group's row is
+                     just its checkbox + name + expand chevron; sub-items only take up
+                     space once expanded. No icons, no separate card per group. -->
+                <div class="flex flex-col divide-y divide-gray-100 rounded-xl border border-gray-100">
+                    <!-- Group: Ngân hàng -->
+                    <div class="flex flex-col p-3">
+                        <div class="flex items-center gap-2.5">
+                            <input id="perm-group-bank"
+                                class="perm-group w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black shrink-0"
+                                type="checkbox" onchange="toggleGroupPerms('bank', this.checked)">
+                            <span class="flex-1 text-gray-800 font-bold text-[12px] cursor-pointer"
+                                onclick="toggleGroupExpand('bank')">Ngân hàng</span>
+                            <button type="button" onclick="toggleGroupExpand('bank')"
+                                class="p-1 -m-1 text-gray-400 cursor-pointer">
+                                <i id="perm-chevron-bank"
+                                    class="fa-solid fa-chevron-right text-[10px] transition-transform"></i>
+                            </button>
+                        </div>
+                        <div id="perm-subitems-bank" class="hidden flex-col gap-2 pl-6 pt-2">
+                            <label class="flex items-center gap-2.5 cursor-pointer">
+                                <input
+                                    class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
+                                    type="checkbox" id="perm-bank-register" data-group="bank"
+                                    onchange="syncGroupCheckbox('bank')">
+                                <span class="text-[11.5px] text-gray-700">Đăng ký mới</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 cursor-pointer">
+                                <input
+                                    class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
+                                    type="checkbox" id="perm-bank-suspend" data-group="bank"
+                                    onchange="syncGroupCheckbox('bank')">
+                                <span class="text-[11.5px] text-gray-700">Tạm dừng</span>
+                            </label>
+                            <!-- Cấp quyền ứng dụng: 2 lựa chọn loại trừ nhau — chỉ chọn 1 tại một
+                                 thời điểm. Chọn "toàn bộ" thì không cần danh sách; chọn "theo
+                                 danh sách" mới hiện checklist từng ngân hàng bên dưới. -->
+                            <label class="flex items-center gap-2.5 cursor-pointer">
+                                <input
+                                    class="perm-bank-grant-option w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
+                                    type="checkbox" id="perm-bank-grant-all"
+                                    onchange="selectBankGrantOption('all', this.checked)">
+                                <span class="text-[11.5px] text-gray-700">Cấp quyền ứng dụng toàn bộ ngân hàng</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 cursor-pointer">
+                                <input
+                                    class="perm-bank-grant-option w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
+                                    type="checkbox" id="perm-bank-grant-specific"
+                                    onchange="selectBankGrantOption('specific', this.checked)">
+                                <span class="text-[11.5px] text-gray-700">Cấp quyền ứng dụng theo danh sách ngân hàng</span>
+                            </label>
+                            <!-- Sub-list: specific bank accounts this member may grant access to
+                                 — only shown when "theo danh sách ngân hàng" is selected above. -->
+                            <div id="perm-bank-grant-list" class="hidden pl-5 flex flex-col gap-1.5 pt-1"></div>
+                        </div>
                     </div>
-                    <label class="flex items-center gap-2.5 pl-6 cursor-pointer">
-                        <input
-                            class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
-                            type="checkbox" id="perm-bank-register">
-                        <span class="text-[11.5px] text-gray-700">Đăng ký mới</span>
-                    </label>
-                    <label class="flex items-center gap-2.5 pl-6 cursor-pointer">
-                        <input
-                            class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
-                            type="checkbox" id="perm-bank-suspend">
-                        <span class="text-[11.5px] text-gray-700">Tạm dừng</span>
-                    </label>
-                    <label class="flex items-center gap-2.5 pl-6 cursor-pointer">
-                        <input
-                            class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
-                            type="checkbox" id="perm-bank-grant" onchange="toggleBankGrantList(this.checked)">
-                        <span class="text-[11.5px] text-gray-700">Cấp quyền ứng dụng</span>
-                    </label>
-                    <!-- Sub-list: specific bank accounts this member may grant access to -->
-                    <div id="perm-bank-grant-list" class="hidden pl-11 flex flex-col gap-1.5 pt-1"></div>
-                </div>
 
-                <!-- Group: Chứng thư số -->
-                <div class="flex flex-col gap-2 p-3 rounded-xl border border-gray-100">
-                    <div class="flex items-center gap-2 text-gray-800 font-bold text-[12px]">
-                        <i class="fa-solid fa-pen-nib text-gray-400 w-4 text-center"></i>
-                        <span>Chứng thư số</span>
+                    <!-- Group: Chứng thư số -->
+                    <div class="flex flex-col p-3">
+                        <div class="flex items-center gap-2.5">
+                            <input id="perm-group-ca"
+                                class="perm-group w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black shrink-0"
+                                type="checkbox" onchange="toggleGroupPerms('ca', this.checked)">
+                            <span class="flex-1 text-gray-800 font-bold text-[12px] cursor-pointer"
+                                onclick="toggleGroupExpand('ca')">Chứng thư số</span>
+                            <button type="button" onclick="toggleGroupExpand('ca')"
+                                class="p-1 -m-1 text-gray-400 cursor-pointer">
+                                <i id="perm-chevron-ca"
+                                    class="fa-solid fa-chevron-right text-[10px] transition-transform"></i>
+                            </button>
+                        </div>
+                        <div id="perm-subitems-ca" class="hidden flex-col gap-2 pl-6 pt-2">
+                            <label class="flex items-center gap-2.5 cursor-pointer">
+                                <input
+                                    class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
+                                    type="checkbox" id="perm-ca-register" data-group="ca"
+                                    onchange="syncGroupCheckbox('ca')">
+                                <span class="text-[11.5px] text-gray-700">Đăng ký mới / Gia hạn</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 cursor-pointer">
+                                <input
+                                    class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
+                                    type="checkbox" id="perm-ca-sign" data-group="ca"
+                                    onchange="syncGroupCheckbox('ca')">
+                                <span class="text-[11.5px] text-gray-700">Ký số</span>
+                            </label>
+                        </div>
                     </div>
-                    <label class="flex items-center gap-2.5 pl-6 cursor-pointer">
-                        <input
-                            class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
-                            type="checkbox" id="perm-ca-register">
-                        <span class="text-[11.5px] text-gray-700">Đăng ký mới / Gia hạn</span>
-                    </label>
-                    <label class="flex items-center gap-2.5 pl-6 cursor-pointer">
-                        <input
-                            class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
-                            type="checkbox" id="perm-ca-sign">
-                        <span class="text-[11.5px] text-gray-700">Ký số</span>
-                    </label>
-                </div>
 
-                <!-- Group: Hóa đơn -->
-                <div class="flex flex-col gap-2 p-3 rounded-xl border border-gray-100">
-                    <div class="flex items-center gap-2 text-gray-800 font-bold text-[12px]">
-                        <i class="fa-solid fa-file-invoice text-gray-400 w-4 text-center"></i>
-                        <span>Hóa đơn</span>
+                    <!-- Group: Hóa đơn -->
+                    <div class="flex flex-col p-3">
+                        <div class="flex items-center gap-2.5">
+                            <input id="perm-group-invoice"
+                                class="perm-group w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black shrink-0"
+                                type="checkbox" onchange="toggleGroupPerms('invoice', this.checked)">
+                            <span class="flex-1 text-gray-800 font-bold text-[12px] cursor-pointer"
+                                onclick="toggleGroupExpand('invoice')">Hóa đơn</span>
+                            <button type="button" onclick="toggleGroupExpand('invoice')"
+                                class="p-1 -m-1 text-gray-400 cursor-pointer">
+                                <i id="perm-chevron-invoice"
+                                    class="fa-solid fa-chevron-right text-[10px] transition-transform"></i>
+                            </button>
+                        </div>
+                        <div id="perm-subitems-invoice" class="hidden flex-col gap-2 pl-6 pt-2">
+                            <label class="flex items-center gap-2.5 cursor-pointer">
+                                <input
+                                    class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
+                                    type="checkbox" id="perm-invoice-register" data-group="invoice"
+                                    onchange="syncGroupCheckbox('invoice')">
+                                <span class="text-[11.5px] text-gray-700">Đăng ký mới</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 cursor-pointer">
+                                <input
+                                    class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
+                                    type="checkbox" id="perm-invoice-grant" data-group="invoice"
+                                    onchange="syncGroupCheckbox('invoice')">
+                                <span class="text-[11.5px] text-gray-700">Cấp quyền ứng dụng</span>
+                            </label>
+                        </div>
                     </div>
-                    <label class="flex items-center gap-2.5 pl-6 cursor-pointer">
-                        <input
-                            class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
-                            type="checkbox" id="perm-invoice-register">
-                        <span class="text-[11.5px] text-gray-700">Đăng ký</span>
-                    </label>
-                    <label class="flex items-center gap-2.5 pl-6 cursor-pointer">
-                        <input
-                            class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
-                            type="checkbox" id="perm-invoice-grant">
-                        <span class="text-[11.5px] text-gray-700">Cấp quyền</span>
-                    </label>
-                </div>
 
-                <!-- Group: Định danh -->
-                <div class="flex flex-col gap-2 p-3 rounded-xl border border-gray-100">
-                    <div class="flex items-center gap-2 text-gray-800 font-bold text-[12px]">
-                        <i class="fa-solid fa-id-card text-gray-400 w-4 text-center"></i>
-                        <span>Định danh</span>
+                    <!-- Group: Định danh -->
+                    <div class="flex flex-col p-3">
+                        <div class="flex items-center gap-2.5">
+                            <input id="perm-group-identity"
+                                class="perm-group w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black shrink-0"
+                                type="checkbox" onchange="toggleGroupPerms('identity', this.checked)">
+                            <span class="flex-1 text-gray-800 font-bold text-[12px] cursor-pointer"
+                                onclick="toggleGroupExpand('identity')">Định danh</span>
+                            <button type="button" onclick="toggleGroupExpand('identity')"
+                                class="p-1 -m-1 text-gray-400 cursor-pointer">
+                                <i id="perm-chevron-identity"
+                                    class="fa-solid fa-chevron-right text-[10px] transition-transform"></i>
+                            </button>
+                        </div>
+                        <div id="perm-subitems-identity" class="hidden flex-col gap-2 pl-6 pt-2">
+                            <label class="flex items-center gap-2.5 cursor-pointer">
+                                <input
+                                    class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
+                                    type="checkbox" id="perm-identity-qr" data-group="identity"
+                                    onchange="syncGroupCheckbox('identity')">
+                                <span class="text-[11.5px] text-gray-700">Đăng nhập QR</span>
+                            </label>
+                        </div>
                     </div>
-                    <label class="flex items-center gap-2.5 pl-6 cursor-pointer">
-                        <input
-                            class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
-                            type="checkbox" id="perm-identity-qr">
-                        <span class="text-[11.5px] text-gray-700">Đăng nhập QR</span>
-                    </label>
-                </div>
 
-                <!-- Group: Quản lý thành viên -->
-                <div class="flex flex-col gap-2 p-3 rounded-xl border border-gray-100">
-                    <div class="flex items-center gap-2 text-gray-800 font-bold text-[12px]">
-                        <i class="fa-solid fa-users-gear text-gray-400 w-4 text-center"></i>
-                        <span>Quản lý thành viên</span>
+                    <!-- Group: Quản lý thành viên -->
+                    <div class="flex flex-col p-3">
+                        <div class="flex items-center gap-2.5">
+                            <input id="perm-group-member"
+                                class="perm-group w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black shrink-0"
+                                type="checkbox" onchange="toggleGroupPerms('member', this.checked)">
+                            <span class="flex-1 text-gray-800 font-bold text-[12px] cursor-pointer"
+                                onclick="toggleGroupExpand('member')">Quản lý thành viên</span>
+                            <button type="button" onclick="toggleGroupExpand('member')"
+                                class="p-1 -m-1 text-gray-400 cursor-pointer">
+                                <i id="perm-chevron-member"
+                                    class="fa-solid fa-chevron-right text-[10px] transition-transform"></i>
+                            </button>
+                        </div>
+                        <div id="perm-subitems-member" class="hidden flex-col gap-2 pl-6 pt-2">
+                            <label class="flex items-center gap-2.5 cursor-pointer">
+                                <input
+                                    class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
+                                    type="checkbox" id="perm-member-add" data-group="member"
+                                    onchange="syncGroupCheckbox('member')">
+                                <span class="text-[11.5px] text-gray-700">Thêm thành viên</span>
+                            </label>
+                            <label class="flex items-center gap-2.5 cursor-pointer">
+                                <input
+                                    class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
+                                    type="checkbox" id="perm-member-remove" data-group="member"
+                                    onchange="syncGroupCheckbox('member')">
+                                <span class="text-[11.5px] text-gray-700">Xóa thành viên</span>
+                            </label>
+                        </div>
                     </div>
-                    <label class="flex items-center gap-2.5 pl-6 cursor-pointer">
-                        <input
-                            class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
-                            type="checkbox" id="perm-member-add">
-                        <span class="text-[11.5px] text-gray-700">Thêm thành viên</span>
-                    </label>
-                    <label class="flex items-center gap-2.5 pl-6 cursor-pointer">
-                        <input
-                            class="perm-item w-3.5 h-3.5 rounded border-gray-300 text-black focus:ring-black accent-black"
-                            type="checkbox" id="perm-member-remove">
-                        <span class="text-[11.5px] text-gray-700">Xóa thành viên</span>
-                    </label>
                 </div>
 
                 <!-- Remove member (only shown when editing an existing member) -->
@@ -779,7 +895,7 @@
                 </button>
 
                 <!-- Submit -->
-                <button onclick="saveMemberForm()" type="button"
+                <button id="member-save-btn" onclick="saveMemberForm()" type="button"
                     class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1.5 cursor-pointer mb-4">
                     <span id="member-save-btn-label">Thêm thành viên</span>
                 </button>
@@ -855,6 +971,7 @@
                     <span>0317654321</span>
                     <span>0319556677</span>
                     <span>0304567890</span>
+                    <span>0399999999</span>
                 </div>
             </div>
         </div>
@@ -1119,6 +1236,14 @@
             return `${hrs}:${mins}:${secs} ${day}/${month}/${year}`;
         }
 
+        // Strips the "HH:MM:SS " time portion off a formatCurrentDateTime() stamp,
+        // for UI spots that only want to show the date (e.g. "Tham gia: DD/MM/YYYY").
+        function dateOnly(stamp) {
+            if (!stamp) return '';
+            const parts = stamp.trim().split(' ');
+            return parts.length > 1 ? parts[parts.length - 1] : stamp;
+        }
+
         // CCCD-match discovery is inherently per-account (it matches a business's
         // director field against YOUR OWN CCCD) — scoped per account so only Nguyễn Văn An
         // (the demo's primary owner identity) gets the seeded mock matches; the other 3
@@ -1176,11 +1301,12 @@
                     if (!member || member.status !== 'joined') return;
                     const biz = businesses.find(b => String(b.id) === String(bizId));
                     if (!biz || biz.ownerCccd === cccd) return;
-                    result.push({ ...biz, role: member.role || 'Thành viên', isMember: true });
+                    result.push({ ...biz, isMember: true });
                 });
             } catch (e) { }
             return result;
         }
+
 
         const CCCD_HOME_MAP = {
             '012345678910': '../empty/index-empty.html',
@@ -1402,9 +1528,6 @@
         }
 
         function getRoleBadgeHtml(biz) {
-            if (biz.isMember) {
-                return `<span class="bg-purple-100 text-purple-800 text-[8.5px] font-bold px-1.5 py-0.5 rounded leading-none">${biz.role || 'Thành viên'}</span>`;
-            }
             if (biz.status === 'verified') {
                 return `<span class="bg-black text-white text-[8.5px] font-bold px-1.5 py-0.5 rounded leading-none">${biz.role || 'Giám đốc'}</span>`;
             } else if (biz.status === 'pending') {
@@ -1599,7 +1722,7 @@
                 role: 'Giám đốc',
                 permissions: {
                     full: true,
-                    bank: { register: true, suspend: true, grant: true, grantedBankIds: [] },
+                    bank: { register: true, suspend: true, grant: true, grantScope: 'all', grantedBankIds: [] },
                     ca: { register: true, sign: true },
                     invoice: { register: true, grant: true },
                     identity: { qr: true },
@@ -1841,7 +1964,7 @@
                                 <span class="bg-black text-white text-[8.5px] font-bold px-1.5 py-0.5 rounded leading-none">${m.role}</span>
                             </div>
                             ${m.status === 'joined'
-                        ? `<span class="text-[10px] text-gray-400 truncate mt-0.5">Tham gia lúc: ${m.joinedTime || m.addedTime || ''}</span>`
+                        ? `<span class="text-[10px] text-gray-400 truncate mt-0.5">${dateOnly(m.addedTime)}</span>`
                         : ''}
                             <span class="text-[10px] text-emerald-600 font-semibold truncate mt-0.5">${permissionSummary(m.permissions)}</span>
                         </div>
@@ -1866,9 +1989,94 @@
                 el.checked = checked;
                 el.disabled = checked;
             });
-            if (checked) {
-                document.getElementById('perm-bank-grant-list')?.classList.add('hidden');
+            document.querySelectorAll('.perm-group').forEach(el => {
+                el.checked = checked;
+                el.disabled = checked;
+                el.indeterminate = false;
+            });
+            setBankGrantOptionState(checked ? 'all' : null, checked);
+        }
+
+        // A group's parent checkbox drives all of its sub-items at once.
+        function toggleGroupPerms(group, checked) {
+            document.querySelectorAll('.perm-item[data-group="' + group + '"]').forEach(el => {
+                el.checked = checked;
+            });
+            document.getElementById('perm-group-' + group).indeterminate = false;
+            if (group === 'bank') {
+                setBankGrantOptionState(checked ? 'all' : null, false);
             }
+            if (checked) {
+                expandGroup(group);
+            }
+        }
+
+        // Expands/collapses a group's sub-item list to keep the overall permission
+        // list compact — sub-items only take up space once a group is opened.
+        function toggleGroupExpand(group) {
+            const box = document.getElementById('perm-subitems-' + group);
+            const chevron = document.getElementById('perm-chevron-' + group);
+            if (!box) return;
+            const willExpand = box.classList.contains('hidden');
+            box.classList.toggle('hidden', !willExpand);
+            box.classList.toggle('flex', willExpand);
+            chevron?.classList.toggle('rotate-90', willExpand);
+        }
+
+        function expandGroup(group) {
+            const box = document.getElementById('perm-subitems-' + group);
+            const chevron = document.getElementById('perm-chevron-' + group);
+            if (!box) return;
+            box.classList.remove('hidden');
+            box.classList.add('flex');
+            chevron?.classList.add('rotate-90');
+        }
+
+        function collapseGroup(group) {
+            const box = document.getElementById('perm-subitems-' + group);
+            const chevron = document.getElementById('perm-chevron-' + group);
+            if (!box) return;
+            box.classList.add('hidden');
+            box.classList.remove('flex');
+            chevron?.classList.remove('rotate-90');
+        }
+
+        // Keeps a group's parent checkbox in sync after a sub-item is toggled by hand —
+        // checked when every sub-item is checked, indeterminate when only some are.
+        // "Ngân hàng" counts its grant-scope pair (all/specific) as a single slot, since
+        // exactly one of the two (or neither) can be active at a time.
+        function syncGroupCheckbox(group) {
+            const items = Array.from(document.querySelectorAll('.perm-item[data-group="' + group + '"]'));
+            let checkedCount = items.filter(el => el.checked).length;
+            let totalCount = items.length;
+            if (group === 'bank') {
+                totalCount += 1;
+                const grantOn = document.getElementById('perm-bank-grant-all').checked
+                    || document.getElementById('perm-bank-grant-specific').checked;
+                if (grantOn) checkedCount += 1;
+            }
+            const groupCb = document.getElementById('perm-group-' + group);
+            if (!groupCb || totalCount === 0) return;
+            groupCb.checked = checkedCount === totalCount;
+            groupCb.indeterminate = checkedCount > 0 && checkedCount < totalCount;
+        }
+
+        // Sets the "Cấp quyền ứng dụng" scope for Ngân hàng — 'all', 'specific', or
+        // null (off). The two checkboxes behave like a single exclusive choice: picking
+        // one clears the other, and only 'specific' reveals the per-bank checklist.
+        function setBankGrantOptionState(scope, disabled) {
+            const allCb = document.getElementById('perm-bank-grant-all');
+            const specificCb = document.getElementById('perm-bank-grant-specific');
+            allCb.checked = scope === 'all';
+            specificCb.checked = scope === 'specific';
+            allCb.disabled = disabled;
+            specificCb.disabled = disabled;
+            toggleBankGrantList(scope === 'specific');
+        }
+
+        function selectBankGrantOption(option, checked) {
+            setBankGrantOptionState(checked ? option : null, false);
+            syncGroupCheckbox('bank');
         }
 
         function toggleBankGrantList(checked) {
@@ -1904,12 +2112,22 @@
             clearMemberCccdError();
             document.getElementById('member-cccd-input-wrapper')?.classList.remove('hidden');
             document.getElementById('member-verified-card')?.classList.add('hidden');
-            document.getElementById('member-role').value = 'Kế toán trưởng';
+            const roleSelect = document.getElementById('member-role');
+            roleSelect.querySelectorAll('.temp-role-option').forEach(opt => opt.remove());
+            roleSelect.value = 'Kế toán trưởng';
+            roleSelect.disabled = false;
+            document.getElementById('member-cccd-change-btn').disabled = false;
+            document.getElementById('member-cccd-change-btn').classList.remove('hidden');
             document.getElementById('perm-full').checked = false;
+            document.getElementById('perm-full').disabled = false;
             document.querySelectorAll('.perm-item').forEach(el => { el.checked = false; el.disabled = false; });
+            document.querySelectorAll('.perm-group').forEach(el => { el.checked = false; el.disabled = false; el.indeterminate = false; });
+            setBankGrantOptionState(null, false);
+            ['bank', 'ca', 'invoice', 'identity', 'member'].forEach(collapseGroup);
             const grantList = document.getElementById('perm-bank-grant-list');
             grantList.classList.add('hidden');
             grantList.innerHTML = '';
+            document.getElementById('member-save-btn')?.classList.remove('hidden');
         }
 
         function showMemberAddView(memberId) {
@@ -1919,16 +2137,30 @@
                 const m = getMembers(currentDetailBizId).find(x => x.id === memberId);
                 if (m) {
                     currentEditMemberId = m.id;
-                    document.getElementById('member-form-title').textContent = 'Chỉnh sửa thành viên';
+                    // The director's own entry is view-only — created automatically when the
+                    // business was verified, it can't be reassigned, re-permissioned, or removed.
+                    const isDirector = m.role === 'Giám đốc';
+                    document.getElementById('member-form-title').textContent = isDirector ? 'Xem chi tiết thành viên' : 'Chỉnh sửa thành viên';
                     document.getElementById('member-save-btn-label').textContent = 'Lưu thay đổi';
-                    document.getElementById('member-remove-btn')?.classList.remove('hidden');
+                    document.getElementById('member-remove-btn')?.classList.toggle('hidden', isDirector);
+                    document.getElementById('member-save-btn')?.classList.toggle('hidden', isDirector);
+                    document.getElementById('member-cccd-change-btn').classList.toggle('hidden', isDirector);
                     showVerifiedMemberCard({ name: m.name, avatar: m.avatar, cccd: m.cccd });
-                    document.getElementById('member-role').value = m.role || 'Kế toán trưởng';
+
+                    const roleSelect = document.getElementById('member-role');
+                    if (!Array.from(roleSelect.options).some(o => o.value === m.role)) {
+                        const opt = document.createElement('option');
+                        opt.className = 'temp-role-option';
+                        opt.value = m.role;
+                        opt.textContent = m.role;
+                        roleSelect.appendChild(opt);
+                    }
+                    roleSelect.value = m.role || 'Kế toán trưởng';
+                    roleSelect.disabled = isDirector;
 
                     const p = m.permissions || {};
                     document.getElementById('perm-bank-register').checked = !!p.bank?.register;
                     document.getElementById('perm-bank-suspend').checked = !!p.bank?.suspend;
-                    document.getElementById('perm-bank-grant').checked = !!p.bank?.grant;
                     document.getElementById('perm-ca-register').checked = !!p.ca?.register;
                     document.getElementById('perm-ca-sign').checked = !!p.ca?.sign;
                     document.getElementById('perm-invoice-register').checked = !!p.invoice?.register;
@@ -1938,18 +2170,37 @@
                     document.getElementById('perm-member-remove').checked = !!p.member?.remove;
 
                     if (p.bank?.grant) {
-                        toggleBankGrantList(true);
-                        // toggleBankGrantList renders every account pre-checked (the "new member"
-                        // default) — reconcile against what was actually granted for this member.
-                        const grantedIds = p.bank.grantedBankIds || [];
-                        document.querySelectorAll('.perm-bank-grant-item').forEach(cb => {
-                            cb.checked = grantedIds.includes(cb.value);
-                        });
+                        // Members saved before the "toàn bộ / theo danh sách" split always meant
+                        // "theo danh sách" — fall back to that for their un-migrated data.
+                        const scope = p.bank.grantScope || 'specific';
+                        setBankGrantOptionState(scope, false);
+                        if (scope === 'specific') {
+                            // toggleBankGrantList (inside setBankGrantOptionState) renders every
+                            // account pre-checked (the "new member" default) — reconcile against
+                            // what was actually granted for this member.
+                            const grantedIds = p.bank.grantedBankIds || [];
+                            document.querySelectorAll('.perm-bank-grant-item').forEach(cb => {
+                                cb.checked = grantedIds.includes(cb.value);
+                            });
+                        }
+                    } else {
+                        setBankGrantOptionState(null, false);
                     }
 
                     if (p.full) {
                         document.getElementById('perm-full').checked = true;
                         togglePermFull(true);
+                    } else {
+                        ['bank', 'ca', 'invoice', 'identity', 'member'].forEach(group => {
+                            syncGroupCheckbox(group);
+                            const hasChecked = Array.from(document.querySelectorAll('.perm-item[data-group="' + group + '"]')).some(el => el.checked);
+                            if (hasChecked) expandGroup(group);
+                        });
+                    }
+
+                    if (isDirector) {
+                        document.getElementById('perm-full').disabled = true;
+                        document.querySelectorAll('.perm-item, .perm-group, .perm-bank-grant-option').forEach(el => { el.disabled = true; });
                     }
                 }
             }
@@ -1961,13 +2212,19 @@
 
         function collectPermissionsFromForm() {
             const full = document.getElementById('perm-full').checked;
+            const grantAll = document.getElementById('perm-bank-grant-all').checked;
+            const grantSpecific = document.getElementById('perm-bank-grant-specific').checked;
             const grantedBankIds = Array.from(document.querySelectorAll('.perm-bank-grant-item:checked')).map(el => el.value);
             return {
                 full: full,
                 bank: {
                     register: full || document.getElementById('perm-bank-register').checked,
                     suspend: full || document.getElementById('perm-bank-suspend').checked,
-                    grant: full || document.getElementById('perm-bank-grant').checked,
+                    grant: full || grantAll || grantSpecific,
+                    // 'all' = every bank the business has (or will) connect; 'specific' = only
+                    // the accounts in grantedBankIds. Newly-connected banks under 'specific'
+                    // are NOT auto-granted.
+                    grantScope: (full || grantAll) ? 'all' : 'specific',
                     grantedBankIds: grantedBankIds
                 },
                 ca: {
@@ -2062,6 +2319,7 @@
             document.getElementById('scenario-1-valid')?.classList.add('hidden');
             document.getElementById('scenario-2-not-director')?.classList.add('hidden');
             document.getElementById('scenario-3-no-cccd')?.classList.add('hidden');
+            document.getElementById('scenario-4-suspended')?.classList.add('hidden');
 
             currentDiscoveredMst = null;
             document.getElementById('s1-not-my-business-btn')?.classList.add('hidden');
@@ -2069,15 +2327,18 @@
             removeGpkdFile();
         }
 
-        // Scenario 2 (not the director) -> user believes Cas ID's data is outdated ->
-        // reroute into the Scenario 3 GPKD-upload form to send the case for manual review.
+        // Scenario 2 (not the director) or Scenario 4 (suspended) -> user believes
+        // Cas ID's data is outdated -> reroute into the Scenario 3 GPKD-upload form
+        // to send the case for manual review.
         function switchToManualReview() {
             document.getElementById('scenario-2-not-director')?.classList.add('hidden');
+            document.getElementById('scenario-4-suspended')?.classList.add('hidden');
             document.getElementById('scenario-3-no-cccd')?.classList.remove('hidden');
 
             const s3Name = document.getElementById('s3-company-name');
             const s2Name = document.getElementById('s2-company-name');
-            if (s3Name) s3Name.value = s2Name?.value || '';
+            const s4Name = document.getElementById('s4-company-name');
+            if (s3Name) s3Name.value = s2Name?.value || s4Name?.value || '';
 
             const s3Phone = document.getElementById('s3-phone');
             const s3Email = document.getElementById('s3-email');
@@ -2123,19 +2384,29 @@
             const s1 = document.getElementById('scenario-1-valid');
             const s2 = document.getElementById('scenario-2-not-director');
             const s3 = document.getElementById('scenario-3-no-cccd');
+            const s4 = document.getElementById('scenario-4-suspended');
 
             // Hide all first
             s1?.classList.add('hidden');
             s2?.classList.add('hidden');
             s3?.classList.add('hidden');
+            s4?.classList.add('hidden');
 
-            // 3 Scenarios Logic:
+            // Scenarios Logic:
+            // TH4: 0399999999 (hoặc có '999') -> Doanh nghiệp đã ngừng hoạt động
             // TH3: 0317654321 (hoặc bắt đầu bằng 0317 / có '321') -> Chưa có CCCD -> Upload GPKD -> Chờ duyệt
             // TH3b: 0319556677 -> Cũng chưa có CCCD -> Upload GPKD, nhưng GPKD không hợp lệ -> Bị từ chối
             // TH2: 0318999888 (hoặc bắt đầu bằng 0318 / có '888') -> Không phải Giám đốc
             // TH1: 0316829871 (hoặc các trường hợp còn lại) -> Hợp lệ, khớp Giám đốc
 
-            if (mst === '0317654321' || mst === '0319556677' || mst.includes('321') || mst.startsWith('0317')) {
+            if (mst === '0399999999' || mst.includes('999')) {
+                // TÌNH HUỐNG 4: Doanh nghiệp đã ngừng hoạt động
+                s4?.classList.remove('hidden');
+                const nameEl = document.getElementById('s4-company-name');
+                if (nameEl) nameEl.value = 'CÔNG TY TNHH THƯƠNG MẠI DỊCH VỤ HOÀNG GIA';
+                showToast('Doanh nghiệp đã ngừng hoạt động', 'fa-solid fa-triangle-exclamation text-red-400');
+
+            } else if (mst === '0317654321' || mst === '0319556677' || mst.includes('321') || mst.startsWith('0317')) {
                 // TÌNH HUỐNG 3: Không tìm thấy CCCD tương ứng với MST -> Upload GPKD
                 s3?.classList.remove('hidden');
                 const nameEl = document.getElementById('s3-company-name');
