@@ -344,32 +344,8 @@
                     </button>
                 </div>
 
-                <!-- Dynamic Recent Activity List -->
-                <div id="recent-activity-container" class="flex flex-col gap-2">
-                    <!-- Default Activity matching screenshot -->
-                    <div onclick="window.location.href='../shared/casID-sign-delegation.html'"
-                        class="bg-white rounded-2xl p-3 border border-gray-150 shadow-xs flex items-center gap-3 hover:bg-gray-50 cursor-pointer transition-all">
-                        <div
-                            class="w-10 h-10 rounded-xl bg-white p-1 border border-gray-150 flex items-center justify-center shrink-0 shadow-xs overflow-hidden">
-                            <img src="../assets/xinvoice.png" alt="xInvoice" class="w-full h-full object-contain">
-                        </div>
-                        <div class="flex flex-col flex-1 min-w-0">
-                            <div class="flex items-center gap-1.5 font-bold text-[13px] text-gray-900 truncate">
-                                <span>X Invoice</span>
-                                <i class="fa-solid fa-link text-emerald-500 text-[11px]"></i>
-                                <span>XInvoice local</span>
-                            </div>
-                            <div class="mt-0.5">
-                                <span
-                                    class="inline-block bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">invoice</span>
-                            </div>
-                            <div class="flex items-center gap-1 text-[10px] text-gray-400 font-medium mt-0.5">
-                                <i class="fa-regular fa-clock text-[9.5px]"></i>
-                                <span>7 phút trước</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Dynamic Recent Activity List (filled in by renderRecentActivity() on load) -->
+                <div id="recent-activity-container" class="flex flex-col gap-2"></div>
             </div>
 
         </div>
@@ -442,6 +418,11 @@
                     class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all">
                     <i class="fa-solid fa-seedling text-[10px]"></i>
                     <span>Hồ sơ mới khởi tạo</span>
+                </button>
+                <button onclick="localStorage.setItem('casso_demo_scenario','new'); clearDemoDatasets(); window.location.href='../empty/index-bank.html'"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-building-columns text-[10px]"></i>
+                    <span>Claim ngân hàng</span>
                 </button>
                 <div class="border-t border-gray-100 my-0.5"></div>
                 <button onclick="resetDemoScenario()"
@@ -857,39 +838,47 @@
             const container = document.getElementById('recent-activity-container');
             if (!container) return;
 
+            // Mock "app permission grant" history — same shape as the Ngân hàng detail
+            // screen's "Cấp quyền truy cập" list (../shared/casID-asset-list.html),
+            // shown here as a quick recent-activity feed on the home screen.
             const activities = [
                 {
-                    title: 'X Invoice',
-                    connectedTo: 'XInvoice local',
-                    tag: 'invoice',
-                    time: '7 phút trước',
-                    logo: 'assets/xinvoice.png'
+                    bankName: 'Vietcombank (VCB)', bankLogo: '../assets/vcb.png',
+                    appName: 'X Invoice', appLogo: '../assets/xinvoice.png',
+                    tags: ['transfer', 'identity', 'balance', 'qrpay'], time: '20-09-2026',
+                    actorName: 'NGUYỄN VĂN AN', actorRole: 'Giám đốc'
                 },
                 {
-                    title: 'MB Bank',
-                    connectedTo: 'MBBank Corp 8888',
-                    tag: 'bank',
-                    time: '1 giờ trước',
-                    logo: 'assets/mb.png'
+                    bankName: 'MB Bank (MBB)', bankLogo: '../assets/mb.png',
+                    appName: 'payOS', appLogo: '../assets/cas_cert.png',
+                    tags: ['transfer', 'identity', 'qrpay'], time: '18-09-2026',
+                    actorName: 'HOÀNG THỊ MAI', actorRole: 'Kế toán trưởng'
+                },
+                {
+                    bankName: 'Vietcombank (VCB)', bankLogo: '../assets/vcb.png',
+                    appName: 'Casso ID', appLogo: '../assets/casso.png',
+                    tags: ['identity', 'transaction'], time: '15-09-2026',
+                    actorName: 'NGUYỄN VĂN AN', actorRole: 'Chủ tài khoản'
                 }
             ];
 
             container.innerHTML = activities.map(act => `
-                <div onclick="window.location.href='../shared/casID-sign-delegation.html'"
-                    class="bg-white rounded-2xl p-3 border border-gray-150 shadow-xs flex items-center gap-3 hover:bg-gray-50 cursor-pointer transition-all">
-                    <div class="w-10 h-10 rounded-xl bg-white p-1 border border-gray-150 flex items-center justify-center shrink-0 shadow-xs overflow-hidden">
-                        <img src="${act.logo}" alt="${act.title}" class="w-full h-full object-contain">
+                <div onclick="openActivityGrantDetail(${JSON.stringify(act).replace(/"/g, '&quot;')})"
+                    class="bg-white rounded-2xl p-3 border border-gray-150 shadow-xs flex items-center gap-3 cursor-pointer hover:bg-gray-50 active:scale-[0.98] transition-all">
+                    <div class="flex items-center shrink-0">
+                        <div class="w-8 h-8 rounded-full overflow-hidden bg-white border-2 border-white shadow-xs z-10 p-1 box-border"><img src="${act.bankLogo}" alt="${act.bankName}" class="w-full h-full object-contain block"></div>
+                        <div class="w-8 h-8 rounded-full overflow-hidden bg-white border-2 border-white shadow-xs -ml-2.5 p-1 box-border"><img src="${act.appLogo}" alt="${act.appName}" class="w-full h-full object-contain block"></div>
                     </div>
-                    <div class="flex flex-col flex-1 min-w-0">
-                        <div class="flex items-center gap-1.5 font-bold text-[13px] text-gray-900 truncate">
-                            <span>${act.title}</span>
-                            <i class="fa-solid fa-link text-emerald-500 text-[11px]"></i>
-                            <span>${act.connectedTo}</span>
+                    <div class="flex flex-col flex-1 min-w-0 gap-1">
+                        <div class="flex items-center gap-1.5 font-bold text-[12.5px] text-gray-900 truncate">
+                            <span>${act.bankName}</span>
+                            <i class="fa-solid fa-link text-emerald-500 text-[10px]"></i>
+                            <span>${act.appName}</span>
                         </div>
-                        <div class="mt-0.5">
-                            <span class="inline-block bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">${act.tag}</span>
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            ${act.tags.map(t => `<span class="bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">${t}</span>`).join('')}
                         </div>
-                        <div class="flex items-center gap-1 text-[10px] text-gray-400 font-medium mt-0.5">
+                        <div class="flex items-center gap-1 text-[10px] text-gray-400 font-medium">
                             <i class="fa-regular fa-clock text-[9.5px]"></i>
                             <span>${act.time}</span>
                         </div>
@@ -901,6 +890,14 @@
         function showToast(msg, iconClass = "fa-solid fa-circle-info text-amber-400") {
             // Disabled toast alert popups on actions
             return;
+        }
+
+        // Stages a grant's data and jumps to its detail screen (../shared/casID-asset-list.html)
+        // from a home-screen "Hoạt động gần đây" card — there's no matching local
+        // asset record to look up, so the data travels via localStorage instead.
+        function openActivityGrantDetail(data) {
+            localStorage.setItem('casso_pending_grant_detail', JSON.stringify(data));
+            window.location.href = '../shared/casID-asset-list.html?type=bank&open=grant&home=' + encodeURIComponent('../full/index.html');
         }
     </script>
 </body>

@@ -152,8 +152,26 @@
                 </div>
             </div>
 
+            <!-- Business verification prompt: shows the CCCD-matched businesses waiting to be confirmed -->
+            <div id="dc-business-prompt" onclick="window.location.href='../shared/casID-business-list.html'"
+                class="mt-4 bg-emerald-50 border border-emerald-100 rounded-2xl p-3 flex items-center justify-between gap-2 cursor-pointer hover:bg-emerald-100/60 transition-all active:scale-[0.99]">
+                <div class="flex items-center gap-2.5">
+                    <div
+                        class="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs shrink-0">
+                        <i class="fa-solid fa-building"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span id="dc-business-prompt-title"
+                            class="text-[11.5px] font-bold text-emerald-900 leading-tight">Có 2
+                            doanh nghiệp khớp CCCD của bạn</span>
+                        <span class="text-[9.5px] text-emerald-600">Nhấn để xác thực ngay</span>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-emerald-500 text-xs"></i>
+            </div>
+
             <!-- Section: Trung tâm dữ liệu -->
-            <div class="mt-5 flex flex-col gap-2.5">
+            <div id="onboarding-target-datacenter" class="mt-5 flex flex-col gap-2.5">
                 <div class="flex items-center justify-between">
                     <h3 class="text-[15px] font-black text-gray-900 tracking-tight">Trung tâm dữ liệu</h3>
                 </div>
@@ -162,18 +180,20 @@
                 <div class="grid grid-cols-3 gap-2.5">
 
                     <!-- 1. Ngân hàng -->
-                    <div id="dc-card-bank" onclick="window.location.href='../shared/casID-asset-list.html?type=bank'"
+                    <div id="dc-card-bank"
+                        onclick="window.location.href='../shared/casID-asset-list.html?type=bank&home=' + encodeURIComponent('../empty/index-bank.html')"
                         class="bg-white rounded-2xl p-3 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
                     </div>
 
                     <!-- 2. Chứng thư số -->
-                    <div id="dc-card-ca" onclick="window.location.href='../shared/casID-asset-list.html?type=ca'"
+                    <div id="dc-card-ca"
+                        onclick="window.location.href='../shared/casID-asset-list.html?type=ca&home=' + encodeURIComponent('../empty/index-bank.html')"
                         class="bg-white rounded-2xl p-3 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
                     </div>
 
                     <!-- 3. Hóa đơn điện tử -->
                     <div id="dc-card-invoice"
-                        onclick="window.location.href='../shared/casID-asset-list.html?type=invoice'"
+                        onclick="window.location.href='../shared/casID-asset-list.html?type=invoice&home=' + encodeURIComponent('../empty/index-bank.html')"
                         class="bg-white rounded-2xl p-3 border border-gray-150 shadow-[0_2px_12px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-3 hover:border-black/30 hover:shadow-md transition-all cursor-pointer active:scale-[0.98]">
                     </div>
 
@@ -223,24 +243,6 @@
                     </div>
 
                 </div>
-
-                <!-- Business verification prompt: shows the CCCD-matched businesses waiting to be confirmed -->
-                <div id="dc-business-prompt" onclick="window.location.href='../shared/casID-business-list.html'"
-                    class="bg-emerald-50 border border-emerald-100 rounded-2xl p-3 flex items-center justify-between gap-2 cursor-pointer hover:bg-emerald-100/60 transition-all active:scale-[0.99]">
-                    <div class="flex items-center gap-2.5">
-                        <div
-                            class="w-8 h-8 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs shrink-0">
-                            <i class="fa-solid fa-building"></i>
-                        </div>
-                        <div class="flex flex-col">
-                            <span id="dc-business-prompt-title"
-                                class="text-[11.5px] font-bold text-emerald-900 leading-tight">Có 2
-                                doanh nghiệp khớp CCCD của bạn</span>
-                            <span class="text-[9.5px] text-emerald-600">Nhấn để xác thực ngay</span>
-                        </div>
-                    </div>
-                    <i class="fa-solid fa-chevron-right text-emerald-500 text-xs"></i>
-                </div>
             </div>
 
             <!-- Promo Banner Carousel: QUÀ TẶNG MIỄN PHÍ CAS CERT -->
@@ -279,13 +281,100 @@
                     <h3 class="text-[15px] font-black text-gray-900 tracking-tight">Hoạt động gần đây</h3>
                 </div>
 
-                <div id="recent-activity-empty"
-                    class="flex flex-col items-center justify-center py-10 text-gray-400 gap-2.5">
-                    <div
-                        class="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-gray-300 text-lg border border-gray-100 shadow-2xs">
-                        <i class="fa-regular fa-clock"></i>
+                <div id="recent-activity-container" class="flex flex-col gap-2">
+                    <div onclick="openActivityGrantDetail({&quot;bankName&quot;: &quot;Vietcombank (VCB)&quot;, &quot;bankLogo&quot;: &quot;../assets/vcb.png&quot;, &quot;appName&quot;: &quot;X Invoice&quot;, &quot;appLogo&quot;: &quot;../assets/xinvoice.png&quot;, &quot;tags&quot;: [&quot;transfer&quot;, &quot;identity&quot;, &quot;balance&quot;, &quot;qrpay&quot;], &quot;time&quot;: &quot;20-09-2026&quot;, &quot;actorName&quot;: &quot;NGUYỄN VĂN AN&quot;, &quot;actorRole&quot;: &quot;Giám đốc&quot;})"
+                        class="bg-white rounded-2xl p-3 border border-gray-150 shadow-xs flex items-center gap-3 cursor-pointer hover:bg-gray-50 active:scale-[0.99] transition-all">
+                        <div class="flex items-center shrink-0">
+                            <div
+                                class="w-8 h-8 rounded-full overflow-hidden bg-white border-2 border-white shadow-xs z-10 p-1 box-border">
+                                <img src="../assets/vcb.png" alt="VCB" class="w-full h-full object-contain block"></div>
+                            <div
+                                class="w-8 h-8 rounded-full overflow-hidden bg-white border-2 border-white shadow-xs -ml-2.5 p-1 box-border">
+                                <img src="../assets/xinvoice.png" alt="X Invoice"
+                                    class="w-full h-full object-contain block"></div>
+                        </div>
+                        <div class="flex flex-col flex-1 min-w-0 gap-1">
+                            <div class="flex items-center gap-1.5 font-bold text-[12.5px] text-gray-900 truncate">
+                                <span>Vietcombank (VCB)</span>
+                                <i class="fa-solid fa-link text-emerald-500 text-[10px]"></i>
+                                <span>X Invoice</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span
+                                    class="bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">transfer</span>
+                                <span
+                                    class="bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">identity</span>
+                                <span
+                                    class="bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">balance</span>
+                                <span
+                                    class="bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">qrpay</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-[10px] text-gray-400 font-medium">
+                                <i class="fa-regular fa-clock text-[9.5px]"></i>
+                                <span>20-09-2026</span>
+                            </div>
+                        </div>
                     </div>
-                    <span class="text-[11px] font-medium text-gray-400">Chưa có hoạt động nào</span>
+                    <div onclick="openActivityGrantDetail({&quot;bankName&quot;: &quot;MB Bank (MBB)&quot;, &quot;bankLogo&quot;: &quot;../assets/mb.png&quot;, &quot;appName&quot;: &quot;payOS&quot;, &quot;appLogo&quot;: &quot;../assets/cas_cert.png&quot;, &quot;tags&quot;: [&quot;transfer&quot;, &quot;identity&quot;, &quot;qrpay&quot;], &quot;time&quot;: &quot;18-09-2026&quot;, &quot;actorName&quot;: &quot;HOÀNG THỊ MAI&quot;, &quot;actorRole&quot;: &quot;Kế toán trưởng&quot;})"
+                        class="bg-white rounded-2xl p-3 border border-gray-150 shadow-xs flex items-center gap-3 cursor-pointer hover:bg-gray-50 active:scale-[0.99] transition-all">
+                        <div class="flex items-center shrink-0">
+                            <div
+                                class="w-8 h-8 rounded-full overflow-hidden bg-white border-2 border-white shadow-xs z-10 p-1 box-border">
+                                <img src="../assets/mb.png" alt="MBB" class="w-full h-full object-contain block"></div>
+                            <div
+                                class="w-8 h-8 rounded-full overflow-hidden bg-white border-2 border-white shadow-xs -ml-2.5 p-1 box-border">
+                                <img src="../assets/cas_cert.png" alt="payOS"
+                                    class="w-full h-full object-contain block"></div>
+                        </div>
+                        <div class="flex flex-col flex-1 min-w-0 gap-1">
+                            <div class="flex items-center gap-1.5 font-bold text-[12.5px] text-gray-900 truncate">
+                                <span>MB Bank (MBB)</span>
+                                <i class="fa-solid fa-link text-emerald-500 text-[10px]"></i>
+                                <span>payOS</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span
+                                    class="bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">transfer</span>
+                                <span
+                                    class="bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">identity</span>
+                                <span
+                                    class="bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">qrpay</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-[10px] text-gray-400 font-medium">
+                                <i class="fa-regular fa-clock text-[9.5px]"></i>
+                                <span>18-09-2026</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div onclick="openActivityGrantDetail({&quot;bankName&quot;: &quot;Vietcombank (VCB)&quot;, &quot;bankLogo&quot;: &quot;../assets/vcb.png&quot;, &quot;appName&quot;: &quot;Casso ID&quot;, &quot;appLogo&quot;: &quot;../assets/casso.png&quot;, &quot;tags&quot;: [&quot;identity&quot;, &quot;transaction&quot;], &quot;time&quot;: &quot;15-09-2026&quot;, &quot;actorName&quot;: &quot;NGUYỄN VĂN AN&quot;, &quot;actorRole&quot;: &quot;Chủ tài khoản&quot;})"
+                        class="bg-white rounded-2xl p-3 border border-gray-150 shadow-xs flex items-center gap-3 cursor-pointer hover:bg-gray-50 active:scale-[0.99] transition-all">
+                        <div class="flex items-center shrink-0">
+                            <div
+                                class="w-8 h-8 rounded-full overflow-hidden bg-white border-2 border-white shadow-xs z-10 p-1 box-border">
+                                <img src="../assets/vcb.png" alt="VCB" class="w-full h-full object-contain block"></div>
+                            <div
+                                class="w-8 h-8 rounded-full overflow-hidden bg-white border-2 border-white shadow-xs -ml-2.5 p-1 box-border">
+                                <img src="../assets/casso.png" alt="Casso ID"
+                                    class="w-full h-full object-contain block"></div>
+                        </div>
+                        <div class="flex flex-col flex-1 min-w-0 gap-1">
+                            <div class="flex items-center gap-1.5 font-bold text-[12.5px] text-gray-900 truncate">
+                                <span>Vietcombank (VCB)</span>
+                                <i class="fa-solid fa-link text-emerald-500 text-[10px]"></i>
+                                <span>Casso ID</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span
+                                    class="bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">identity</span>
+                                <span
+                                    class="bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md">transaction</span>
+                            </div>
+                            <div class="flex items-center gap-1 text-[10px] text-gray-400 font-medium">
+                                <i class="fa-regular fa-clock text-[9.5px]"></i>
+                                <span>15-09-2026</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -298,7 +387,7 @@
                 <i class="fa-solid fa-house text-base text-black"></i>
                 <span class="font-bold">Trang chủ</span>
             </button>
-            <button onclick="window.location.href='../shared/casID-business-list.html'"
+            <button id="onboarding-target-business" onclick="window.location.href='../shared/casID-business-list.html'"
                 class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700 relative">
                 <div class="relative">
                     <i class="fa-solid fa-building text-base"></i>
@@ -307,7 +396,7 @@
                 </div>
                 <span>Doanh nghiệp</span>
             </button>
-            <button onclick="window.location.href='../shared/casID-sign-delegation.html'"
+            <button id="onboarding-target-delegation" onclick="window.location.href='../shared/casID-sign-delegation.html'"
                 class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
                 <i class="fa-solid fa-qrcode text-base"></i>
                 <span>Ủy quyền</span>
@@ -333,6 +422,27 @@
             <span id="custom-toast-msg" class="text-[11.5px] font-semibold leading-snug"></span>
         </div>
 
+        <!-- Onboarding Tour Overlay: a short one-time coachmark sequence shown right after
+             identity verification, walking the user through the personal profile, the data
+             center, and the Doanh nghiệp/Ủy quyền nav tabs — see maybeStartOnboardingTour(). -->
+        <div id="onboarding-overlay" class="hidden absolute inset-0 z-[60] overflow-hidden">
+            <!-- The dimming comes entirely from this box's own giant box-shadow spread, so
+                 resizing/repositioning it to the target's rect is all it takes to "cut a hole"
+                 there — no separate full-screen dim layer needed. -->
+            <div id="onboarding-spotlight" class="absolute transition-all duration-300"
+                style="box-shadow: 0 0 0 9999px rgba(0,0,0,0.6), 0 0 0 3px rgba(255,255,255,0.95);"></div>
+            <div id="onboarding-tooltip"
+                class="absolute w-60 bg-gray-900 text-white rounded-xl p-3.5 shadow-2xl flex flex-col gap-2.5">
+                <p id="onboarding-tooltip-text" class="text-[12px] leading-relaxed"></p>
+                <div class="flex items-center justify-end gap-4">
+                    <button onclick="skipOnboardingTour()" type="button"
+                        class="text-[11px] font-bold text-gray-400 hover:text-gray-200 cursor-pointer">Bỏ qua</button>
+                    <button id="onboarding-next-btn" onclick="nextOnboardingStep()" type="button"
+                        class="text-[11px] font-black text-white cursor-pointer">Tiếp tục</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Demo Scenario Control (web page tool — lives outside the phone mockup, not part of the product UI) -->
@@ -355,6 +465,17 @@
                     class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all">
                     <i class="fa-solid fa-seedling text-[10px]"></i>
                     <span>Hồ sơ mới khởi tạo</span>
+                </button>
+                <button
+                    onclick="localStorage.setItem('casso_demo_scenario','new'); clearDemoDatasets(); window.location.href='../empty/index-bank.html'"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-building-columns text-[10px]"></i>
+                    <span>Claim ngân hàng</span>
+                </button>
+                <button onclick="toggleDemoPanel(); replayOnboardingTour()"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-circle-question text-[10px]"></i>
+                    <span>Xem hướng dẫn onboarding</span>
                 </button>
                 <div class="border-t border-gray-100 my-0.5"></div>
                 <button onclick="resetDemoScenario()"
@@ -427,6 +548,7 @@
             renderBusinessPrompt();
             renderProfileBadges();
             selectDefaultHomeEntity(); // also renders the Trung tâm dữ liệu cards + score for that entity
+            setTimeout(maybeStartOnboardingTour, 500);
         };
 
         function updateLiveTime() {
@@ -441,6 +563,117 @@
         function showToast(msg, iconClass = "fa-solid fa-circle-info text-amber-400") {
             // Disabled toast alert popups on actions
             return;
+        }
+
+        // =========================================================
+        // ONBOARDING TOUR: one-time coachmark walkthrough shown right after identity
+        // verification, per CasID_Userguide_RunbookOnApp — introduces the personal
+        // profile card, the Trung tâm dữ liệu section, and the Doanh nghiệp/Ủy quyền
+        // nav tabs. Persisted per-CCCD so switching demo accounts re-triggers it.
+        // =========================================================
+        const ONBOARDING_STEPS = [
+            { target: '#badge-personal', text: 'Đây là nơi quản lý thông tin cá nhân của bạn.', placement: 'bottom', radius: 999 },
+            { target: '#onboarding-target-datacenter', text: 'Đây là nơi quản lý các dữ liệu số của bạn. Nhấp chọn để tiến hành thêm mới.', placement: 'bottom', radius: 20 },
+            { target: '#onboarding-target-business', text: 'Bạn có thể xác thực doanh nghiệp và quản lý dữ liệu số cho doanh nghiệp tại đây.', placement: 'top', radius: 16 },
+            { target: '#onboarding-target-delegation', text: 'Bạn có thể quét mã QR để ủy quyền hoặc cấp quyền truy cập dữ liệu cho ứng dụng, đối tác tại đây.', placement: 'top', radius: 16 }
+        ];
+        let onboardingStepIndex = 0;
+
+        function onboardingSeenKey() {
+            return 'casso_onboarding_seen__' + PERSONAL_CCCD;
+        }
+
+        function maybeStartOnboardingTour() {
+            try {
+                if (localStorage.getItem(onboardingSeenKey())) return;
+            } catch (e) { }
+            onboardingStepIndex = 0;
+            showOnboardingStep(0);
+        }
+
+        function replayOnboardingTour() {
+            onboardingStepIndex = 0;
+            showOnboardingStep(0);
+        }
+
+        function showOnboardingStep(index) {
+            const step = ONBOARDING_STEPS[index];
+            const overlay = document.getElementById('onboarding-overlay');
+            const targetEl = step ? document.querySelector(step.target) : null;
+            if (!step || !overlay || !targetEl) {
+                finishOnboardingTour();
+                return;
+            }
+
+            overlay.classList.remove('hidden');
+            document.getElementById('onboarding-tooltip-text').textContent = step.text;
+            document.getElementById('onboarding-next-btn').textContent = (index === ONBOARDING_STEPS.length - 1) ? 'Xong' : 'Tiếp tục';
+
+            targetEl.scrollIntoView({ block: 'center' });
+            requestAnimationFrame(() => positionOnboardingOverlay(targetEl, step));
+        }
+
+        function positionOnboardingOverlay(targetEl, step) {
+            const phone = document.querySelector('.phone-container');
+            const overlay = document.getElementById('onboarding-overlay');
+            const tooltip = document.getElementById('onboarding-tooltip');
+            const spotlight = document.getElementById('onboarding-spotlight');
+            if (!phone || !overlay || !tooltip || !spotlight) return;
+            // The whole mockup is scaled via CSS `zoom` (see fitPhoneToViewport) — getBoundingClientRect()
+            // already reflects that zoom, but style.top/left are interpreted in pre-zoom local units, so
+            // every physical-pixel delta below must be divided by the current zoom factor before assigning.
+            // Measuring against the overlay's OWN rect (not phone-container's) matters here: the overlay
+            // is `inset-0` relative to phone-container's padding box, which sits 8px inside its border —
+            // using phone-container's border-box rect as the origin would silently shift everything by
+            // that border width.
+            const scale = parseFloat(getComputedStyle(phone).zoom) || 1;
+            const pRect = overlay.getBoundingClientRect();
+            const tRect = targetEl.getBoundingClientRect();
+            const margin = 12;
+            const localWidth = pRect.width / scale;
+            const localHeight = pRect.height / scale;
+
+            // Spotlight: a padded cutout hugging the target's own rect, so the user's eye
+            // is drawn to exactly the element the tooltip is talking about.
+            const pad = 6;
+            const sTop = (tRect.top - pRect.top) / scale - pad;
+            const sLeft = (tRect.left - pRect.left) / scale - pad;
+            const sWidth = tRect.width / scale + pad * 2;
+            const sHeight = tRect.height / scale + pad * 2;
+            spotlight.style.top = sTop + 'px';
+            spotlight.style.left = sLeft + 'px';
+            spotlight.style.width = sWidth + 'px';
+            spotlight.style.height = sHeight + 'px';
+            spotlight.style.borderRadius = (step.radius || 16) + 'px';
+
+            // Tooltip: anchored just above/below that same spotlight rect.
+            const tw = tooltip.offsetWidth;
+            const th = tooltip.offsetHeight;
+            let top = (step.placement === 'bottom') ? (sTop + sHeight + 10) : (sTop - th - 10);
+            let left = sLeft;
+            left = Math.max(margin, Math.min(left, localWidth - tw - margin));
+            top = Math.max(margin, Math.min(top, localHeight - th - margin));
+
+            tooltip.style.top = top + 'px';
+            tooltip.style.left = left + 'px';
+        }
+
+        function nextOnboardingStep() {
+            onboardingStepIndex++;
+            if (onboardingStepIndex >= ONBOARDING_STEPS.length) {
+                finishOnboardingTour();
+            } else {
+                showOnboardingStep(onboardingStepIndex);
+            }
+        }
+
+        function skipOnboardingTour() {
+            finishOnboardingTour();
+        }
+
+        function finishOnboardingTour() {
+            document.getElementById('onboarding-overlay')?.classList.add('hidden');
+            try { localStorage.setItem(onboardingSeenKey(), '1'); } catch (e) { }
         }
 
         // =========================================================
@@ -468,6 +701,23 @@
             invoice: { label: 'Hóa đơn điện tử', icon: 'fa-file-invoice' }
         };
 
+        // Real brand logos already shipped in /assets — reused here instead of plain
+        // colored initials wherever a linked bank has a matching asset.
+        const BANK_LOGO_BY_INITIAL = {
+            VCB: '../assets/vcb.png',
+            MBB: '../assets/mb.png',
+            TCB: '../assets/tcb.png',
+            ACB: '../assets/acb.png'
+        };
+
+        function bankHomeIconHtml(item) {
+            const logo = BANK_LOGO_BY_INITIAL[item.logoInitial];
+            if (logo) {
+                return `<div class="w-8 h-8 rounded-full overflow-hidden bg-white border-2 border-gray-200 shadow-xs shrink-0 p-1.5 box-border"><img src="${logo}" alt="${item.logoInitial}" class="w-full h-full object-contain block"></div>`;
+            }
+            return `<div class="w-8 h-8 rounded-full ${item.logoColor} text-white flex items-center justify-center text-[8px] font-black border-2 border-white shadow-xs shrink-0">${item.logoInitial}</div>`;
+        }
+
         function renderDataCenterCards() {
             Object.keys(ASSET_CARD_CONFIG).forEach(type => {
                 const card = document.getElementById('dc-card-' + type);
@@ -477,38 +727,51 @@
                 if (list.length > 0) {
                     const shown = list.slice(0, 2);
                     const remaining = list.length - shown.length;
+                    // Already has confirmed banks, but some discovered ones are still
+                    // waiting on confirmation — keep the notification badge visible so
+                    // the user knows there's still something to review.
+                    const pendingCount = (type === 'bank' && (currentHomeEntity || 'personal') === 'personal') ? getDiscoveredBankAccounts().length : 0;
+                    const pendingBadgeHtml = pendingCount > 0
+                        ? `<span class="absolute -top-1.5 -right-1.5 min-w-[15px] h-[15px] px-1 bg-red-500 text-white text-[8.5px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-xs z-10">${pendingCount}</span>`
+                        : '';
+                    // Badge always sits on the last (topmost, right-most) circle in the
+                    // stack — the "+N" overflow chip when there is one, otherwise the
+                    // last shown bank icon — so it reads at a consistent corner. The
+                    // "+N" chip is always in ADDITION to the (up to 2) real bank icons,
+                    // never a replacement for one of them.
+                    const hasOverflow = remaining > 0;
+                    const leadingIcons = hasOverflow ? shown : shown.slice(0, -1);
+                    const lastCircleHtml = hasOverflow
+                        ? `<div class="w-8 h-8 rounded-full bg-gray-200 text-gray-700 font-bold text-[10px] flex items-center justify-center border-2 border-white shadow-xs shrink-0">+${remaining}</div>`
+                        : bankHomeIconHtml(shown[shown.length - 1]);
                     card.innerHTML = `
                         <div class="flex items-center -space-x-2.5 shrink-0 py-0.5">
-                            ${shown.map(item => `
-                                <div class="w-8 h-8 rounded-full ${item.logoColor} text-white flex items-center justify-center text-[8px] font-black border-2 border-white shadow-xs shrink-0">
-                                    ${item.logoInitial}
-                                </div>
-                            `).join('')}
-                            ${remaining > 0 ? `
-                                <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-700 font-bold text-[10px] flex items-center justify-center border-2 border-white shadow-xs shrink-0">
-                                    +${remaining}
-                                </div>
-                            ` : ''}
+                            ${leadingIcons.map(item => bankHomeIconHtml(item)).join('')}
+                            <div class="relative shrink-0">
+                                ${lastCircleHtml}
+                                ${pendingBadgeHtml}
+                            </div>
                         </div>
                         <div class="flex flex-col">
                             <span class="text-[10.5px] font-bold text-gray-900 leading-tight whitespace-nowrap">${cfg.label}</span>
                         </div>
                     `;
                 } else if (type === 'bank' && (currentHomeEntity || 'personal') === 'personal' && getDiscoveredBankAccounts().length > 0) {
-                    // Demo-only: banks the system "found" from a past Cas link, waiting on confirmation
+                    // Demo-only: banks the system "found" from a past Cas link, waiting on confirmation —
+                    // surfaced as a notification badge on the tile, same visual language as the
+                    // bottom-nav "Doanh nghiệp" badge, so it reads as "needs your attention".
                     const discoveredCount = getDiscoveredBankAccounts().length;
                     card.innerHTML = `
                         <div class="flex items-center shrink-0 py-0.5">
-                            <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center border border-amber-200 text-amber-600 shadow-xs shrink-0">
-                                <i class="fa-solid ${cfg.icon} text-sm"></i>
+                            <div class="relative">
+                                <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center border border-amber-200 text-amber-600 shadow-xs shrink-0">
+                                    <i class="fa-solid ${cfg.icon} text-sm"></i>
+                                </div>
+                                <span class="absolute -top-1.5 -right-2 min-w-[15px] h-[15px] px-1 bg-red-500 text-white text-[8.5px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-xs">${discoveredCount}</span>
                             </div>
                         </div>
                         <div class="flex flex-col">
                             <span class="text-[10.5px] font-bold text-gray-900 leading-tight whitespace-nowrap">${cfg.label}</span>
-                            <span class="text-[8.5px] font-bold text-amber-600 flex items-center gap-1 mt-0.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                ${discoveredCount} chờ xác nhận
-                            </span>
                         </div>
                     `;
                 } else {
@@ -543,8 +806,23 @@
         function seedDiscoveredBankAccounts() {
             if (localStorage.getItem(DISCOVERED_BANK_KEY)) return;
             const seed = [
-                { id: 'dbank-vcb', name: 'NGUYỄN VĂN AN', provider: 'Vietcombank (VCB)', logoInitial: 'VCB', logoColor: 'bg-emerald-700' },
-                { id: 'dbank-mbb', name: 'NGUYỄN VĂN AN', provider: 'MB Bank (MBB)', logoInitial: 'MBB', logoColor: 'bg-blue-800' }
+                {
+                    id: 'dbank-vcb', name: 'NGUYỄN VĂN AN', provider: 'Vietcombank (VCB)', logoInitial: 'VCB', logoColor: 'bg-emerald-700',
+                    accountNumber: '0071000123456',
+                    // A single bank account can be linked to more than one app.
+                    linkedApps: [
+                        { name: 'X Invoice', tags: ['qrpay', 'identity'], time: '15-03-2026' },
+                        { name: 'Casso ID', tags: ['identity'], time: '20-04-2026' },
+                        { name: 'payOS', tags: ['qrpay', 'transaction'], time: '10-01-2026', revoked: true, revokedTime: '28-02-2026' }
+                    ]
+                },
+                {
+                    id: 'dbank-mbb', name: 'NGUYỄN VĂN AN', provider: 'MB Bank (MBB)', logoInitial: 'MBB', logoColor: 'bg-blue-800',
+                    accountNumber: '9688669302544',
+                    linkedApps: [
+                        { name: 'payOS', tags: ['qrpay'], time: '03-07-2026' }
+                    ]
+                }
             ];
             localStorage.setItem(DISCOVERED_BANK_KEY, JSON.stringify(seed));
         }
@@ -792,6 +1070,15 @@
             clearDemoDatasets();
             window.location.reload();
         }
+
+        // Stages a grant's data and jumps to its detail screen (../shared/casID-asset-list.html)
+        // from a home-screen "Hoạt động gần đây" card — there's no matching local
+        // asset record to look up, so the data travels via localStorage instead.
+        function openActivityGrantDetail(data) {
+            localStorage.setItem('casso_pending_grant_detail', JSON.stringify(data));
+            window.location.href = '../shared/casID-asset-list.html?type=bank&open=grant&home=' + encodeURIComponent('../empty/index-bank.html');
+        }
+
     </script>
 </body>
 

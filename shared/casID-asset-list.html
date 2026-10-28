@@ -67,7 +67,7 @@
 
         <!-- Header -->
         <div class="px-5 pt-3 pb-2 flex items-center gap-4 bg-white shrink-0">
-            <button onclick="window.location.href=demoHomeUrl()" class="text-gray-800 text-lg hover:opacity-70 p-1">
+            <button onclick="handleHeaderBack()" class="text-gray-800 text-lg hover:opacity-70 p-1">
                 <i class="fa-solid fa-arrow-left"></i>
             </button>
             <h1 id="asset-title" class="text-[19px] font-bold text-gray-900 tracking-tight">Ngân hàng</h1>
@@ -80,7 +80,300 @@
         <!-- Scrollable Content (the "Thêm ..." button renders right after the last record, not pinned to the screen bottom) -->
         <div class="flex-1 overflow-y-auto px-4 pb-6 bg-white">
             <div id="asset-list-container" class="flex flex-col"></div>
+
+            <!-- CLAIM CONFIRM VIEW: opened by tapping a discovered/"chờ xác nhận" bank -->
+            <div id="view-claim-detail" class="hidden flex-col gap-3.5">
+                <div class="flex items-center gap-3 pt-1">
+                    <div id="claim-detail-avatar" class="shrink-0"></div>
+                    <div class="flex flex-col min-w-0 flex-1">
+                        <span id="claim-detail-name" class="text-[13.5px] font-black text-gray-900 truncate"></span>
+                        <span id="claim-detail-bank" class="text-[11px] text-gray-500 truncate"></span>
+                    </div>
+                    <span
+                        class="text-[9.5px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-1 rounded-full shrink-0">
+                        Chờ xác nhận
+                    </span>
+                </div>
+
+                <div
+                    class="bg-white rounded-xl border border-gray-100 shadow-xs px-3.5 py-2.5 flex items-center justify-between">
+                    <span class="text-[11px] text-gray-500">Số tài khoản</span>
+                    <span id="claim-detail-account" class="text-[12px] font-bold text-gray-900 font-mono"></span>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center justify-between px-0.5">
+                        <span class="text-[10.5px] font-bold text-gray-500 uppercase tracking-wide">Ứng dụng đã liên
+                            kết</span>
+                        <span id="claim-detail-app-count" class="text-[10px] text-gray-400"></span>
+                    </div>
+                    <!-- Every app is checked (selected) by default; unchecking one just excludes it from
+                         the permissions carried into the new asset record, "Xác nhận" still always works. -->
+                    <div id="claim-detail-app-list" class="flex flex-col gap-2"></div>
+                </div>
+
+                <div class="flex flex-col gap-2 pt-1">
+                    <button onclick="confirmClaimDetail()" type="button"
+                        class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs cursor-pointer">
+                        Xác nhận liên kết
+                    </button>
+                    <button onclick="cancelClaimDetail()" type="button"
+                        class="w-full py-2.5 bg-white hover:bg-red-50 text-red-600 font-bold text-[11.5px] rounded-lg border border-red-200 transition-all active:scale-[0.98] cursor-pointer">
+                        Hủy liên kết
+                    </button>
+                </div>
+            </div>
+
+            <!-- ASSET DETAIL VIEW: opened by tapping an already-confirmed bank in the list -->
+            <div id="view-asset-detail" class="hidden flex-col gap-4">
+                <div class="bg-gray-50 rounded-2xl p-4 flex flex-col gap-3 relative">
+                    <div class="flex items-center gap-3">
+                        <div id="asset-detail-avatar" class="shrink-0"></div>
+                        <div class="flex flex-col min-w-0 flex-1">
+                            <span id="asset-detail-name" class="text-[15px] font-black text-gray-900 truncate"></span>
+                            <span id="asset-detail-provider"
+                                class="text-[11.5px] text-emerald-600 font-bold flex items-center gap-1.5 mt-0.5 truncate">
+                                <i class="fa-solid fa-globe text-[9px]"></i>
+                                <span></span>
+                            </span>
+                        </div>
+                        <button onclick="toggleAssetDetailMenu()" type="button"
+                            class="text-gray-400 hover:text-gray-700 p-1.5 -mr-1.5 -mt-1.5 shrink-0 cursor-pointer">
+                            <i class="fa-solid fa-ellipsis-vertical text-sm"></i>
+                        </button>
+                        <div id="asset-detail-menu"
+                            class="hidden absolute top-9 right-2 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 w-40 z-20">
+                            <button onclick="closeAssetDetailMenu(); openRemoveAssetConfirm()" type="button"
+                                class="w-full text-left px-3.5 py-2 text-[12px] font-bold text-red-500 hover:bg-red-50 flex items-center gap-2 cursor-pointer">
+                                <i class="fa-solid fa-trash-can text-[11px]"></i>
+                                <span>Xóa tài khoản</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-4 gap-1 py-1 border-b border-gray-100 pb-4">
+                    <button onclick="showToast('Tính năng đang phát triển')" type="button"
+                        class="flex flex-col items-center gap-1.5 text-gray-700 cursor-pointer">
+                        <div
+                            class="w-11 h-11 rounded-full bg-gray-50 border border-gray-150 flex items-center justify-center shadow-2xs">
+                            <i class="fa-solid fa-share-nodes text-sm"></i>
+                        </div>
+                        <span class="text-[9.5px] font-semibold text-center leading-tight">Cấp quyền</span>
+                    </button>
+                    <button onclick="showToast('Tính năng đang phát triển')" type="button"
+                        class="flex flex-col items-center gap-1.5 text-gray-700 cursor-pointer">
+                        <div
+                            class="w-11 h-11 rounded-full bg-gray-50 border border-gray-150 flex items-center justify-center shadow-2xs">
+                            <i class="fa-solid fa-key text-sm"></i>
+                        </div>
+                        <span class="text-[9.5px] font-semibold text-center leading-tight">Cập nhật pass</span>
+                    </button>
+                    <button id="asset-detail-pause-btn" onclick="toggleAssetPause()" type="button"
+                        class="flex flex-col items-center gap-1.5 text-gray-700 cursor-pointer">
+                        <div
+                            class="w-11 h-11 rounded-full bg-gray-50 border border-gray-150 flex items-center justify-center shadow-2xs">
+                            <i id="asset-detail-pause-icon" class="fa-solid fa-pause text-sm"></i>
+                        </div>
+                        <span id="asset-detail-pause-label"
+                            class="text-[9.5px] font-semibold text-center leading-tight">Tạm dừng</span>
+                    </button>
+                    <button onclick="showToast('Tính năng đang phát triển')" type="button"
+                        class="flex flex-col items-center gap-1.5 text-gray-700 cursor-pointer">
+                        <div
+                            class="w-11 h-11 rounded-full bg-gray-50 border border-gray-150 flex items-center justify-center shadow-2xs">
+                            <i class="fa-solid fa-user-group text-sm"></i>
+                        </div>
+                        <span class="text-[9.5px] font-semibold text-center leading-tight">Ủy quyền</span>
+                    </button>
+                </div>
+
+                <div class="flex flex-col gap-2.5">
+                    <h3 class="text-[13px] font-black text-gray-900 tracking-tight">Danh sách tài khoản</h3>
+                    <div id="asset-detail-accounts-list" class="flex flex-col gap-2.5"></div>
+                </div>
+
+                <div class="flex flex-col gap-2.5">
+                    <h3 class="text-[13px] font-black text-gray-900 tracking-tight">Cấp quyền truy cập</h3>
+                    <div id="asset-detail-grants-list" class="flex flex-col gap-2.5"></div>
+                </div>
+            </div>
+
+            <!-- GRANT DETAIL VIEW: opened by tapping one app in "Cấp quyền truy cập" -->
+            <div id="view-grant-detail" class="hidden flex-col gap-4">
+                <div class="bg-gray-50 rounded-2xl p-4 flex flex-col gap-3 relative">
+                    <div class="flex items-center gap-3">
+                        <div id="grant-detail-icon" class="shrink-0"></div>
+                        <div class="flex flex-col min-w-0 flex-1">
+                            <span id="grant-detail-app-name"
+                                class="text-[14px] font-black text-gray-900 truncate"></span>
+                            <span id="grant-detail-provider" class="text-[11px] text-gray-500 truncate"></span>
+                        </div>
+                        <button id="grant-detail-menu-btn" onclick="toggleGrantDetailMenu()" type="button"
+                            class="text-gray-400 hover:text-gray-700 p-1.5 -mr-1 shrink-0 cursor-pointer">
+                            <i class="fa-solid fa-ellipsis-vertical text-sm"></i>
+                        </button>
+                        <div id="grant-detail-menu"
+                            class="hidden absolute top-9 right-2 bg-white rounded-xl shadow-xl border border-gray-100 py-1.5 w-44 z-20">
+                            <button onclick="closeGrantDetailMenu(); openRemoveGrantConfirm()" type="button"
+                                class="w-full text-left px-3.5 py-2 text-[12px] font-bold text-red-500 hover:bg-red-50 flex items-center gap-2 cursor-pointer">
+                                <i class="fa-solid fa-trash-can text-[11px]"></i>
+                                <span>Xóa cấp quyền</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pt-2.5 border-t border-gray-200/70 flex flex-col gap-2">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[11px] text-gray-500 shrink-0">Số tài khoản:</span>
+                            <span id="grant-detail-account-number"
+                                class="text-[11.5px] font-bold text-gray-900 font-mono text-right truncate"></span>
+                        </div>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[11px] text-gray-500 shrink-0">Trạng thái:</span>
+                            <span id="grant-detail-status" class="text-[11.5px] font-bold text-right"></span>
+                        </div>
+                        <div class="flex items-start justify-between gap-2">
+                            <span class="text-[11px] text-gray-500 shrink-0 pt-0.5">Danh sách quyền:</span>
+                            <div class="flex items-center gap-1.5 flex-wrap justify-end">
+                                <div id="grant-detail-tags" class="flex items-center gap-1.5 flex-wrap justify-end">
+                                </div>
+                                <button type="button" onclick="showScopeTooltip()" class="text-gray-400 p-0.5 shrink-0">
+                                    <i class="fa-solid fa-circle-info text-[11px]"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[11px] text-gray-500 shrink-0">Ngày cấp quyền:</span>
+                            <span id="grant-detail-time" class="text-[11.5px] font-bold text-gray-900 text-right"></span>
+                        </div>
+                        <div class="flex items-center justify-between gap-2 flex-wrap">
+                            <span class="text-[11px] text-gray-500 shrink-0">Người cấp quyền:</span>
+                            <div class="flex items-center gap-1.5 justify-end">
+                                <span id="grant-detail-actor-name" class="text-[11.5px] font-bold text-gray-800"></span>
+                                <span id="grant-detail-actor-role"
+                                    class="hidden bg-black text-white text-[9.5px] font-bold px-2 py-0.5 rounded-md"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                    <h3 class="text-[13px] font-black text-gray-900 tracking-tight">Lịch sử truy cập</h3>
+                    <div id="grant-detail-tabs"
+                        class="flex items-center justify-center gap-4 border-b border-gray-100 -mx-0.5 px-0.5">
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full table-fixed text-[11px]">
+                            <thead>
+                                <tr class="text-center text-gray-800">
+                                    <th class="font-black pb-2 w-[36%]">API</th>
+                                    <th class="font-black pb-2 w-[36%]">Thời gian</th>
+                                    <th class="font-black pb-2 w-[28%]">Kết quả</th>
+                                </tr>
+                            </thead>
+                            <tbody id="grant-detail-history-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scope description popup, shown on tap of a scope tag in the grant detail view -->
+            <div id="scope-tooltip-backdrop" onclick="closeScopeTooltip()"
+                class="hidden absolute inset-0 bg-black/40 z-50 items-end justify-center">
+                <div onclick="event.stopPropagation()"
+                    class="bg-white rounded-t-2xl w-full p-5 flex flex-col gap-3 pb-7 max-h-[70%] overflow-y-auto">
+                    <div class="flex items-center justify-between shrink-0">
+                        <span class="text-[13.5px] font-black text-gray-900">Danh sách quyền truy cập</span>
+                        <button onclick="closeScopeTooltip()" type="button" class="text-gray-400 p-1 -mr-1">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div id="scope-tooltip-list" class="flex flex-col gap-3"></div>
+                </div>
+            </div>
+
+            <!-- Confirm sheet for "Xóa tài khoản" — destructive, so it always asks first -->
+            <div id="remove-asset-backdrop" onclick="closeRemoveAssetConfirm()"
+                class="hidden absolute inset-0 bg-black/40 z-50 items-end justify-center">
+                <div id="remove-asset-sheet" onclick="event.stopPropagation()"
+                    class="bg-white w-full rounded-t-3xl p-6 flex flex-col gap-4 transform translate-y-full transition-all duration-300">
+                    <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-1"></div>
+                    <div class="flex flex-col items-center gap-2 text-center">
+                        <div class="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mb-1">
+                            <i class="fa-solid fa-trash-can text-red-500 text-xl"></i>
+                        </div>
+                        <h3 id="remove-asset-title" class="text-[15px] font-bold text-gray-800">Xóa tài khoản ngân hàng?</h3>
+                        <p class="text-[11px] text-gray-500 leading-relaxed">Tài khoản này sẽ bị xóa khỏi danh sách. Bạn
+                            có thể liên kết lại bất cứ lúc nào.</p>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="confirmRemoveAsset()" type="button"
+                            class="w-full py-3 bg-red-500 hover:bg-red-600 text-white text-sm font-bold rounded-md transition-all active:scale-[0.98] cursor-pointer">
+                            Xóa tài khoản
+                        </button>
+                        <button onclick="closeRemoveAssetConfirm()" type="button"
+                            class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-bold rounded-md transition-all active:scale-[0.98] cursor-pointer">
+                            Hủy
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blocking notice: an account still granting apps can't be deleted outright —
+                 shown instead of the destructive confirm sheet above when that's the case -->
+            <div id="asset-delete-blocked-backdrop" onclick="closeAssetDeleteBlockedNotice()"
+                class="hidden absolute inset-0 bg-black/40 z-50 items-end justify-center">
+                <div id="asset-delete-blocked-sheet" onclick="event.stopPropagation()"
+                    class="bg-white w-full rounded-t-3xl p-6 flex flex-col gap-4 transform translate-y-full transition-all duration-300">
+                    <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-1"></div>
+                    <div class="flex flex-col items-center gap-2 text-center">
+                        <div class="w-14 h-14 rounded-full bg-amber-50 flex items-center justify-center mb-1">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-500 text-xl"></i>
+                        </div>
+                        <h3 class="text-[15px] font-bold text-gray-800">Chưa thể xóa tài khoản</h3>
+                        <p id="asset-delete-blocked-desc" class="text-[11px] text-gray-500 leading-relaxed"></p>
+                    </div>
+                    <button onclick="closeAssetDeleteBlockedNotice()" type="button"
+                        class="w-full py-3 bg-black hover:bg-gray-900 text-white text-sm font-bold rounded-md transition-all active:scale-[0.98] cursor-pointer">
+                        Đã hiểu
+                    </button>
+                </div>
+            </div>
+
+            <!-- Confirm sheet for "Xóa cấp quyền" — revokes just this one app's access -->
+            <div id="remove-grant-backdrop" onclick="closeRemoveGrantConfirm()"
+                class="hidden absolute inset-0 bg-black/40 z-50 items-end justify-center">
+                <div id="remove-grant-sheet" onclick="event.stopPropagation()"
+                    class="bg-white w-full rounded-t-3xl p-6 flex flex-col gap-4 transform translate-y-full transition-all duration-300">
+                    <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-1"></div>
+                    <div class="flex flex-col items-center gap-2 text-center">
+                        <div class="w-14 h-14 rounded-full bg-red-50 flex items-center justify-center mb-1">
+                            <i class="fa-solid fa-trash-can text-red-500 text-xl"></i>
+                        </div>
+                        <h3 id="remove-grant-title" class="text-[15px] font-bold text-gray-800">Xóa quyền truy cập này?</h3>
+                        <p class="text-[11px] text-gray-500 leading-relaxed">Ứng dụng sẽ ngay lập tức mất toàn bộ quyền
+                            truy cập vào tài khoản này. Bạn có thể cấp lại quyền sau nếu cần.</p>
+                    </div>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="confirmRemoveGrant()" type="button"
+                            class="w-full py-3 bg-red-500 hover:bg-red-600 text-white text-sm font-bold rounded-md transition-all active:scale-[0.98] cursor-pointer">
+                            Xóa cấp quyền
+                        </button>
+                        <button onclick="closeRemoveGrantConfirm()" type="button"
+                            class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-bold rounded-md transition-all active:scale-[0.98] cursor-pointer">
+                            Hủy
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- Floating Action Button (FAB): only shown on the plain asset list -->
+        <button id="header-add-btn" onclick="addAsset()"
+            class="absolute bottom-10 right-6 w-12 h-12 bg-black hover:bg-gray-900 text-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-all z-10">
+            <i class="fa-solid fa-plus text-lg"></i>
+        </button>
 
         <!-- Custom Toast Banner -->
         <div id="custom-toast"
@@ -111,6 +404,12 @@
                     class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all">
                     <i class="fa-solid fa-seedling text-[10px]"></i>
                     <span>Hồ sơ mới khởi tạo</span>
+                </button>
+                <button
+                    onclick="localStorage.setItem('casso_demo_scenario','new'); clearDemoDatasets(); window.location.href='../empty/index-bank.html'"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-building-columns text-[10px]"></i>
+                    <span>Claim ngân hàng</span>
                 </button>
                 <div class="border-t border-gray-100 my-0.5"></div>
                 <button onclick="resetDemoScenario()"
@@ -183,9 +482,29 @@
             bank: [
                 { id: 'b1', name: 'NGUYEN VAN C', provider: 'VCB Digibank', status: 'inactive', statusText: 'Ngừng kết nối', logoInitial: 'VCB', logoColor: 'bg-emerald-700' },
                 { id: 'b2', name: 'NGUYEN VAN B', provider: 'VCB Digibank', status: 'active', statusText: 'Đang kết nối', logoInitial: 'VCB', logoColor: 'bg-emerald-700' },
-                { id: 'b3', name: 'VCB DigiBiz', provider: '', status: 'active', statusText: 'Đang kết nối', logoInitial: 'VCB', logoColor: 'bg-emerald-700' },
+                {
+                    id: 'b3', name: 'VCB DigiBiz', provider: 'VCB Digibiz VA', status: 'active', statusText: 'Đang kết nối', logoInitial: 'VCB', logoColor: 'bg-emerald-700',
+                    // A business VA relationship can carry several sub-accounts under the same bank —
+                    // shown as a list on the detail screen instead of one flat "Số tài khoản" line.
+                    accounts: [
+                        { accountNumber: '0071000123456', status: 'active', statusText: 'Đang kết nối' },
+                        { accountNumber: '0071000198765', status: 'active', statusText: 'Đang kết nối' }
+                    ],
+                    grantedApps: [
+                        { name: 'Wonder Wallet', accountNumber: '0071000123456', tags: ['qrpay'], grantedTime: '10-06-2026' },
+                        { name: 'Wonder Wallet', accountNumber: '0071000198765', tags: ['qrpay', 'identity'], grantedTime: '12-06-2026' }
+                    ]
+                },
                 { id: 'b4', name: 'Tổng Cục Thuế', provider: '', status: 'active', statusText: 'Đang kết nối', logoInitial: 'TCT', logoColor: 'bg-red-600' },
-                { id: 'b5', name: 'NGUYỄN VĂN AN', provider: 'MBBank VietQR Official', status: 'inactive', statusText: 'Ngừng kết nối', logoInitial: 'MB', logoColor: 'bg-blue-800' }
+                {
+                    id: 'b5', name: 'NGUYỄN VĂN AN', provider: 'MBBank VietQR Official', status: 'inactive', statusText: 'Ngừng kết nối', logoInitial: 'MB', logoColor: 'bg-blue-800',
+                    accountNumber: '96886693025440',
+                    grantedApps: [
+                        { name: 'payOS', accountNumber: '96886693025440', tags: ['qrpay', 'identity'], grantedTime: '03-07-2026' },
+                        { name: 'X Invoice', accountNumber: '96886693025440', tags: ['transaction', 'balance'], grantedTime: '18-06-2026', revoked: true, revokedTime: '02-07-2026' },
+                        { name: 'Casso ID', accountNumber: '96886693025440', tags: ['identity'], grantedTime: '05-05-2026', revoked: true, revokedTime: '20-06-2026' }
+                    ]
+                }
             ],
             invoice: [
                 { id: 'i1', name: 'HỘ KINH DOANH CASSO TEST', provider: 'Xinvoice TVAN', status: 'inactive', statusText: 'Không hoạt động', logoInitial: 'X', logoColor: 'bg-emerald-600' },
@@ -216,11 +535,30 @@
             ]
         };
 
+        // Set right before navigating here from a home-screen "Hoạt động gần đây"
+        // entry — lets handleHeaderBack() know to go back home instead of to a
+        // (non-existent) underlying asset-detail view.
+        let grantOpenedFromHome = false;
+
         window.onload = function () {
             updateLiveTime();
             renderDemoPanel();
             renderEntityPills();
             render();
+
+            // Arrived from a home-screen activity card wanting to jump straight into
+            // its grant detail — staged via localStorage since the data (bank/app
+            // logos, tags, actor) doesn't correspond to any real asset record here.
+            if (new URLSearchParams(window.location.search).get('open') === 'grant') {
+                try {
+                    const staged = JSON.parse(localStorage.getItem('casso_pending_grant_detail') || 'null');
+                    if (staged) {
+                        localStorage.removeItem('casso_pending_grant_detail');
+                        grantOpenedFromHome = true;
+                        openGrantDetailFromData(staged);
+                    }
+                } catch (e) { }
+            }
         };
 
         // =========================================================
@@ -229,6 +567,24 @@
         // =========================================================
         function getCurrentEntityKey() {
             return localStorage.getItem('casso_active_entity') || 'personal';
+        }
+
+        // Which personal identity is browsing — every "Hồ sơ mới khởi tạo" home screen
+        // passes its own CCCD in the URL when it links here; falls back to Nguyễn Văn An
+        // for the "Hồ sơ đầy đủ" scenario, where that's the only identity there is.
+        const PERSONAL_IDENTITY_BY_CCCD = {
+            '012345678910': { name: 'NGUYỄN VĂN AN', role: 'Chủ tài khoản', initials: 'NA' },
+            '022303008786': { name: 'NGUYỄN VĂN HÙNG', role: 'Chủ tài khoản', initials: 'VH' },
+            '030987654321': { name: 'HOÀNG THỊ MAI', role: 'Chủ tài khoản', initials: 'TM' },
+            '079201004567': { name: 'LÊ QUỐC TRUNG', role: 'Chủ tài khoản', initials: 'QT' }
+        };
+
+        function getCurrentPersonalCccd() {
+            return new URLSearchParams(window.location.search).get('cccd') || '012345678910';
+        }
+
+        function getCurrentPersonalIdentity() {
+            return PERSONAL_IDENTITY_BY_CCCD[getCurrentPersonalCccd()] || PERSONAL_IDENTITY_BY_CCCD['012345678910'];
         }
 
         // Same legal-prefix stripping used on the home screens, so a business
@@ -279,10 +635,11 @@
             }).join('');
 
             const personalCls = activeKey === 'personal' ? PILL_ACTIVE_PERSONAL : PILL_IDLE;
+            const personalIdentity = getCurrentPersonalIdentity();
             const personalPill = `
                 <div onclick="switchAssetEntity('personal')" class="${personalCls}">
-                    <div class="w-5 h-5 rounded-full bg-white text-black text-[9px] font-black flex items-center justify-center shrink-0">NA</div>
-                    <span class="text-[10px] font-bold tracking-wider leading-none whitespace-nowrap">NGUYỄN VĂN AN</span>
+                    <div class="w-5 h-5 rounded-full bg-white text-black text-[9px] font-black flex items-center justify-center shrink-0">${personalIdentity.initials}</div>
+                    <span class="text-[10px] font-bold tracking-wider leading-none whitespace-nowrap">${personalIdentity.name}</span>
                 </div>
             `;
 
@@ -297,7 +654,7 @@
         function switchAssetEntity(entId) {
             localStorage.setItem('casso_active_entity', entId);
             renderEntityPills();
-            render();
+            showListView();
         }
 
         function updateLiveTime() {
@@ -343,16 +700,6 @@
             localStorage.setItem(key, JSON.stringify(list));
         }
 
-        function addButtonHtml(label) {
-            return `
-                <button onclick="addAsset()"
-                    class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1.5 cursor-pointer">
-                    <i class="fa-solid fa-plus text-[10px]"></i>
-                    <span>Thêm ${label}</span>
-                </button>
-            `;
-        }
-
         // =========================================================
         // DEMO-ONLY: banks "found" from a past Cas link (seeded by ../empty/index-bank.html),
         // shown as a confirmation prompt above the regular bank list.
@@ -371,38 +718,182 @@
             const discovered = getDiscoveredBankAccounts();
             if (discovered.length === 0) return '';
             return `
-                <div class="flex flex-col gap-2 pb-4 mb-2 border-b border-gray-100">
-                    <div class="flex items-start gap-1.5 px-0.5">
+                <div class="flex flex-col pb-2 mb-1 border-b border-gray-100">
+                    <div class="flex items-start gap-1.5 px-0.5 pb-2.5">
                         <span class="text-[11.5px] font-bold text-gray-800 leading-snug">
                             Hệ thống tìm thấy thông tin ${discovered.length} ngân hàng của bạn đã từng liên kết qua Cas, nếu đây là liên kết do bạn thực hiện hãy nhấp để thực hiện xác nhận.
                         </span>
                     </div>
-                    <div class="flex flex-col gap-2">
-                        ${discovered.map(item => `
-                            <div onclick="confirmDiscoveredBank('${item.id}')"
-                                class="bg-white rounded-xl p-2.5 border border-amber-200/80 hover:border-amber-300 shadow-sm flex items-center gap-3 transition-all active:scale-[0.99] cursor-pointer">
-                                <div class="w-9 h-9 rounded-full ${item.logoColor} text-white flex items-center justify-center text-[10px] font-black shrink-0">
-                                    ${item.logoInitial}
+                    ${discovered.map(item => `
+                        <div onclick="openClaimDetail('${item.id}')"
+                            class="flex items-center justify-between py-3 cursor-pointer hover:bg-gray-50 active:scale-[0.99] transition-all -mx-1 px-1 rounded-lg">
+                            <div class="flex items-center gap-3 min-w-0 flex-1">
+                                ${bankAvatarHtml(item, 'w-11 h-11')}
+                                <div class="flex flex-col min-w-0">
+                                    <span class="text-[14px] text-gray-900 leading-snug truncate">${item.name}</span>
+                                    <span class="text-[12px] text-gray-500 leading-snug truncate">${item.provider}</span>
                                 </div>
-                                <div class="flex flex-col min-w-0 flex-1">
-                                    <span class="font-bold text-[12.5px] text-gray-900 truncate leading-snug">${item.name}</span>
-                                    <span class="text-[10px] text-gray-500 truncate">${item.provider}</span>
-                                </div>
-                                <span class="text-[10px] font-bold text-amber-600 shrink-0">Xác nhận</span>
                             </div>
-                        `).join('')}
-                    </div>
+                            <span class="text-[11px] font-semibold text-amber-600 shrink-0 ml-2">Chờ xác nhận</span>
+                            <i class="fa-solid fa-chevron-right text-gray-300 text-xs shrink-0 ml-2"></i>
+                        </div>
+                    `).join('')}
                 </div>
             `;
         }
 
-        function confirmDiscoveredBank(id) {
+        // Currently open claim item id (while view-claim-detail is showing)
+        let currentClaimId = null;
+        let currentAssetDetailId = null;
+        let currentGrantTags = [];
+        let currentAssetView = 'list'; // 'list' | 'claim' | 'detail' | 'grant'
+
+        function tagBadgesHtml(tags) {
+            if (!tags || tags.length === 0) return `<span class="text-[10.5px] text-gray-400 italic">Không có</span>`;
+            return tags.map(t => `<span class="bg-black text-white text-[10px] font-bold px-2.5 py-1 rounded-md">${t}</span>`).join('');
+        }
+
+        // Tapping the single info icon next to "Danh sách quyền" opens a bottom-sheet
+        // explaining what every granted scope means.
+        function showScopeTooltip() {
+            document.getElementById('scope-tooltip-list').innerHTML = (currentGrantTags || []).map(t => `
+                <div class="flex flex-col gap-0.5">
+                    <span class="text-[12px] font-black text-gray-900 capitalize">${t}</span>
+                    <span class="text-[11.5px] text-gray-600 leading-relaxed">${SCOPE_DESCRIPTIONS[t] || 'Không có mô tả.'}</span>
+                </div>
+            `).join('');
+            const backdrop = document.getElementById('scope-tooltip-backdrop');
+            backdrop.classList.remove('hidden');
+            backdrop.classList.add('flex');
+        }
+
+        function closeScopeTooltip() {
+            const backdrop = document.getElementById('scope-tooltip-backdrop');
+            backdrop.classList.add('hidden');
+            backdrop.classList.remove('flex');
+        }
+
+        // Real brand logos already shipped in /assets (used elsewhere in the app for
+        // the same banks/apps) — reused here instead of plain colored initials.
+        const BANK_LOGO_BY_INITIAL = {
+            VCB: '../assets/vcb.png',
+            MBB: '../assets/mb.png',
+            TCB: '../assets/tcb.png',
+            ACB: '../assets/acb.png'
+        };
+        const APP_LOGO_BY_NAME = {
+            'X Invoice': '../assets/xinvoice.png',
+            'Casso ID': '../assets/casso.png'
+        };
+        // No dedicated logo for every demo app (e.g. payOS) — fall back to one of the
+        // existing brand assets, picked randomly but kept stable per app name.
+        const RANDOM_LOGO_POOL = ['../assets/cas_cert.png', '../assets/hilo.png', '../assets/tcb.png', '../assets/acb.png'];
+
+        function hashStr(s) {
+            let h = 0;
+            for (let i = 0; i < (s || '').length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+            return h;
+        }
+
+        function resolveAppLogo(name) {
+            return APP_LOGO_BY_NAME[name] || RANDOM_LOGO_POOL[hashStr(name) % RANDOM_LOGO_POOL.length];
+        }
+
+        // A circular avatar: the real logo image when we have one, otherwise the
+        // existing colored-initials fallback (kept for banks outside BANK_LOGO_BY_INITIAL).
+        function circleLogoHtml(logoUrl, fallbackColor, fallbackInitial, sizeClass, textSizeClass) {
+            if (logoUrl) {
+                return `<div class="${sizeClass} rounded-full overflow-hidden bg-white border border-gray-200 shrink-0 p-1.5 box-border"><img src="${logoUrl}" alt="${fallbackInitial}" class="w-full h-full object-contain block"></div>`;
+            }
+            return `<div class="${sizeClass} rounded-full ${fallbackColor} text-white flex items-center justify-center ${textSizeClass || 'text-[10px]'} font-black shrink-0">${fallbackInitial}</div>`;
+        }
+
+        function bankAvatarHtml(item, sizeClass, textSizeClass) {
+            return circleLogoHtml(BANK_LOGO_BY_INITIAL[item.logoInitial], item.logoColor, item.logoInitial, sizeClass, textSizeClass);
+        }
+
+        // Two overlapping circles (bank + app) to read as "these two are linked",
+        // same visual shorthand used for delegated-access pairs elsewhere in the app.
+        function linkedPairIconHtml(item, appName) {
+            const bankLogo = BANK_LOGO_BY_INITIAL[item.logoInitial];
+            const appLogo = resolveAppLogo(appName);
+            const bankCircle = bankLogo
+                ? `<div class="w-8 h-8 rounded-full overflow-hidden bg-white border-2 border-white shadow-xs z-10 p-1 box-border"><img src="${bankLogo}" alt="${item.logoInitial}" class="w-full h-full object-contain block"></div>`
+                : `<div class="w-8 h-8 rounded-full ${item.logoColor} text-white flex items-center justify-center text-[9px] font-black border-2 border-white shadow-xs z-10">${item.logoInitial}</div>`;
+            const appCircle = `<div class="w-8 h-8 rounded-full overflow-hidden bg-white border-2 border-white shadow-xs -ml-2.5 p-1 box-border"><img src="${appLogo}" alt="${appName}" class="w-full h-full object-contain block"></div>`;
+            return `<div class="flex items-center shrink-0">${bankCircle}${appCircle}</div>`;
+        }
+
+        // Plain-language explanation of each access scope — shown on the grant detail screen.
+        const SCOPE_DESCRIPTIONS = {
+            identity: 'Xem thông tin định danh bao gồm: tên, số căn cước công dân, ngày sinh, số điện thoại, email',
+            transaction: 'Xem lịch sử giao dịch của tài khoản trong vòng 30 ngày',
+            balance: 'Xem thông tin tài khoản bao gồm: tên tài khoản, loại tài khoản, tiền tệ, số dư tài khoản…',
+            qrpay: 'Tạo mã QR thanh toán và nhận thanh toán qua tài khoản này',
+            transfer: 'Thực hiện lệnh chuyển tiền từ tài khoản này'
+        };
+
+        const SCOPE_API_PATH = {
+            identity: '/identity',
+            transaction: '/transactions',
+            balance: '/balance',
+            qrpay: '/qrpay',
+            transfer: '/transfer'
+        };
+
+        function openClaimDetail(id) {
+            const item = getDiscoveredBankAccounts().find(b => b.id === id);
+            if (!item) return;
+            currentClaimId = id;
+
+            document.getElementById('claim-detail-avatar').innerHTML = bankAvatarHtml(item, 'w-12 h-12', 'text-[11px]');
+
+            document.getElementById('claim-detail-name').textContent = item.name;
+            document.getElementById('claim-detail-bank').textContent = item.provider;
+            document.getElementById('claim-detail-account').textContent = item.accountNumber || '—';
+
+            const apps = item.linkedApps || [];
+            document.getElementById('claim-detail-app-count').textContent = apps.length + ' liên kết';
+            document.getElementById('claim-detail-app-list').innerHTML = apps.map((app, i) => `
+                <div class="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-3">
+                    ${linkedPairIconHtml(item, app.name)}
+                    <div class="flex flex-col gap-1.5 min-w-0 flex-1">
+                        <span class="text-[12px] font-bold text-gray-900 truncate">${app.name}</span>
+                        <div class="flex items-center gap-1.5 flex-wrap">${tagBadgesHtml(app.tags)}</div>
+                        <span class="text-[10px] text-gray-400 flex items-center gap-1"><i class="fa-regular fa-clock"></i>${app.time || '—'}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            currentAssetView = 'claim';
+            document.getElementById('header-add-btn')?.classList.add('hidden');
+            document.getElementById('entity-pills-container')?.classList.add('hidden');
+            document.getElementById('asset-list-container').classList.add('hidden');
+            document.getElementById('view-asset-detail').classList.add('hidden');
+            const claimView = document.getElementById('view-claim-detail');
+            claimView.classList.remove('hidden');
+            claimView.classList.add('flex');
+        }
+
+        function confirmClaimDetail() {
+            if (!currentClaimId) return;
             const discovered = getDiscoveredBankAccounts();
-            const idx = discovered.findIndex(b => b.id === id);
+            const idx = discovered.findIndex(b => b.id === currentClaimId);
             if (idx === -1) return;
             const item = discovered[idx];
             discovered.splice(idx, 1);
             localStorage.setItem(DISCOVERED_BANK_KEY, JSON.stringify(discovered));
+
+            // Confirming carries every linked app straight over onto the new asset,
+            // including ones already revoked before the claim (shown below the active grants).
+            const grantedApps = (item.linkedApps || []).map(app => ({
+                name: app.name,
+                accountNumber: item.accountNumber,
+                tags: app.tags || [],
+                grantedTime: app.time,
+                revoked: app.revoked || false,
+                revokedTime: app.revokedTime
+            }));
 
             const list = getAssetList('bank');
             list.push({
@@ -412,11 +903,456 @@
                 status: 'active',
                 statusText: 'Đang kết nối',
                 logoInitial: item.logoInitial,
-                logoColor: item.logoColor
+                logoColor: item.logoColor,
+                accountNumber: item.accountNumber,
+                grantedApps: grantedApps
             });
             saveAssetList('bank', list);
 
+            currentClaimId = null;
+            showListView();
+        }
+
+        // Rejecting a claim just drops it from the discovered list — no asset is
+        // ever created, and it won't be suggested again this session.
+        function cancelClaimDetail() {
+            if (!currentClaimId) return;
+            const discovered = getDiscoveredBankAccounts().filter(b => b.id !== currentClaimId);
+            localStorage.setItem(DISCOVERED_BANK_KEY, JSON.stringify(discovered));
+            currentClaimId = null;
+            showListView();
+        }
+
+        function openAssetDetail(id) {
+            const type = getTypeFromQuery();
+            if (type !== 'bank') return; // detail view is bank-specific for now
+            const item = getAssetList('bank').find(b => b.id === id);
+            if (!item) return;
+
+            document.getElementById('asset-detail-avatar').innerHTML = bankAvatarHtml(item, 'w-14 h-14', 'text-sm');
+
+            document.getElementById('asset-detail-name').textContent = item.name;
+            document.getElementById('asset-detail-provider').querySelector('span').textContent = item.provider || '—';
+            renderPauseToggleButton(item);
+
+            // A bank connection may carry more than one account (e.g. a business's several
+            // VA sub-accounts at the same bank) — item.accounts lists them; single-account
+            // items fall back to the flat accountNumber/status fields they've always had.
+            const accounts = getItemAccounts(item);
+            document.getElementById('asset-detail-accounts-list').innerHTML = accounts.map(acc => `
+                <div class="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-3">
+                    ${bankAvatarHtml(item, 'w-10 h-10', 'text-[11px]')}
+                    <div class="flex flex-col min-w-0 flex-1">
+                        <span class="text-[12.5px] font-bold text-gray-900 truncate">${item.provider || item.name}</span>
+                        <span class="text-[11px] text-gray-500 font-mono">Số tài khoản: ${acc.accountNumber || '—'}</span>
+                    </div>
+                    <span class="text-[11px] font-bold shrink-0 ${assetStatusColorClass(acc.status)}">${acc.statusText || '—'}</span>
+                </div>
+            `).join('');
+
+            currentAssetDetailId = item.id;
+            const grants = item.grantedApps || [];
+            // Revoked grants sink to the bottom of the list, below the still-active ones —
+            // original index is kept per-entry so openGrantDetail(i) still points at the
+            // right record in item.grantedApps after reordering for display.
+            const orderedGrants = grants
+                .map((g, i) => ({ g, i }))
+                .sort((a, b) => (a.g.revoked ? 1 : 0) - (b.g.revoked ? 1 : 0));
+            document.getElementById('asset-detail-grants-list').innerHTML = grants.length === 0
+                ? `<span class="text-[11px] text-gray-400 italic px-0.5">Chưa cấp quyền cho ứng dụng nào</span>`
+                : orderedGrants.map(({ g, i }) => `
+                    <div onclick="openGrantDetail(${i})"
+                        class="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-xl px-3.5 py-3 cursor-pointer hover:bg-gray-100 active:scale-[0.99] transition-all">
+                        ${linkedPairIconHtml(item, g.name)}
+                        <div class="flex flex-col gap-1.5 min-w-0 flex-1">
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                <span class="text-[12.5px] font-bold text-gray-900">${item.provider || item.name}</span>
+                                <i class="fa-solid fa-link text-emerald-500 text-[10px]"></i>
+                                <span class="text-[12.5px] font-bold text-gray-900">${g.name}</span>
+                                <i class="fa-solid fa-chevron-right text-gray-300 text-[10px] ml-auto"></i>
+                            </div>
+                            <span class="text-[10px] text-gray-500 font-mono">Số tài khoản: ${g.accountNumber || '—'}</span>
+                            <div class="flex items-center gap-1.5 flex-wrap">${tagBadgesHtml(g.tags)}</div>
+                            <span class="text-[10px] text-gray-400 flex items-center gap-1"><i class="fa-regular fa-clock"></i>${g.grantedTime || '—'}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+            currentAssetView = 'detail';
+            document.getElementById('header-add-btn')?.classList.add('hidden');
+            document.getElementById('entity-pills-container')?.classList.add('hidden');
+            document.getElementById('asset-list-container').classList.add('hidden');
+            document.getElementById('view-claim-detail').classList.add('hidden');
+            document.getElementById('view-grant-detail').classList.add('hidden');
+            const detailView = document.getElementById('view-asset-detail');
+            detailView.classList.remove('hidden');
+            detailView.classList.add('flex');
+            closeAssetDetailMenu();
+        }
+
+        // ---- "Xóa tài khoản" — a 3-dot menu next to the header, not a 5th grid icon,
+        // so a destructive action never sits flush next to the everyday ones. ----
+        function toggleAssetDetailMenu() {
+            document.getElementById('asset-detail-menu')?.classList.toggle('hidden');
+        }
+
+        function closeAssetDetailMenu() {
+            document.getElementById('asset-detail-menu')?.classList.add('hidden');
+        }
+
+        function openRemoveAssetConfirm() {
+            // An account still granting apps can't be deleted outright — the user has to
+            // revoke every active grant first, so nothing gets silently cut off mid-use.
+            const item = getAssetList('bank').find(b => b.id === currentAssetDetailId);
+            const activeGrants = (item?.grantedApps || []).filter(g => !g.revoked);
+            if (activeGrants.length > 0) {
+                openAssetDeleteBlockedNotice(activeGrants.length);
+                return;
+            }
+            const backdrop = document.getElementById('remove-asset-backdrop');
+            const sheet = document.getElementById('remove-asset-sheet');
+            backdrop.classList.remove('hidden');
+            backdrop.classList.add('flex');
+            requestAnimationFrame(() => requestAnimationFrame(() => sheet.classList.remove('translate-y-full')));
+        }
+
+        function closeRemoveAssetConfirm() {
+            const backdrop = document.getElementById('remove-asset-backdrop');
+            const sheet = document.getElementById('remove-asset-sheet');
+            sheet.classList.add('translate-y-full');
+            setTimeout(() => {
+                backdrop.classList.add('hidden');
+                backdrop.classList.remove('flex');
+            }, 300);
+        }
+
+        function confirmRemoveAsset() {
+            const list = getAssetList('bank').filter(b => b.id !== currentAssetDetailId);
+            saveAssetList('bank', list);
+            closeRemoveAssetConfirm();
+            showToast('Đã xóa tài khoản ngân hàng');
+            showListView();
+        }
+
+        function openAssetDeleteBlockedNotice(activeGrantCount) {
+            document.getElementById('asset-delete-blocked-desc').textContent =
+                `Tài khoản này vẫn đang cấp quyền cho ${activeGrantCount} ứng dụng. Vui lòng xóa hết các quyền đã cấp trước khi xóa tài khoản.`;
+            const backdrop = document.getElementById('asset-delete-blocked-backdrop');
+            const sheet = document.getElementById('asset-delete-blocked-sheet');
+            backdrop.classList.remove('hidden');
+            backdrop.classList.add('flex');
+            requestAnimationFrame(() => requestAnimationFrame(() => sheet.classList.remove('translate-y-full')));
+        }
+
+        function closeAssetDeleteBlockedNotice() {
+            const backdrop = document.getElementById('asset-delete-blocked-backdrop');
+            const sheet = document.getElementById('asset-delete-blocked-sheet');
+            sheet.classList.add('translate-y-full');
+            setTimeout(() => {
+                backdrop.classList.add('hidden');
+                backdrop.classList.remove('flex');
+            }, 300);
+        }
+
+        // ---- "Xóa cấp quyền" — a 3-dot menu on the grant detail screen, revoking just
+        // this one app's access to the asset (the record itself is removed, not merely
+        // flagged as revoked, since the user asked for it gone). ----
+        function toggleGrantDetailMenu() {
+            document.getElementById('grant-detail-menu')?.classList.toggle('hidden');
+        }
+
+        function closeGrantDetailMenu() {
+            document.getElementById('grant-detail-menu')?.classList.add('hidden');
+        }
+
+        function openRemoveGrantConfirm() {
+            if (!grantDetailIsReal || currentGrantIndex === null) return;
+            const backdrop = document.getElementById('remove-grant-backdrop');
+            const sheet = document.getElementById('remove-grant-sheet');
+            backdrop.classList.remove('hidden');
+            backdrop.classList.add('flex');
+            requestAnimationFrame(() => requestAnimationFrame(() => sheet.classList.remove('translate-y-full')));
+        }
+
+        function closeRemoveGrantConfirm() {
+            const backdrop = document.getElementById('remove-grant-backdrop');
+            const sheet = document.getElementById('remove-grant-sheet');
+            sheet.classList.add('translate-y-full');
+            setTimeout(() => {
+                backdrop.classList.add('hidden');
+                backdrop.classList.remove('flex');
+            }, 300);
+        }
+
+        function confirmRemoveGrant() {
+            if (currentGrantIndex === null) return;
+            const list = getAssetList('bank');
+            const item = list.find(b => b.id === currentAssetDetailId);
+            if (!item) return;
+            item.grantedApps = (item.grantedApps || []).filter((g, i) => i !== currentGrantIndex);
+            saveAssetList('bank', list);
+            closeRemoveGrantConfirm();
+            showToast('Đã xóa cấp quyền');
+            openAssetDetail(currentAssetDetailId);
+        }
+
+        // A connection with no explicit item.accounts is just a single classic
+        // accountNumber/status/statusText — normalized here so the detail screen can
+        // always render "Danh sách tài khoản" as a list, whether it holds 1 or many.
+        function getItemAccounts(item) {
+            if (item.accounts && item.accounts.length) return item.accounts;
+            return [{ accountNumber: item.accountNumber, status: item.status, statusText: item.statusText }];
+        }
+
+        // ---- "Tạm dừng" / "Tiếp tục" — pauses a bank account without deleting it or
+        // its granted-apps history; toggling flips both the status badge and this
+        // same button's own icon/label between the two states. ----
+        function assetStatusColorClass(status) {
+            if (status === 'active') return 'text-emerald-600';
+            if (status === 'paused') return 'text-amber-600';
+            return 'text-red-500';
+        }
+
+        function renderPauseToggleButton(item) {
+            const icon = document.getElementById('asset-detail-pause-icon');
+            const label = document.getElementById('asset-detail-pause-label');
+            if (!icon || !label) return;
+            const isPaused = item.status === 'paused';
+            icon.className = isPaused ? 'fa-solid fa-play text-sm' : 'fa-solid fa-pause text-sm';
+            label.textContent = isPaused ? 'Tiếp tục' : 'Tạm dừng';
+        }
+
+        function toggleAssetPause() {
+            const list = getAssetList('bank');
+            const item = list.find(b => b.id === currentAssetDetailId);
+            if (!item) return;
+            if (item.status === 'paused') {
+                item.status = 'active';
+                item.statusText = 'Đang kết nối';
+                showToast('Đã tiếp tục kết nối');
+            } else {
+                item.status = 'paused';
+                item.statusText = 'Tạm dừng';
+                showToast('Đã tạm dừng tài khoản');
+            }
+            saveAssetList('bank', list);
+            openAssetDetail(currentAssetDetailId);
+        }
+
+        // Fabricates a handful of recent-looking access log rows for the demo — a
+        // few calls per granted scope, all successful.
+        function buildGrantHistory(tags) {
+            const rows = [];
+            (tags || []).forEach(tag => {
+                const path = SCOPE_API_PATH[tag] || ('/' + tag);
+                for (let i = 0; i < 3; i++) {
+                    rows.push({ tag, api: path, time: '04-07-2026', result: 'OK' });
+                }
+            });
+            return rows;
+        }
+
+        function renderGrantHistory(tags, filterTag) {
+            const rows = buildGrantHistory(tags).filter(r => !filterTag || r.tag === filterTag);
+            document.getElementById('grant-detail-history-body').innerHTML = rows.map(r => `
+                <tr class="border-t border-gray-100">
+                    <td class="py-2 text-center font-mono text-gray-800">${r.api}</td>
+                    <td class="py-2 text-center text-gray-600">${r.time}</td>
+                    <td class="py-2 text-center font-bold text-emerald-600">${r.result}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Default "who did this" shown when a grant record doesn't carry its own
+        // actor (e.g. every grant created before this field existed).
+        // Falls back to whoever is the obvious actor for the current context when a
+        // grant record doesn't carry its own actor — the personal account itself,
+        // or the business's director when viewing a business's assets.
+        function getDefaultActor() {
+            const entityKey = getCurrentEntityKey();
+            if (entityKey === 'personal') {
+                return getCurrentPersonalIdentity();
+            }
+            try {
+                const businesses = JSON.parse(localStorage.getItem('casso_user_businesses_v7') || '[]');
+                const biz = businesses.find(b => b.id === entityKey);
+                if (biz) return { name: biz.director || getCurrentPersonalIdentity().name, role: 'Giám đốc' };
+            } catch (e) { }
+            return getCurrentPersonalIdentity();
+        }
+
+        // Remembers the header title so it can be restored when leaving the grant
+        // detail view back to whichever view opened it (list or asset detail).
+        let previousAssetTitle = null;
+
+        let currentGrantIndex = null;
+        let grantDetailIsReal = false;
+
+        function openGrantDetail(grantIndex) {
+            const item = getAssetList('bank').find(b => b.id === currentAssetDetailId);
+            if (!item) return;
+            const grant = (item.grantedApps || [])[grantIndex];
+            if (!grant) return;
+
+            currentGrantIndex = grantIndex;
+            grantDetailIsReal = true;
+
+            renderGrantDetailView({
+                iconHtml: linkedPairIconHtml(item, grant.name),
+                appName: grant.name,
+                provider: item.provider || item.name,
+                accountNumber: item.accountNumber,
+                tags: grant.tags,
+                time: grant.grantedTime,
+                actorName: grant.actorName,
+                actorRole: grant.actorRole,
+                revoked: grant.revoked,
+                revokedTime: grant.revokedTime
+            });
+        }
+
+        // Opens the grant detail view from a plain data object instead of an asset
+        // record — used when arriving from outside this page (e.g. tapping a "Hoạt
+        // động gần đây" entry on the home screen), where there's no matching
+        // localStorage bank asset to look up.
+        function openGrantDetailFromData(data) {
+            currentGrantIndex = null;
+            grantDetailIsReal = false;
+            const bankItem = { logoColor: data.bankLogoColor || 'bg-gray-700', logoInitial: data.bankInitial || '?' };
+            const iconHtml = data.bankLogo && data.appLogo
+                ? `<div class="flex items-center shrink-0">
+                        <div class="w-8 h-8 rounded-full overflow-hidden bg-white border-2 border-white shadow-xs z-10 p-1 box-border"><img src="${data.bankLogo}" alt="${data.bankName}" class="w-full h-full object-contain block"></div>
+                        <div class="w-8 h-8 rounded-full overflow-hidden bg-white border-2 border-white shadow-xs -ml-2.5 p-1 box-border"><img src="${data.appLogo}" alt="${data.appName}" class="w-full h-full object-contain block"></div>
+                   </div>`
+                : linkedPairIconHtml(bankItem, data.appName);
+
+            renderGrantDetailView({
+                iconHtml,
+                appName: data.appName,
+                provider: data.bankName,
+                accountNumber: data.accountNumber,
+                tags: data.tags,
+                time: data.time,
+                actorName: data.actorName,
+                actorRole: data.actorRole,
+                revoked: data.revoked,
+                revokedTime: data.revokedTime
+            });
+        }
+
+        function renderGrantDetailView({ iconHtml, appName, provider, accountNumber, tags, time, actorName, actorRole, revoked, revokedTime }) {
+            currentGrantTags = tags || [];
+            closeGrantDetailMenu();
+            // Only a grant backed by a real asset record can be deleted — a "Hoạt động gần
+            // đây" entry opened via openGrantDetailFromData() has nothing to delete.
+            document.getElementById('grant-detail-menu-btn')?.classList.toggle('hidden', !grantDetailIsReal);
+
+            document.getElementById('grant-detail-icon').innerHTML = iconHtml;
+            document.getElementById('grant-detail-app-name').textContent = appName;
+            document.getElementById('grant-detail-provider').textContent = provider;
+            document.getElementById('grant-detail-account-number').textContent = accountNumber || '—';
+            document.getElementById('grant-detail-tags').innerHTML = tagBadgesHtml(tags);
+            document.getElementById('grant-detail-time').textContent = time || '—';
+            const fallbackActor = getDefaultActor();
+            const finalActorName = actorName || fallbackActor.name;
+            document.getElementById('grant-detail-actor-name').textContent = finalActorName;
+
+            // Role tag next to the name: a business shows who acted (their role); a personal
+            // profile stays unlabeled since it's just you — unless someone else acted on your
+            // behalf via ủy quyền, in which case that alone is worth flagging.
+            const roleEl = document.getElementById('grant-detail-actor-role');
+            const isBusinessContext = getCurrentEntityKey() !== 'personal';
+            if (isBusinessContext) {
+                roleEl.textContent = actorRole || fallbackActor.role;
+                roleEl.classList.remove('hidden');
+            } else if (finalActorName !== getCurrentPersonalIdentity().name) {
+                roleEl.textContent = 'Ủy quyền';
+                roleEl.classList.remove('hidden');
+            } else {
+                roleEl.classList.add('hidden');
+            }
+
+            const statusEl = document.getElementById('grant-detail-status');
+            if (revoked) {
+                statusEl.textContent = `Đã hủy${revokedTime ? ' • ' + revokedTime : ''}`;
+                statusEl.className = 'text-[11.5px] font-bold text-red-500';
+            } else {
+                statusEl.textContent = 'Đang hoạt động';
+                statusEl.className = 'text-[11.5px] font-bold text-emerald-600';
+            }
+
+            const tabsEl = document.getElementById('grant-detail-tabs');
+            const tabList = ['all', ...(tags || [])];
+            tabsEl.innerHTML = tabList.map((t, i) => `
+                <button onclick="switchGrantHistoryTab('${t}', this)" type="button"
+                    class="pb-2 text-[11.5px] font-bold capitalize border-b-2 transition-all cursor-pointer ${i === 0 ? 'text-emerald-700 border-emerald-600' : 'text-gray-400 border-transparent hover:text-gray-600'}">
+                    ${t === 'all' ? 'All' : t}
+                </button>
+            `).join('');
+            renderGrantHistory(tags, null);
+
+            if (currentAssetView !== 'grant') {
+                previousAssetTitle = document.getElementById('asset-title').textContent;
+            }
+            document.getElementById('asset-title').textContent = 'Cấp quyền dữ liệu';
+
+            currentAssetView = 'grant';
+            document.getElementById('header-add-btn')?.classList.add('hidden');
+            document.getElementById('entity-pills-container')?.classList.add('hidden');
+            document.getElementById('asset-list-container').classList.add('hidden');
+            document.getElementById('view-claim-detail').classList.add('hidden');
+            document.getElementById('view-asset-detail').classList.add('hidden');
+            const grantView = document.getElementById('view-grant-detail');
+            grantView.classList.remove('hidden');
+            grantView.classList.add('flex');
+        }
+
+        function switchGrantHistoryTab(tag, btnEl) {
+            document.querySelectorAll('#grant-detail-tabs button').forEach(b => {
+                b.className = 'pb-2 text-[11.5px] font-bold capitalize border-b-2 transition-all cursor-pointer text-gray-400 border-transparent hover:text-gray-600';
+            });
+            btnEl.className = 'pb-2 text-[11.5px] font-bold capitalize border-b-2 transition-all cursor-pointer text-emerald-700 border-emerald-600';
+            renderGrantHistory(currentGrantTags, tag === 'all' ? null : tag);
+        }
+
+        function showListView() {
+            currentAssetView = 'list';
+            document.getElementById('header-add-btn')?.classList.remove('hidden');
+            document.getElementById('entity-pills-container')?.classList.remove('hidden');
+            document.getElementById('view-claim-detail').classList.add('hidden');
+            document.getElementById('view-claim-detail').classList.remove('flex');
+            document.getElementById('view-asset-detail').classList.add('hidden');
+            document.getElementById('view-asset-detail').classList.remove('flex');
+            document.getElementById('view-grant-detail').classList.add('hidden');
+            document.getElementById('view-grant-detail').classList.remove('flex');
+            document.getElementById('asset-list-container').classList.remove('hidden');
             render();
+        }
+
+        function handleHeaderBack() {
+            closeScopeTooltip();
+            if (currentAssetView === 'grant') {
+                // Arrived straight from a home-screen "Hoạt động gần đây" entry —
+                // there's no asset-detail view underneath to return to, so go home.
+                if (grantOpenedFromHome) {
+                    window.location.href = demoHomeUrl();
+                    return;
+                }
+                if (previousAssetTitle) {
+                    document.getElementById('asset-title').textContent = previousAssetTitle;
+                }
+                document.getElementById('view-grant-detail').classList.add('hidden');
+                document.getElementById('view-grant-detail').classList.remove('flex');
+                document.getElementById('view-asset-detail').classList.remove('hidden');
+                document.getElementById('view-asset-detail').classList.add('flex');
+                currentAssetView = 'detail';
+                return;
+            }
+            if (currentAssetView !== 'list') {
+                showListView();
+                return;
+            }
+            window.location.href = demoHomeUrl();
         }
 
         function render() {
@@ -434,29 +1370,25 @@
                     <div class="mt-2 border border-dashed border-gray-200 rounded-2xl bg-gray-50/60 flex flex-col items-center justify-center gap-4 py-10 px-6">
                         <i class="fa-solid ${cfg.emptyIcon} text-4xl text-gray-300"></i>
                         <span class="text-[13px] font-bold text-gray-400 text-center leading-snug">${cfg.emptyMessage}</span>
-                        <button onclick="addAsset()"
-                            class="w-full py-3 bg-black hover:bg-gray-900 text-white font-bold text-[12.5px] rounded-xl transition-all active:scale-[0.98] shadow-xs cursor-pointer">
-                            Thêm ${cfg.label} +
-                        </button>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = discoveredHtml + list.map(item => `
-                <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                <div onclick="${type === 'bank' ? `openAssetDetail('${item.id}')` : ''}"
+                    class="flex items-center justify-between py-3 border-b border-gray-100 ${type === 'bank' ? 'cursor-pointer hover:bg-gray-50 active:scale-[0.99] transition-all -mx-1 px-1 rounded-lg' : ''}">
                     <div class="flex items-center gap-3 min-w-0 flex-1">
-                        <div class="w-11 h-11 rounded-full ${item.logoColor} text-white flex items-center justify-center text-[10px] font-black shrink-0">
-                            ${item.logoInitial}
-                        </div>
+                        ${bankAvatarHtml(item, 'w-11 h-11')}
                         <div class="flex flex-col min-w-0">
                             <span class="text-[14px] text-gray-900 leading-snug truncate">${item.name}</span>
                             ${item.provider ? `<span class="text-[12px] text-emerald-600 leading-snug truncate">${item.provider}</span>` : ''}
                         </div>
                     </div>
-                    <span class="text-[11px] font-semibold shrink-0 ml-2 ${item.status === 'active' ? 'text-emerald-600' : 'text-red-500'}">${item.statusText}</span>
+                    <span class="text-[11px] font-semibold shrink-0 ml-2 ${assetStatusColorClass(item.status)}">${item.statusText}</span>
+                    ${type === 'bank' ? '<i class="fa-solid fa-chevron-right text-gray-300 text-xs shrink-0 ml-2"></i>' : ''}
                 </div>
-            `).join('') + `<div class="pt-4">${addButtonHtml(cfg.label)}</div>`;
+            `).join('');
         }
 
         function addAsset() {
@@ -487,6 +1419,11 @@
         }
 
         function demoHomeUrl() {
+            // A caller can override where "back" goes via ?home=<relative-path> — used by
+            // alternate home screens (e.g. the bank-claim demo) that aren't the default
+            // entry point for their scenario but still need the back arrow to return to them.
+            const homeParam = new URLSearchParams(window.location.search).get('home');
+            if (homeParam) return decodeURIComponent(homeParam);
             return getDemoScenario() === 'new' ? '../empty/index-empty.html' : '../full/index.html';
         }
 

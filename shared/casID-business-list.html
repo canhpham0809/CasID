@@ -100,15 +100,13 @@
             <div class="flex-1 overflow-y-auto px-3.5 py-3 flex flex-col gap-2.5 bg-gray-50/60">
                 <!-- Business cards list injected dynamically -->
                 <div id="business-list-container" class="flex flex-col gap-2"></div>
-
-                <!-- Add Business Button directly underneath the cards -->
-                <div class="pt-1 pb-4">
-                    <button onclick="showAddBusinessView()"
-                        class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1">
-                        <span>Xác thực doanh nghiệp</span>
-                    </button>
-                </div>
             </div>
+
+            <!-- Floating Action Button (FAB) -->
+            <button onclick="showAddBusinessView()"
+                class="absolute bottom-20 right-6 w-12 h-12 bg-black hover:bg-gray-900 text-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-all z-10">
+                <i class="fa-solid fa-plus text-lg"></i>
+            </button>
 
             <!-- Bottom Navigation Bar (Active tab: Doanh nghiệp) -->
             <div
@@ -622,6 +620,12 @@
             <div class="flex-1 overflow-y-auto px-4 py-3.5">
                 <div id="member-list-container" class="flex flex-col gap-2.5"></div>
             </div>
+
+            <!-- Floating Action Button (FAB) -->
+            <button onclick="showMemberAddView()"
+                class="absolute bottom-10 right-6 w-12 h-12 bg-black hover:bg-gray-900 text-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-all z-10">
+                <i class="fa-solid fa-plus text-lg"></i>
+            </button>
         </div>
 
         <!-- ========================================================= -->
@@ -931,6 +935,11 @@
                     class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all">
                     <i class="fa-solid fa-seedling text-[10px]"></i>
                     <span>Hồ sơ mới khởi tạo</span>
+                </button>
+                <button onclick="localStorage.setItem('casso_demo_scenario','new'); clearDemoDatasets(); window.location.href='../empty/index-bank.html'"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-building-columns text-[10px]"></i>
+                    <span>Claim ngân hàng</span>
                 </button>
                 <div class="border-t border-gray-100 my-0.5"></div>
                 <button onclick="resetDemoScenario()"
@@ -1973,14 +1982,6 @@
                 `).join('');
             }
 
-            html += `
-                <button onclick="showMemberAddView()" type="button"
-                    class="w-full py-2.5 mt-1 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1.5 cursor-pointer">
-                    <i class="fa-solid fa-user-plus text-xs"></i>
-                    <span>Thêm thành viên</span>
-                </button>
-            `;
-
             container.innerHTML = html;
         }
 
@@ -2367,6 +2368,14 @@
         // =========================================================
         // TAX CODE SEARCH & 3 SCENARIOS LOGIC
         // =========================================================
+        // Shared with submitScenario1()/submitScenario3(): the registry's operating
+        // status is re-checked right before finalizing, not just at search time — a
+        // business found "active" during search may have been suspended on the
+        // national registry by the time the user actually submits.
+        function isBusinessSuspendedMst(mst) {
+            return mst === '0399999999' || mst.includes('999');
+        }
+
         function searchTaxCode() {
             const input = document.getElementById('input-mst');
             const mst = input ? input.value.trim() : '';
@@ -2399,7 +2408,7 @@
             // TH2: 0318999888 (hoặc bắt đầu bằng 0318 / có '888') -> Không phải Giám đốc
             // TH1: 0316829871 (hoặc các trường hợp còn lại) -> Hợp lệ, khớp Giám đốc
 
-            if (mst === '0399999999' || mst.includes('999')) {
+            if (isBusinessSuspendedMst(mst)) {
                 // TÌNH HUỐNG 4: Doanh nghiệp đã ngừng hoạt động
                 s4?.classList.remove('hidden');
                 const nameEl = document.getElementById('s4-company-name');
@@ -2454,12 +2463,32 @@
         // =========================================================
         // SUBMIT SCENARIO 1 (HỢP LỆ -> THÊM VÀO ĐÃ XÁC THỰC)
         // =========================================================
+        // Re-routes into TH4 (ngừng hoạt động) right at submit time — used when a
+        // business that looked active during search turns out to have been
+        // suspended on the registry by the time the user actually confirms.
+        function redirectToSuspendedScenario(companyName) {
+            document.getElementById('scenario-1-valid')?.classList.add('hidden');
+            document.getElementById('scenario-2-not-director')?.classList.add('hidden');
+            document.getElementById('scenario-3-no-cccd')?.classList.add('hidden');
+            document.getElementById('scenario-4-suspended')?.classList.remove('hidden');
+            const nameEl = document.getElementById('s4-company-name');
+            if (nameEl) nameEl.value = companyName || '';
+            showToast('Doanh nghiệp đã ngừng hoạt động, không thể xác thực', 'fa-solid fa-triangle-exclamation text-red-400');
+        }
+
         function submitScenario1() {
             const mst = document.getElementById('input-mst')?.value.trim() || '0316829871';
             const name = document.getElementById('s1-company-name')?.value.trim() || 'CÔNG TY TNHH CASSO';
             const director = document.getElementById('s1-director-name')?.value.trim() || 'NGUYỄN VĂN AN';
             const phone = document.getElementById('s1-phone')?.value.trim() || '0901234567';
             const email = document.getElementById('s1-email')?.value.trim() || 'contact@casso.vn';
+
+            // Re-check the registry's operating status right before finalizing — it
+            // may have changed since the form was first opened (see isBusinessSuspendedMst).
+            if (isBusinessSuspendedMst(mst)) {
+                redirectToSuspendedScenario(name);
+                return;
+            }
 
             // Remove from discovered list if applicable, but keep its curated shortName (if any)
             const discovered = getDiscoveredData();

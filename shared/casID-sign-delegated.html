@@ -296,10 +296,43 @@
                 </div>
                 <span>Thông báo</span>
             </button>
-            <button onclick="showCustomToast('Tính năng Hồ sơ đang phát triển')" class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
+            <button onclick="showToast('Tính năng Hồ sơ đang phát triển')" class="flex flex-col items-center gap-1 w-16 text-gray-400 hover:text-gray-700">
                 <i class="fa-solid fa-circle-user text-lg"></i>
                 <span>Hồ sơ</span>
             </button>
+        </div>
+        <!-- Confirm Disconnect Popup -->
+        <div id="popup-disconnect" class="absolute inset-0 z-50 flex items-end justify-center hidden"
+            style="background:rgba(0,0,0,0.35); backdrop-filter:blur(2px);">
+            <div id="popup-disconnect-sheet"
+                class="bg-white w-full max-w-[375px] rounded-t-3xl p-6 flex flex-col gap-4 transform translate-y-full transition-all duration-300">
+                <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-1"></div>
+                <div class="flex flex-col items-center gap-2 text-center">
+                    <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-1">
+                        <i class="fa-solid fa-link-slash text-gray-500 text-xl"></i>
+                    </div>
+                    <h3 class="text-[15px] font-bold text-gray-800">Xóa ủy quyền?</h3>
+                    <p class="text-[11px] text-gray-500 leading-relaxed">Bạn sẽ không còn thấy hoặc thực hiện các yêu cầu ký
+                        được ủy quyền bởi <strong id="popup-delegator-name" class="text-gray-800"></strong> nữa.</p>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <button onclick="confirmDisconnect()"
+                        class="w-full py-3 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-xl transition-all active:scale-[0.98]">
+                        Xóa vĩnh viễn
+                    </button>
+                    <button onclick="closeDisconnectPopup()"
+                        class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-bold rounded-xl transition-all active:scale-[0.98]">
+                        Huỷ
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Toast alert banner -->
+        <div id="custom-toast"
+            class="absolute top-12 left-4 right-4 z-50 bg-gray-900/95 backdrop-blur-md text-white rounded-2xl p-3.5 shadow-xl flex items-center gap-2.5 transform -translate-y-6 opacity-0 transition-all duration-300 pointer-events-none hidden border border-gray-800">
+            <i id="custom-toast-icon" class="text-xs shrink-0 text-emerald-400 fa-solid fa-circle-info"></i>
+            <span id="custom-toast-msg" class="text-[11px] font-semibold leading-snug"></span>
         </div>
 
     </div>
@@ -324,6 +357,11 @@
                     class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all">
                     <i class="fa-solid fa-seedling text-[10px]"></i>
                     <span>Hồ sơ mới khởi tạo</span>
+                </button>
+                <button onclick="localStorage.setItem('casso_demo_scenario','new'); clearDemoDatasets(); window.location.href='../empty/index-bank.html'"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-building-columns text-[10px]"></i>
+                    <span>Claim ngân hàng</span>
                 </button>
                 <div class="border-t border-gray-100 my-0.5"></div>
                 <button onclick="resetDemoScenario()"
@@ -360,37 +398,6 @@
         </div>
     </div>
 
-    <!-- Confirm Disconnect Popup -->
-    <div id="popup-disconnect" class="absolute inset-0 z-50 flex items-end justify-center hidden"
-        style="background:rgba(0,0,0,0.35); backdrop-filter:blur(2px);">
-        <div id="popup-disconnect-sheet"
-            class="bg-white w-full max-w-[375px] rounded-t-3xl p-6 flex flex-col gap-4 transform translate-y-full transition-all duration-300">
-            <div class="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-1"></div>
-            <div class="flex flex-col items-center gap-2 text-center">
-                <div class="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center mb-1">
-                    <i class="fa-solid fa-link-slash text-gray-500 text-xl"></i>
-                </div>
-                <h3 class="text-[15px] font-bold text-gray-800">Xóa ủy quyền?</h3>
-                <p class="text-[11px] text-gray-500 leading-relaxed">Bạn sẽ không còn thấy hoặc thực hiện các yêu cầu ký
-                    được ủy quyền bởi <strong id="popup-delegator-name" class="text-gray-800"></strong> nữa.</p>
-            </div>
-            <div class="flex flex-col gap-2">
-                <button onclick="confirmDisconnect()"
-                    class="w-full py-3 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-xl transition-all active:scale-[0.98]">
-                    Xóa vĩnh viễn
-                </button>
-                <button onclick="closeDisconnectPopup()"
-                    class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-bold rounded-xl transition-all active:scale-[0.98]">
-                    Huỷ
-                </button>
-            </div>
-            <!-- Custom Toast alert banner -->
-            <div id="custom-toast"
-                class="absolute top-12 left-4 right-4 z-50 bg-gray-900/95 backdrop-blur-md text-white rounded-2xl p-3.5 shadow-xl flex items-center gap-2.5 transform -translate-y-6 opacity-0 transition-all duration-300 pointer-events-none hidden border border-gray-800">
-                <i id="custom-toast-icon" class="text-xs shrink-0 text-emerald-400 fa-solid fa-circle-info"></i>
-                <span id="custom-toast-msg" class="text-[11px] font-semibold leading-snug"></span>
-            </div>
-        </div>
 
         <script>
             // Scales the whole phone mockup down to fit the viewport (no more manual

@@ -404,6 +404,12 @@
 
         </div>
 
+        <!-- Floating Action Button (FAB) -->
+        <button id="fab-add-delegation" onclick="showCreateFormView()"
+            class="absolute bottom-20 right-6 w-12 h-12 bg-black hover:bg-gray-900 text-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-all z-10">
+            <i class="fa-solid fa-plus text-lg"></i>
+        </button>
+
         <!-- ========================================== -->
         <!-- CONFIRM MODAL (TẠM DỪNG / KHÔI PHỤC / XÓA) -->
         <!-- ========================================== -->
@@ -522,6 +528,11 @@
                     class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all">
                     <i class="fa-solid fa-seedling text-[10px]"></i>
                     <span>Hồ sơ mới khởi tạo</span>
+                </button>
+                <button onclick="localStorage.setItem('casso_demo_scenario','new'); clearDemoDatasets(); window.location.href='../empty/index-bank.html'"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-building-columns text-[10px]"></i>
+                    <span>Claim ngân hàng</span>
                 </button>
                 <div class="border-t border-gray-100 my-0.5"></div>
                 <button onclick="resetDemoScenario()"
@@ -1304,6 +1315,8 @@
             const container = document.getElementById('delegation-list-container');
             if (!container) return;
 
+            document.getElementById('fab-add-delegation')?.classList.toggle('hidden', currentFilterEntity === 'delegated');
+
             // Apply Filters
             let filtered = [];
             if (currentFilterEntity === 'delegated') {
@@ -1326,18 +1339,11 @@
                 const emptyMsg = (currentFilterEntity === 'delegated')
                     ? 'Bạn chưa nhận được yêu cầu ủy quyền nào'
                     : 'Bạn chưa có ủy quyền nào';
-                const emptyBtn = (currentFilterEntity === 'delegated') ? '' : `
-                    <button onclick="showCreateFormView()"
-                        class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1">
-                        <span>Tạo ủy quyền mới +</span>
-                    </button>
-                `;
 
                 container.innerHTML = `
                     <div class="mt-3 p-6 bg-[#f8f9fa] border border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center text-center">
                         <i class="fa-solid fa-shield-halved text-[28px] text-gray-300 mb-2"></i>
-                        <p class="text-[11px] text-gray-400 font-medium mb-3.5">${emptyMsg}</p>
-                        ${emptyBtn}
+                        <p class="text-[11px] text-gray-400 font-medium">${emptyMsg}</p>
                     </div>
                 `;
                 return;
@@ -1446,20 +1452,6 @@
 
                 container.appendChild(card);
             });
-
-            // Append Bottom Full-Width Create Button (Only for outgoing delegation profiles)
-            if (currentFilterEntity !== 'delegated') {
-                const bottomActionDiv = document.createElement('div');
-                bottomActionDiv.className = "pt-2 pb-1";
-                const btnLabel = currentFilterEntity === 'personal' ? 'Tạo ủy quyền mới +' : 'Tạo ủy quyền mới +';
-                bottomActionDiv.innerHTML = `
-                    <button onclick="showCreateFormView()"
-                        class="w-full py-2.5 bg-black hover:bg-gray-900 text-white font-bold text-[11.5px] rounded-lg transition-all active:scale-[0.98] shadow-xs flex items-center justify-center gap-1">
-                        <span>${btnLabel}</span>
-                    </button>
-                `;
-                container.appendChild(bottomActionDiv);
-            }
         }
 
         // ========================================================
@@ -1475,6 +1467,7 @@
             document.getElementById('view-list').classList.add('hidden');
             document.getElementById('view-form').classList.add('hidden');
             document.getElementById('view-received-detail').classList.remove('hidden');
+            document.getElementById('fab-add-delegation')?.classList.add('hidden');
 
             const pageTitleEl = document.getElementById('page-title');
             if (pageTitleEl) {
@@ -1691,6 +1684,7 @@
             if (recDetailView) recDetailView.classList.add('hidden');
             document.getElementById('view-form').classList.remove('hidden');
             document.getElementById('page-title').textContent = "Tạo ủy quyền";
+            document.getElementById('fab-add-delegation')?.classList.add('hidden');
 
             updateFormDelegatorLabel(currentFilterEntity);
             clearCccdError();
@@ -1731,6 +1725,7 @@
             if (recDetailView) recDetailView.classList.add('hidden');
             document.getElementById('view-form').classList.remove('hidden');
             document.getElementById('page-title').textContent = "Chi tiết ủy quyền";
+            document.getElementById('fab-add-delegation')?.classList.add('hidden');
 
             updateFormDelegatorLabel(item.delegatorKey);
             clearCccdError();

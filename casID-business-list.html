@@ -1685,7 +1685,7 @@
                             </div>
                             <span class="text-[10px] text-gray-400 truncate font-mono">${m.cccd ? 'CCCD: ' + m.cccd : ''}</span>
                             ${m.status === 'joined'
-                        ? `<span class="text-[10px] text-gray-400 truncate">Tham gia lúc: ${m.joinedTime || m.addedTime || ''}</span>`
+                        ? `<span class="text-[10px] text-gray-400 truncate">Tham gia: ${m.addedTime || ''}</span>`
                         : ''}
                             <span class="text-[10px] text-emerald-600 font-semibold truncate mt-0.5">${permissionSummary(m.permissions)}</span>
                         </div>

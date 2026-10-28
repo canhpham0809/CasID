@@ -82,7 +82,7 @@
         </div>
 
         <!-- VIEW 1: LIST -->
-        <div id="view-list" class="flex-1 flex flex-col overflow-hidden">
+        <div id="view-list" class="flex-1 flex flex-col overflow-hidden relative">
             <div class="px-4 py-3 flex items-center gap-3 bg-white shrink-0">
                 <button onclick="window.location.href=demoHomeUrl()" class="text-gray-700 text-lg hover:opacity-70">
                     <i class="fa-solid fa-arrow-left"></i>
@@ -114,13 +114,12 @@
                 </div>
             </div>
             <div id="cert-list" class="flex-1 overflow-y-auto p-4 flex flex-col gap-4"></div>
-            <div class="px-4 pb-6 bg-white border-t border-gray-100 shrink-0 pt-3">
-                <button
-                    onclick="window.location.href='casID-discount-flow.html'"
-                    class="w-full py-4 bg-[#181818] hover:bg-black text-white font-bold text-sm rounded-md transition-all active:scale-[0.98]">
-                    Đăng ký chứng thư số mới +
-                </button>
-            </div>
+
+            <!-- Floating Action Button (FAB) -->
+            <button onclick="window.location.href='casID-discount-flow.html'"
+                class="absolute bottom-10 right-6 w-12 h-12 bg-black hover:bg-gray-900 text-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-all z-10">
+                <i class="fa-solid fa-plus text-lg"></i>
+            </button>
         </div>
 
         <!-- VIEW 2: DETAIL -->
@@ -282,20 +281,14 @@
         </div>
 
         <!-- VIEW 4: DELEGATION LIST FOR CERT -->
-        <div id="view-delegation-list" class="flex-1 flex flex-col overflow-hidden hidden">
-            <div class="px-4 py-3 flex items-center justify-between bg-white border-b border-gray-50 shrink-0">
-                <div class="flex items-center gap-3">
-                    <button onclick="showDetailView()" class="text-gray-700 text-lg hover:opacity-70">
-                        <i class="fa-solid fa-arrow-left"></i>
-                    </button>
-                    <div>
-                        <h1 class="text-[15px] font-bold text-gray-800">Quản lý ủy quyền</h1>
-                    </div>
-                </div>
-                <button onclick="showDelegateForm()"
-                    class="text-[10px] font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full px-3.5 py-1.5 transition-all flex items-center active:scale-95">
-                    <span>Thêm mới</span>
+        <div id="view-delegation-list" class="flex-1 flex flex-col overflow-hidden hidden relative">
+            <div class="px-4 py-3 flex items-center gap-3 bg-white border-b border-gray-50 shrink-0">
+                <button onclick="showDetailView()" class="text-gray-700 text-lg hover:opacity-70">
+                    <i class="fa-solid fa-arrow-left"></i>
                 </button>
+                <div>
+                    <h1 class="text-[15px] font-bold text-gray-800">Quản lý ủy quyền</h1>
+                </div>
             </div>
             <div class="flex-1 overflow-y-auto bg-gray-50/50 p-4 flex flex-col gap-3">
                 <!-- Info note -->
@@ -307,6 +300,12 @@
                 <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mt-1">Danh sách đã ủy quyền</h3>
                 <div id="ca-delegation-cards" class="flex flex-col gap-3"></div>
             </div>
+
+            <!-- Floating Action Button (FAB) -->
+            <button onclick="showDelegateForm()"
+                class="absolute bottom-10 right-6 w-12 h-12 bg-black hover:bg-gray-900 text-white rounded-full flex items-center justify-center shadow-lg active:scale-95 transition-all z-10">
+                <i class="fa-solid fa-plus text-lg"></i>
+            </button>
         </div>
 
         <!-- Success Popup -->
@@ -391,6 +390,11 @@
                     class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all">
                     <i class="fa-solid fa-seedling text-[10px]"></i>
                     <span>Hồ sơ mới khởi tạo</span>
+                </button>
+                <button onclick="localStorage.setItem('casso_demo_scenario','new'); clearDemoDatasets(); window.location.href='../empty/index-bank.html'"
+                    class="text-left px-2.5 py-2 rounded-lg text-[11px] font-bold flex items-center gap-2 transition-all text-gray-700 hover:bg-gray-50">
+                    <i class="fa-solid fa-building-columns text-[10px]"></i>
+                    <span>Claim ngân hàng</span>
                 </button>
                 <div class="border-t border-gray-100 my-0.5"></div>
                 <button onclick="resetDemoScenario()"

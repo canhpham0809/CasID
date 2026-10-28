@@ -1,0 +1,304 @@
+# QR Pay
+
+> Nguồn: https://cas.so/product/qr-pay
+
+Tạo mã thanh toán
+
+QR PAY (Mã QR thanh toán) là mã QR động được tạo theo đơn hàng và kèm xác nhận thanh toán.
+
+Với mỗi mã thanh toán được tạo thì sẽ có một số tài khoản ảo được sinh ra và số tài khoản ảo này sẽ gắn với một đơn hàng tương ứng, 
+khi KH thanh toán vào số tài khoản ảo thì đơn hàng đó cũng được xác nhận thanh toán thành công.
+
+Khi khách hàng thực hiện thanh toán vào số tài khoản ảo với đúng số tiền hoặc đúng số tiền và nội dung thì phía Cas sẽ xác nhận đơn hàng của bạn thanh toán, 
+hệ thống của bạn sẽ nhận được một [webhook](/general/api/webhook) loại TRANSACTIONS và paymentMeta sẽ kèm giá trị `referenceNumber` lúc tạo QR Pay. 
+
+Xem dữ liệu webhook mẫu
+```js
+  {
+  "environment": "dev",
+  "webhookType": "TRANSACTIONS",
+  "webhookCode": "DEFAULT_UPDATE",
+  "error": null,
+  "grantId": "4c657924-13f3-11ee-a4bb-42010a40001b",
+  "transaction": {
+    "id": "3cacecf6935011ee952542010a400022",
+    "transactionCode": "19c4a4ab-3ea8-4254-8436-bffe01d3352f",
+    "reference": "FT23339WL0MW\\BNK",
+    "transactionDate": "2023-12-05",
+    "transactionDateTime": "2023-12-05T16:25:00+07:00",
+    "bookingDate": "2023-12-05",
+    "amount": 10000,
+    "description": "CSP5BXM10C5 test",
+    "runningBalance": null,
+    "accountNumber": 867623232,
+    "virtualAccountNumber": "CASD0867623232",
+    "virtualAccountName": null,
+    "paymentChannel": null,
+    "counterAccountNumber": null,
+    "counterAccountName": null,
+    "counterAccountBankId": null,
+    "counterAccountBankName": null,
+    "paymentMeta": {
+      "referenceNumber": "m9nTyCFrVZubG"
+    },
+    "fiId": "3c2e880d-efb5-11ed-8620-0ae7e48c82d8",
+    "fiName": "OCB",
+    "fiServiceId": "fbad1579-7224-11ee-b6d2-42010a40001e",
+    "fiServiceName": "OCB VietQR Pay",
+    "currency": "VND"
+  }
+}
+```
+
+### Các bước tích hợp QR Pay
+
+Dưới đây là các bước để tích hợp QR Pay vào sản phẩm của bạn.
+1. Tạo một phân quyền [/grant/token](/general/api/grant/create) với `scopes` có giá trị là `qrpay`.
+  - **user** (tuỳ chọn): thông tin khách hàng mà hệ thống của bạn đã lưu, dùng để điền sẵn biểu mẫu trên Cas Link
+  và đối chiếu với thông tin tài khoản ngân hàng. [Xem chi tiết](#user-info)
+
+2. Mở giao diện Cas Link bằng `grantToken` được trả về ở bước trên. [Xem chi tiết](/general/link)
+
+3. Sau khi người dùng hoàn tất xác thực, phía giao diện của bạn sẽ nhận được một publicToken, dùng publicToken này để lấy accessToken cho phân quyền.
+
+4. Sau khi có `accessToken`, gọi [API lấy thông tin định danh của TK tạo QR Pay](/general/api/product-qr-pay/get-qr-pay-identity) để kiểm tra thông tin TK có hợp lệ hay không. 
+Trường hợp TK không hợp lệ bạn sẽ gọi [API /grant/remove](/general/api/grant/remove) để xoá phân quyền này.
+
+5. Bây giờ bạn đã có thể gọi [API Tạo QR Pay](/general/api/product-qr-pay/create-qr-pay).
+
+6. Tạo mã QR từ kết quả ở trường `qrCode` và hiển thị mã QR này trên giao diện của bạn. 
+Để đơn giản việc tạo mã VietQR bạn có thể dùng [Quicklink của vietqr.io](https://vietqr.io/danh-sach-api/link-tao-ma-nhanh/) để tạo QR và nhúng link vào hệ thống của bạn.
+
+7. Xử lý trạng thái đơn hàng trên hệ thống của bạn khi nhận [webhook](/general/api/webhook) giao dịch,
+và trường `referenceNumber` trong paymentMeta từ webhook là mã đơn hàng trên hệ thống của bạn.
+
+#### Thông tin khách hàng (`user`) {#user-info}
+
+`user` là trường **tuỳ chọn** khi tạo phân quyền. Nếu hệ thống của bạn đã lưu sẵn thông tin của khách hàng, hãy truyền vào để:
+
+- **Kiểm tra thông tin tài khoản**: Cas Link đối chiếu thông tin bạn gửi với thông tin tài khoản mà ngân hàng trả về.
+Nếu tên chủ tài khoản hoặc số định danh không khớp, thao tác liên kết sẽ bị dừng lại và báo lỗi cho người dùng.
+- **Điền sẵn biểu mẫu liên kết**: Cas Link tự động điền các ô tên chủ tài khoản, số định danh, số điện thoại và email,
+người dùng không cần nhập lại những thông tin bên bạn đã có.
+
+| Trường | Kiểu | Mô tả |
+| --- | --- | --- |
+| `legalName` | string | Tên chủ tài khoản cá nhân |
+| `idNumber` | string | Số định danh cá nhân (CCCD/CMND) của chủ tài khoản |
+| `companyName` | string | Tên doanh nghiệp |
+| `companyLegalId` | string | Mã số thuế/mã số doanh nghiệp |
+| `mobileNumber` | string | Số điện thoại khách hàng đăng ký với ngân hàng |
+| `email` | string | Email của khách hàng |
+
+:::note
+Tuỳ theo dịch vụ tài chính là loại **cá nhân** hay **doanh nghiệp** mà Cas Link dùng cặp `legalName`/`idNumber`
+hoặc `companyName`/`companyLegalId` để đối chiếu. Trường nào không truyền thì bỏ qua việc đối chiếu trường đó.
+:::
+
+### Gọi API
+#### Tạo phân quyền cho QR Pay
+
+  
+
+```bash
+curl --location 'https://sandbox.bankhub.dev/grant/token' \
+--header 'X-BankHub-Api-Version: 2023-01-01' \
+--header 'x-client-id: <CLIENT_ID_HERE>' \
+--header 'x-secret-key: <SECRET_KEY_HERE>' \
+--header 'Content-Type: application/json' \
+--data '{
+    "scopes": "qrpay",
+    "language": "vi",
+    "redirectUri": "https://your-domain.vn/link",
+    "user": {
+        "legalName": "NGUYEN VAN A",
+        "idNumber": "079201000123",
+        "mobileNumber": "0901234567",
+        "email": "nguyenvana@gmail.com"
+    }
+}'
+```
+
+  
+  
+```js
+ const axios = require('axios');
+ const data = JSON.stringify({
+   "scopes": "qrpay",
+   "language": "vi",
+   "redirectUri": "https://your-domain.vn/link",
+   "user": {
+     "legalName": "NGUYEN VAN A",
+     "idNumber": "079201000123",
+     "mobileNumber": "0901234567",
+     "email": "nguyenvana@gmail.com"
+   }
+ });
+
+ const config = {
+   method: 'post',
+   maxBodyLength: Infinity,
+   url: 'https://sandbox.bankhub.dev/grant/token',
+   headers: { 
+     'X-BankHub-Api-Version': '2023-01-01', 
+     'x-client-id': '<CLIENT_ID_HERE>', 
+     'x-secret-key': '<SECRET_KEY_HERE>', 
+     'Content-Type': 'application/json'
+   },
+   data: data
+ };
+
+ axios.request(config)
+ .then((response) => {
+   console.log(JSON.stringify(response.data));
+ })
+ .catch((error) => {
+   console.log(error);
+ });
+```
+  
+
+:::info
+  Xem chi tiết API, [tại đây](/general/api/grant/create)
+:::
+
+#### Lấy accessToken từ publicToken
+
+  
+```bash
+  curl --location 'https://sandbox.bankhub.dev/grant/exchange' \
+  --header 'X-BankHub-Api-Version: 2023-01-01' \
+  --header 'x-client-id: <CLIENT_ID_HERE>' \
+  --header 'x-secret-key: <SECRET_KEY_HERE>' \
+  --header 'Content-Type: application/json' \
+  --data '{
+      "publicToken": "bdbde2bad-7685-4f95-987c-71309a4a3"
+  }'
+```
+  
+  
+```js
+  const axios = require('axios');
+  const data = JSON.stringify({
+    "publicToken": "bdbde2bad-7685-4f95-987c-71309a4a3"
+  });
+
+  const config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'https://sandbox.bankhub.dev/grant/exchange',
+    headers: { 
+      'X-BankHub-Api-Version': '2023-01-01', 
+      'x-client-id': '<CLIENT_ID_HERE>', 
+      'x-secret-key': '<SECRET_KEY_HERE>', 
+      'Content-Type': 'application/json'
+    },
+    data: data
+  };
+
+  axios.request(config)
+    .then((response) => {
+      console.log(JSON.stringify(response.data));
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+```
+  
+
+:::info
+  Xem chi tiết API, [tại đây](/general/api/grant/exchange)
+:::
+
+#### Lấy thông tin định danh của TK tạo QR Pay
+
+  
+```bash
+  curl --location 'https://sandbox.bankhub.dev/qr-pay/identity' \
+  --header 'X-BankHub-Api-Version: 2023-01-01' \
+  --header 'Authorization: <ACCESS_TOKEN_HERE>' \
+  --header 'x-client-id: <CLIENT_ID_HERE>' \
+  --header 'x-secret-key: <SECRET_KEY_HERE>'
+```
+  
+  
+```js
+  const axios = require('axios');
+
+  const config = {
+    method: 'get',
+    maxBodyLength: Infinity,
+    url: 'https://sandbox.bankhub.dev/qr-pay/identity',
+    headers: { 
+      'X-BankHub-Api-Version': '2023-01-01', 
+      'Authorization': '<ACCESS_TOKEN_HERE>', 
+      'x-client-id': '<CLIENT_ID_HERE>', 
+      'x-secret-key': '<SECRET_KEY_HERE>''
+    }
+  };
+
+  axios.request(config)
+  .then((response) => {
+    console.log(JSON.stringify(response.data));
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+```
+  
+
+:::info
+  Xem chi tiết API, [tại đây](/general/api/product-qr-pay/get-qr-pay-identity)
+:::
+
+#### Tạo QR Pay
+
+  
+```bash
+  curl --location 'https://sandbox.bankhub.dev/qr-pay' \
+  --header 'X-BankHub-Api-Version: 2023-01-01' \
+  --header 'Authorization: <ACCESS_TOKEN_HERE>' \
+  --header 'x-client-id: <CLIENT_ID_HERE>' \
+  --header 'x-secret-key: <SECRET_KEY_HERE>'
+  --data '{
+    "amount": 2000,
+    "description": "cassotest",
+    "referenceNumber": "1234455811acbc"
+  }'
+```
+  
+
+  
+```js
+  const axios = require('axios');
+  const data = JSON.stringify({
+    "amount": 2000,
+    "description": "cassotest",
+    "referenceNumber": "1234455811acbc"
+  });
+  const config = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'https://sandbox.bankhub.dev/qr-pay',
+    headers: { 
+      'X-BankHub-Api-Version': '2023-01-01', 
+      'Authorization': '<ACCESS_TOKEN_HERE>', 
+      'x-client-id': '<CLIENT_ID_HERE>', 
+      'x-secret-key': '<SECRET_KEY_HERE>'
+    },
+    data
+  };
+
+  axios.request(config)
+  .then((response) => {
+    console.log(JSON.stringify(response.data));
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+```
+  
+
+:::info
+  Xem chi tiết API, [tại đây](/general/api/product-qr-pay/create-qr-pay)
+:::
